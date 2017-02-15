@@ -4,7 +4,7 @@ import lujgame.gateway.boot.GatewayBoot;
 import lujgame.gateway.boot.GatewayInjectConfig;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-public class Main {
+public class GatewayMain {
 
   public static void main(String[] args) {
     AnnotationConfigApplicationContext appCtx

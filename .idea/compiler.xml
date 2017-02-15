@@ -24,12 +24,14 @@
         <processorPath useClasspath="true" />
         <module name="core" />
         <module name="gateway" />
+        <module name="robot" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="core" target="1.8" />
       <module name="gateway" target="1.8" />
       <module name="lujgame" target="1.8" />
+      <module name="robot" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
