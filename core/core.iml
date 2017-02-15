@@ -21,5 +21,10 @@
     <orderEntry type="library" name="Maven: com.typesafe.akka:akka-actor_2.11:2.3.16" level="project" />
     <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.11.5" level="project" />
     <orderEntry type="library" name="Maven: com.typesafe:config:1.2.1" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-all:4.0.44.Final" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-all:1.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.mockito:mockito-all:1.10.19" level="project" />
   </component>
 </module>
