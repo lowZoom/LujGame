@@ -8,7 +8,7 @@ public class ChildInboundHandler extends ChannelInboundHandlerAdapter {
 
   @Override
   public void channelActive(ChannelHandlerContext ctx) throws Exception {
-    Channel ch = ctx.channel();
-    System.out.println("新连接：" + ch.remoteAddress());
+    Channel channel = ctx.channel();
+    System.out.println("新连接：" + channel.remoteAddress());
   }
 }

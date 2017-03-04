@@ -3,7 +3,6 @@ package lujgame.gateway.boot;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import com.typesafe.config.Config;
-import java.io.File;
 import lujgame.core.file.DataFileReader;
 import lujgame.gateway.network.NetAcceptActor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,5 +24,5 @@ public class GatewayBoot {
     system.actorOf(Props.create(NetAcceptActor.class, NetAcceptActor::new));
   }
 
-  private DataFileReader _dataFileReader;
+  private final DataFileReader _dataFileReader;
 }

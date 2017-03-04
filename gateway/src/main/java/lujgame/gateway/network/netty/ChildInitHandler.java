@@ -6,7 +6,7 @@ import io.netty.channel.socket.SocketChannel;
 public class ChildInitHandler extends ChannelInitializer<SocketChannel> {
 
   @Override
-  protected void initChannel(SocketChannel ch) throws Exception {
+  protected void initChannel(SocketChannel channel) throws Exception {
 
   }
 }

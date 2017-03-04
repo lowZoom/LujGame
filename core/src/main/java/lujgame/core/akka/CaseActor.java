@@ -25,7 +25,7 @@ public abstract class CaseActor extends UntypedActor {
   }
 
   protected CaseActor() {
-    _actionMap = new HashMap<>();
+    _actionMap = new HashMap<>(16);
 
     initLog();
   }
@@ -68,6 +68,6 @@ public abstract class CaseActor extends UntypedActor {
     unhandled(msg);
   }
 
-  private Map<Class<?>, Consumer<?>> _actionMap;
+  private final Map<Class<?>, Consumer<?>> _actionMap;
   private LoggingAdapter _log;
 }

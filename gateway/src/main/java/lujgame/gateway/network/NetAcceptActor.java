@@ -21,6 +21,7 @@ public class NetAcceptActor extends CaseActor {
         .channel(NioServerSocketChannel.class)
         .childHandler(new ChildInboundHandler());
 
-    serverBoot.bind(12345);
+    final int SERVER_PORT = 12345;
+    serverBoot.bind(SERVER_PORT);
   }
 }
