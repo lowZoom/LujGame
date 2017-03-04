@@ -25,5 +25,5 @@ public class DataFileReader {
     return ConfigFactory.parseFile(cfgFile);
   }
 
-  private DataFilePathGetter _pathGetter;
+  private final DataFilePathGetter _pathGetter;
 }
