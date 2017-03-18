@@ -7,18 +7,14 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 public class RobotMain {
 
   public static void main(String[] args) {
-    RobotMain main = new RobotMain();
-
-    try (AnnotationConfigApplicationContext appCtx = main.prepare()) {
-      main.start(appCtx, args);
-    }
+    new RobotMain().start(args);
   }
 
-  private AnnotationConfigApplicationContext prepare() {
-    return new AnnotationConfigApplicationContext(RobotInjectConfig.class);
-  }
+  private void start(String[] args) {
+    //TODO: 接受控制台输入后考虑context close的问题
+    AnnotationConfigApplicationContext appCtx =
+        new AnnotationConfigApplicationContext(RobotInjectConfig.class);
 
-  private void start(AnnotationConfigApplicationContext appCtx, String[] args) {
     RobotBoot boot = appCtx.getBean(RobotBoot.class);
     boot.boot(args);
   }
