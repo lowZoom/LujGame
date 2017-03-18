@@ -1,8 +1,5 @@
 package lujgame.core.akka;
 
-
-import akka.actor.ActorPath;
-import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.UntypedActor;
 import akka.actor.UntypedActorContext;
@@ -25,9 +22,8 @@ public abstract class CaseActor extends UntypedActor {
   }
 
   protected CaseActor() {
-    _actionMap = new HashMap<>(16);
-
-    initLog();
+    _actionMap = new HashMap<>(32);
+    _log = initLog();
   }
 
   protected <T extends Serializable> void addCase(Class<T> msgType, Consumer<T> action) {
@@ -38,11 +34,11 @@ public abstract class CaseActor extends UntypedActor {
     return _log;
   }
 
-  private void initLog() {
+  private LoggingAdapter initLog() {
     UntypedActorContext ctx = getContext();
     ActorSystem system = ctx.system();
 
-    _log = Logging.getLogger(system, this);
+    return Logging.getLogger(system, this);
   }
 
   private boolean tryHandleMessage(Object msg) {
@@ -61,13 +57,10 @@ public abstract class CaseActor extends UntypedActor {
   }
 
   private void logUnhandled(Object msg) {
-    ActorRef self = getSelf();
-    ActorPath path = self.path();
-
-    log().warning("{} 未处理的消息：{}（{}）", path, msg, msg.getClass());
+    log().warning("未处理的消息：{}（{}）", msg, msg.getClass());
     unhandled(msg);
   }
 
   private final Map<Class<?>, Consumer<?>> _actionMap;
-  private LoggingAdapter _log;
+  private final LoggingAdapter _log;
 }
