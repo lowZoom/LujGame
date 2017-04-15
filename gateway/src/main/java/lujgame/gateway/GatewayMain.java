@@ -7,18 +7,14 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 public class GatewayMain {
 
   public static void main(String[] args) {
-    GatewayMain main = new GatewayMain();
-
-    try (AnnotationConfigApplicationContext appCtx = main.prepare()) {
-      main.start(appCtx);
-    }
+    new GatewayMain().start();
   }
 
-  private AnnotationConfigApplicationContext prepare() {
-    return new AnnotationConfigApplicationContext(GatewayInjectConfig.class);
-  }
+  private void start() {
+    //TODO: 接受控制台输入后考虑context close的问题
+    AnnotationConfigApplicationContext appCtx =
+        new AnnotationConfigApplicationContext(GatewayInjectConfig.class);
 
-  private void start(AnnotationConfigApplicationContext appCtx) {
     GatewayBoot boot = appCtx.getBean(GatewayBoot.class);
     boot.boot();
   }
