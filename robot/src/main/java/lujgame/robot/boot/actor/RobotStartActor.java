@@ -12,7 +12,8 @@ import lujgame.robot.robot.spawn.message.ChangeRobotCountMsg;
  */
 public class RobotStartActor extends CaseActor {
 
-  public RobotStartActor(RobotSpawnActorFactory spawnActorFactory) {
+  public RobotStartActor(
+      RobotSpawnActorFactory spawnActorFactory) {
     _spawnActorFactory = spawnActorFactory;
   }
 
@@ -24,8 +25,8 @@ public class RobotStartActor extends CaseActor {
   }
 
   private void loadConfig() {
-    String ip = "192.168.0.101";
-    int port = 8113;
+    String ip = "127.0.0.1";
+    int port = 12345;
 
     UntypedActorContext ctx = getContext();
     Props spawnProps = _spawnActorFactory.props(ip, port);

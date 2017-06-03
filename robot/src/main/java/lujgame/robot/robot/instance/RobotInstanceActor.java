@@ -1,7 +1,9 @@
 package lujgame.robot.robot.instance;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.Future;
 import lujgame.core.akka.CaseActor;
@@ -30,7 +32,12 @@ public class RobotInstanceActor extends CaseActor {
         .group(_workerGroup)
         .channel(NioSocketChannel.class)
 //        .option(ChannelOption.SO_KEEPALIVE, true)
-//        .handler(null)
+        .handler(new ChannelInitializer<SocketChannel>() {
+          @Override
+          protected void initChannel(SocketChannel socketChannel) throws Exception {
+
+          }
+        })
         .connect(_ip, _port)
         .addListener(this::onConnectDone);
   }

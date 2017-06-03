@@ -12,12 +12,11 @@ public class NetAcceptActor extends CaseActor {
   public void preStart() throws Exception {
     log().debug("启动服务器监听。。。");
 
+    NioEventLoopGroup bossGroup = new NioEventLoopGroup();
+    NioEventLoopGroup workerGroup = new NioEventLoopGroup();
+
     ServerBootstrap serverBoot = new ServerBootstrap();
-
-    NioEventLoopGroup boss = new NioEventLoopGroup();
-    NioEventLoopGroup worker = new NioEventLoopGroup();
-
-    serverBoot.group(boss)
+    serverBoot.group(bossGroup)
         .channel(NioServerSocketChannel.class)
         .childHandler(new ChildInboundHandler());
 
