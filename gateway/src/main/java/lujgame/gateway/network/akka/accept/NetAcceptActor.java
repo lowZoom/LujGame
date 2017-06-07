@@ -1,5 +1,6 @@
-package lujgame.gateway.network;
+package lujgame.gateway.network.akka.accept;
 
+import akka.actor.ActorRef;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -16,9 +17,11 @@ public class NetAcceptActor extends CaseActor {
     NioEventLoopGroup workerGroup = new NioEventLoopGroup();
 
     ServerBootstrap serverBoot = new ServerBootstrap();
+    ActorRef self = getSelf();
+
     serverBoot.group(bossGroup)
         .channel(NioServerSocketChannel.class)
-        .childHandler(new ChildInboundHandler());
+        .childHandler(new ChildInboundHandler(self));
 
     final int SERVER_PORT = 12345;
     serverBoot.bind(SERVER_PORT);

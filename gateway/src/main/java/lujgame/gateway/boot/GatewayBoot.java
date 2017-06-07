@@ -4,7 +4,7 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import com.typesafe.config.Config;
 import lujgame.core.file.DataFileReader;
-import lujgame.gateway.network.NetAcceptActor;
+import lujgame.gateway.network.akka.accept.NetAcceptActor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
