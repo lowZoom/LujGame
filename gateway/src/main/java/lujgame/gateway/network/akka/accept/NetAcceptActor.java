@@ -1,25 +1,27 @@
 package lujgame.gateway.network.akka.accept;
 
 import akka.actor.ActorRef;
-import akka.actor.Props;
-import akka.actor.UntypedActorContext;
 import io.netty.bootstrap.ServerBootstrap;
-import java.net.InetSocketAddress;
 import lujgame.core.akka.CaseActor;
+import lujgame.gateway.network.akka.accept.logic.ConnKiller;
+import lujgame.gateway.network.akka.accept.logic.NewConnCreator;
+import lujgame.gateway.network.akka.accept.logic.ConnItem;
 import lujgame.gateway.network.akka.accept.logic.NettyRunner;
+import lujgame.gateway.network.akka.accept.message.KillConnMsg;
 import lujgame.gateway.network.akka.accept.message.NewConnMsg;
-import lujgame.gateway.network.akka.connection.ConnActorFactory;
 
 public class NetAcceptActor extends CaseActor {
 
   public NetAcceptActor(
       NetAcceptState state,
       NettyRunner nettyRunner,
-      ConnActorFactory connActorFactory) {
+      NewConnCreator newConnCreator,
+      ConnKiller connKiller) {
     _state = state;
 
     _nettyRunner = nettyRunner;
-    _connActorFactory = connActorFactory;
+    _newConnCreator = newConnCreator;
+    _connKiller = connKiller;
 
     registerMessage();
   }
@@ -37,23 +39,24 @@ public class NetAcceptActor extends CaseActor {
 
   private void registerMessage() {
     addCase(NewConnMsg.class, this::onNewConn);
+    addCase(KillConnMsg.class, this::onKillConn);
   }
 
   private void onNewConn(NewConnMsg msg) {
-    ConnActorFactory connFactory = _connActorFactory;
+    NewConnCreator c = _newConnCreator;
+    ConnItem connItem = c.createConn(this, msg);
+    c.addToMap(_state, connItem, log());
+  }
+
+  private void onKillConn(KillConnMsg msg) {
     String connId = msg.getConnId();
-    InetSocketAddress remoteAddr = msg.getRemoteAddr();
-
-    UntypedActorContext ctx = getContext();
-    Props props = connFactory.props(connId, remoteAddr);
-    String name = connFactory.getActorName(connId);
-    ctx.actorOf(props, name);
-
-    //TODO: 加入map进行管理
+    _connKiller.killConnection(_state, connId, log());
   }
 
   private final NetAcceptState _state;
 
   private final NettyRunner _nettyRunner;
-  private final ConnActorFactory _connActorFactory;
+
+  private final NewConnCreator _newConnCreator;
+  private final ConnKiller _connKiller;
 }
