@@ -5,7 +5,6 @@ import akka.actor.UntypedActor;
 import akka.actor.UntypedActorContext;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -26,7 +25,7 @@ public abstract class CaseActor extends UntypedActor {
     _log = initLog();
   }
 
-  protected <T extends Serializable> void addCase(Class<T> msgType, Consumer<T> action) {
+  protected <T> void addCase(Class<T> msgType, Consumer<T> action) {
     _actionMap.put(msgType, action);
   }
 
@@ -47,7 +46,6 @@ public abstract class CaseActor extends UntypedActor {
 
     @SuppressWarnings("unchecked")
     Consumer<Object> action = (Consumer<Object>) _actionMap.get(msgType);
-
     if (action == null) {
       return false;
     }
