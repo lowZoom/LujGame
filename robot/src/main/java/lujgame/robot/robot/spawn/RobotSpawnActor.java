@@ -1,6 +1,5 @@
 package lujgame.robot.robot.spawn;
 
-import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActorContext;
 import io.netty.channel.EventLoopGroup;

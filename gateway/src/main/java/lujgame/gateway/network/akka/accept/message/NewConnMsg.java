@@ -1,22 +1,22 @@
 package lujgame.gateway.network.akka.accept.message;
 
-import java.net.InetSocketAddress;
+import io.netty.channel.ChannelHandlerContext;
 
 public class NewConnMsg {
 
-  public NewConnMsg(String connId, InetSocketAddress remoteAddr) {
+  public NewConnMsg(String connId, ChannelHandlerContext nettyContext) {
     _connId = connId;
-    _remoteAddr = remoteAddr;
+    _nettyContext = nettyContext;
   }
 
   public String getConnId() {
     return _connId;
   }
 
-  public InetSocketAddress getRemoteAddr() {
-    return _remoteAddr;
+  public ChannelHandlerContext getNettyContext() {
+    return _nettyContext;
   }
 
   private final String _connId;
-  private final InetSocketAddress _remoteAddr;
+  private final ChannelHandlerContext _nettyContext;
 }

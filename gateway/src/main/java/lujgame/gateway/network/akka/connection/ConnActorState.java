@@ -1,14 +1,14 @@
 package lujgame.gateway.network.akka.connection;
 
 import akka.actor.ActorRef;
-import java.net.InetSocketAddress;
+import io.netty.channel.ChannelHandlerContext;
 
 public class ConnActorState {
 
-  public ConnActorState(String connId, InetSocketAddress remoteAddr, ActorRef acceptRef) {
+  public ConnActorState(String connId, ChannelHandlerContext nettyContext, ActorRef acceptRef) {
     _connId = connId;
-    _remoteAddr = remoteAddr;
 
+    _nettyContext = nettyContext;
     _acceptRef = acceptRef;
   }
 
@@ -16,8 +16,8 @@ public class ConnActorState {
     return _connId;
   }
 
-  public InetSocketAddress getRemoteAddr() {
-    return _remoteAddr;
+  public ChannelHandlerContext getNettyContext() {
+    return _nettyContext;
   }
 
   public ActorRef getAcceptRef() {
@@ -25,9 +25,7 @@ public class ConnActorState {
   }
 
   private final String _connId;
-  private final InetSocketAddress _remoteAddr;
 
+  private final ChannelHandlerContext _nettyContext;
   private final ActorRef _acceptRef;
-
-  //TODO: 要保存一个可以和NETTY通讯的东西
 }

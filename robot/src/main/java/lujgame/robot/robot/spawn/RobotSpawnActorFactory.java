@@ -21,8 +21,8 @@ public class RobotSpawnActorFactory {
         ip,
         port,
         new ArrayList<>(64),
-        _robotInstanceFactory
-    );
+        _robotInstanceFactory);
+
     return Props.create(RobotSpawnActor.class, c);
   }
 

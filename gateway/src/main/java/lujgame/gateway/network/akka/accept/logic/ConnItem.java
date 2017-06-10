@@ -13,6 +13,10 @@ public class ConnItem {
     return _connId;
   }
 
+  public ActorRef getConnRef() {
+    return _connRef;
+  }
+
   private final String _connId;
   private final ActorRef _connRef;
 }

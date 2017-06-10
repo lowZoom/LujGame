@@ -13,10 +13,7 @@ import lujgame.core.akka.CaseActor;
  */
 public class RobotInstanceActor extends CaseActor {
 
-  public RobotInstanceActor(
-      EventLoopGroup workerGroup,
-      String ip,
-      int port) {
+  public RobotInstanceActor(EventLoopGroup workerGroup, String ip, int port) {
     _workerGroup = workerGroup;
 
     _ip = ip;

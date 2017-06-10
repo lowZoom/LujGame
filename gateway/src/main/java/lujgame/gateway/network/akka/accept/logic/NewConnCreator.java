@@ -4,7 +4,7 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActorContext;
 import akka.event.LoggingAdapter;
-import java.net.InetSocketAddress;
+import io.netty.channel.ChannelHandlerContext;
 import java.util.Map;
 import lujgame.gateway.network.akka.accept.NetAcceptActor;
 import lujgame.gateway.network.akka.accept.NetAcceptState;
@@ -26,9 +26,9 @@ public class NewConnCreator {
 
     ConnActorFactory connFactory = _connActorFactory;
     String connId = msg.getConnId();
-    InetSocketAddress remoteAddr = msg.getRemoteAddr();
+    ChannelHandlerContext nettyCtx = msg.getNettyContext();
     ActorRef acceptRef = acceptActor.getSelf();
-    Props props = connFactory.props(connId, remoteAddr, acceptRef);
+    Props props = connFactory.props(connId, nettyCtx, acceptRef);
 
     String name = connFactory.getActorName(connId);
     ActorRef connRef = ctx.actorOf(props, name);

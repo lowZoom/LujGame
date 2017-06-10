@@ -16,8 +16,8 @@ public class RobotStartActorFactory {
 
   public Props props() {
     Creator<RobotStartActor> c = () -> new RobotStartActor(
-        _spawnActorFactory
-    );
+        _spawnActorFactory);
+
     return Props.create(RobotStartActor.class, c);
   }
 
