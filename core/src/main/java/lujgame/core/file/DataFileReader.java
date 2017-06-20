@@ -2,7 +2,7 @@ package lujgame.core.file;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import java.io.File;
+import java.nio.file.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,11 +19,10 @@ public class DataFileReader {
   }
 
   public Config readConfig(String path) {
-    String cfgPath = _pathGetter.getConfigPath(path);
-    File cfgFile = new File(cfgPath);
+    Path cfgPath = _pathGetter.getConfigPath(path);
 
 //    System.out.println(cfgFile.getAbsolutePath());
-    return ConfigFactory.parseFile(cfgFile);
+    return ConfigFactory.parseFile(cfgPath.toFile());
   }
 
   private final DataFilePathGetter _pathGetter;

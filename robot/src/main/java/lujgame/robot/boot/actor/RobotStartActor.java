@@ -32,9 +32,9 @@ public class RobotStartActor extends CaseActor {
     Props spawnProps = _spawnActorFactory.props(ip, port);
     ActorRef spawnActor = ctx.actorOf(spawnProps, "Spawn");
 
-    ChangeRobotCountMsg msg = new ChangeRobotCountMsg(1);
-    ActorRef self = getSelf();
-    spawnActor.tell(msg, self);
+//    ChangeRobotCountMsg msg = new ChangeRobotCountMsg(1);
+//    ActorRef self = getSelf();
+//    spawnActor.tell(msg, self);
   }
 
   private final RobotSpawnActorFactory _spawnActorFactory;
