@@ -3,7 +3,6 @@ package lujgame.robot.robot.spawn;
 import akka.actor.Props;
 import akka.actor.UntypedActorContext;
 import akka.event.LoggingAdapter;
-import com.typesafe.config.Config;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import java.nio.file.Path;
@@ -30,7 +29,7 @@ public class RobotSpawnActor extends CaseActor {
     _robotSpawner = robotSpawner;
     _robotInstanceFactory = robotInstanceFactory;
 
-    addCase(ChangeRobotCountMsg.class, this::onChangeRobotCount);
+//    addCase(ChangeRobotCountMsg.class, this::onChangeRobotCount);
   }
 
   @Override
@@ -43,25 +42,26 @@ public class RobotSpawnActor extends CaseActor {
   private void scanRobot() {
     RobotSpawner s = _robotSpawner;
     LoggingAdapter log = log();
+
     List<Path> configList = s.findRobotConfig("robot", log);
-    s.spawnRobot(configList, log);
+    s.spawnRobot(configList, _eventGroup, getContext(), log);
   }
 
-  private void onChangeRobotCount(ChangeRobotCountMsg msg) {
-    int oldCount = _robotList.size();
-    int newCount = msg.getCount();
-
-    int delta = newCount - oldCount;
-    if (delta == 0) {
-      return;
-    }
-
-    log().info("更改机器人数量 -> {}", newCount);
-
-    UntypedActorContext ctx = getContext();
-    Props robotProps = _robotInstanceFactory.props(_eventGroup, _ip, _port);
-    ctx.actorOf(robotProps, "Robot");
-  }
+//  private void onChangeRobotCount(ChangeRobotCountMsg msg) {
+//    int oldCount = _robotList.size();
+//    int newCount = msg.getCount();
+//
+//    int delta = newCount - oldCount;
+//    if (delta == 0) {
+//      return;
+//    }
+//
+//    log().info("更改机器人数量 -> {}", newCount);
+//
+//    UntypedActorContext ctx = getContext();
+//    Props robotProps = _robotInstanceFactory.props(_eventGroup, _ip, _port);
+//    ctx.actorOf(robotProps, "Robot");
+//  }
 
   private EventLoopGroup _eventGroup;
 

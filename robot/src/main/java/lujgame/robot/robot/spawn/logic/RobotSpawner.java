@@ -1,7 +1,12 @@
 package lujgame.robot.robot.spawn.logic;
 
+import akka.actor.ActorRef;
+import akka.actor.Props;
+import akka.actor.UntypedActorContext;
 import akka.event.LoggingAdapter;
 import com.google.common.collect.ImmutableList;
+import com.typesafe.config.Config;
+import io.netty.channel.EventLoopGroup;
 import java.nio.file.Path;
 import java.util.List;
 import lujgame.core.file.DataFilePathGetter;
@@ -16,11 +21,13 @@ public class RobotSpawner {
   @Autowired
   public RobotSpawner(FileTool fileTool,
       DataFilePathGetter dataFilePathGetter,
-      RobotInstanceActorFactory robotInstanceFactory) {
+      RobotInstanceActorFactory robotInstanceFactory,
+      RobotConfigReader robotConfigReader) {
     _fileTool = fileTool;
     _dataFilePathGetter = dataFilePathGetter;
 
     _robotInstanceFactory = robotInstanceFactory;
+    _robotConfigReader = robotConfigReader;
   }
 
   public List<Path> findRobotConfig(String dirName, LoggingAdapter log) {
@@ -40,7 +47,8 @@ public class RobotSpawner {
     return children;
   }
 
-  public void spawnRobot(List<Path> pathList, LoggingAdapter log) {
+  public void spawnRobot(List<Path> pathList, EventLoopGroup eventGroup,
+      UntypedActorContext actorCtx, LoggingAdapter log) {
     RobotInstanceActorFactory f = _robotInstanceFactory;
 
     for (Path path : pathList) {
@@ -50,6 +58,19 @@ public class RobotSpawner {
       }
 
       log.debug("启动机器人组 -> {}", group.getName());
+      spawnGroup(group, eventGroup, actorCtx);
+    }
+  }
+
+  private void spawnGroup(RobotGroup robotGroup,
+      EventLoopGroup eventGroup, UntypedActorContext actorCtx) {
+    Config cfg = robotGroup.getConfig();
+    int num = _robotConfigReader.getAmount(cfg);
+
+    RobotInstanceActorFactory f = _robotInstanceFactory;
+    for (int i = 0; i < num; i++) {
+      Props props = f.props(robotGroup, eventGroup);
+      ActorRef instanceRef = actorCtx.actorOf(props);
     }
   }
 
@@ -57,4 +78,5 @@ public class RobotSpawner {
   private final DataFilePathGetter _dataFilePathGetter;
 
   private final RobotInstanceActorFactory _robotInstanceFactory;
+  private final RobotConfigReader _robotConfigReader;
 }

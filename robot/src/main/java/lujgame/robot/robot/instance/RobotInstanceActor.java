@@ -1,50 +1,27 @@
 package lujgame.robot.robot.instance;
 
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.concurrent.Future;
 import lujgame.core.akka.CaseActor;
+import lujgame.robot.robot.instance.logic.RobotConnector;
 
 /**
  * 代表一个机器人
  */
 public class RobotInstanceActor extends CaseActor {
 
-  public RobotInstanceActor(EventLoopGroup workerGroup, String ip, int port) {
-    _workerGroup = workerGroup;
-
-    _ip = ip;
-    _port = port;
+  public RobotInstanceActor(
+      RobotInstanceState state,
+      RobotConnector robotConnector) {
+    _state = state;
+    _robotConnector = robotConnector;
   }
 
   @Override
   public void preStart() throws Exception {
-    log().info("检测目标服务器 -> {}:{}", _ip, _port);
-
-    //TODO: 只创一个，整个APP重用
-    new Bootstrap()
-        .group(_workerGroup)
-        .channel(NioSocketChannel.class)
-//        .option(ChannelOption.SO_KEEPALIVE, true)
-        .handler(new ChannelInitializer<SocketChannel>() {
-          @Override
-          protected void initChannel(SocketChannel socketChannel) throws Exception {
-
-          }
-        })
-        .connect(_ip, _port)
-        .addListener(this::onConnectDone);
+    RobotConnector c = _robotConnector;
+    c.startConnect(_state, c::onConnectDone, log());
   }
 
-  private void onConnectDone(Future<? super Void> future) {
-    log().debug("连接结果：{}", future.isSuccess());
-  }
+  private final RobotInstanceState _state;
 
-  private final EventLoopGroup _workerGroup;
-
-  private final String _ip;
-  private final int _port;
+  private final RobotConnector _robotConnector;
 }

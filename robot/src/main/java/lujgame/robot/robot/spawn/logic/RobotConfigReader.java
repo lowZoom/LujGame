@@ -1,16 +1,23 @@
 package lujgame.robot.robot.spawn.logic;
 
-import lujgame.core.file.FileTool;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.typesafe.config.Config;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RobotConfigReader {
 
-  @Autowired
-  public RobotConfigReader(FileTool fileTool) {
-    _fileTool = fileTool;
+  public String getIp(Config cfg) {
+    return cfg.getString("ip");
   }
 
-  private final FileTool _fileTool;
+  public int getPort(Config cfg) {
+    return cfg.getInt("port");
+  }
+
+  /**
+   * 需要创建的机器人数量
+   */
+  public int getAmount(Config cfg) {
+    return cfg.getInt("num");
+  }
 }
