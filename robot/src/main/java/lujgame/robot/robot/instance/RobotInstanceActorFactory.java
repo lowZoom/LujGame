@@ -30,11 +30,6 @@ public class RobotInstanceActorFactory {
     return new RobotGroup(groupName, config.getConfig("robot"));
   }
 
-  public boolean validateGroup(RobotGroup group) {
-    //TODO: 暂时没有什么好校验的
-    return true;
-  }
-
   public Props props(RobotGroup robotGroup, EventLoopGroup eventGroup) {
     RobotInstanceState state = new RobotInstanceState(robotGroup, eventGroup);
 

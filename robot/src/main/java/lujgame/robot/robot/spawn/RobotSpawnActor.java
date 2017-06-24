@@ -10,6 +10,7 @@ import java.util.List;
 import lujgame.core.akka.CaseActor;
 import lujgame.robot.robot.instance.RobotInstanceActor;
 import lujgame.robot.robot.instance.RobotInstanceActorFactory;
+import lujgame.robot.robot.spawn.logic.RobotGroup;
 import lujgame.robot.robot.spawn.logic.RobotSpawner;
 import lujgame.robot.robot.spawn.message.ChangeRobotCountMsg;
 
@@ -44,7 +45,8 @@ public class RobotSpawnActor extends CaseActor {
     LoggingAdapter log = log();
 
     List<Path> configList = s.findRobotConfig("robot", log);
-    s.spawnRobot(configList, _eventGroup, getContext(), log);
+    List<RobotGroup> groupList = s.makeRobotGroup(configList, log);
+    s.spawnRobot(groupList, _eventGroup, getContext(), log);
   }
 
 //  private void onChangeRobotCount(ChangeRobotCountMsg msg) {

@@ -1,10 +1,27 @@
 package lujgame.robot.robot.spawn.logic;
 
 import com.typesafe.config.Config;
+import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RobotConfigReader {
+
+  public boolean isAbstract(Config cfg) {
+    final String ABSTRACT = "abstract";
+    if (!cfg.hasPath(ABSTRACT)) {
+      return false;
+    }
+    return cfg.getBoolean(ABSTRACT);
+  }
+
+  public Optional<String> getExtends(Config cfg) {
+    final String EXTENDS = "extends";
+    if (!cfg.hasPath(EXTENDS)) {
+      return Optional.empty();
+    }
+    return Optional.of(cfg.getString(EXTENDS));
+  }
 
   public String getIp(Config cfg) {
     return cfg.getString("ip");

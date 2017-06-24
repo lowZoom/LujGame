@@ -8,7 +8,12 @@ import com.google.common.collect.ImmutableList;
 import com.typesafe.config.Config;
 import io.netty.channel.EventLoopGroup;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import lujgame.core.file.DataFilePathGetter;
 import lujgame.core.file.FileTool;
 import lujgame.robot.robot.instance.RobotInstanceActorFactory;
@@ -21,10 +26,13 @@ public class RobotSpawner {
   @Autowired
   public RobotSpawner(FileTool fileTool,
       DataFilePathGetter dataFilePathGetter,
+      RobotGroupMaker robotGroupMaker,
       RobotInstanceActorFactory robotInstanceFactory,
       RobotConfigReader robotConfigReader) {
     _fileTool = fileTool;
     _dataFilePathGetter = dataFilePathGetter;
+
+    _robotGroupMaker = robotGroupMaker;
 
     _robotInstanceFactory = robotInstanceFactory;
     _robotConfigReader = robotConfigReader;
@@ -33,10 +41,10 @@ public class RobotSpawner {
   public List<Path> findRobotConfig(String dirName, LoggingAdapter log) {
     Path dirPath = _dataFilePathGetter.getRootPath(dirName);
     FileTool f = _fileTool;
-    List<Path> children = f.getChildren(dirPath, p -> f.isExtension(p, "conf"));
 
+    List<Path> children = f.getChildren(dirPath, p -> f.isExtension(p, "conf"));
     if (children.isEmpty()) {
-      log.info("未发现任何机器人组配置 -> {}", dirPath);
+      log.info("未发现任何机器人配置 -> {}", dirPath);
       return ImmutableList.of();
     }
 
@@ -47,16 +55,26 @@ public class RobotSpawner {
     return children;
   }
 
-  public void spawnRobot(List<Path> pathList, EventLoopGroup eventGroup,
+  public List<RobotGroup> makeRobotGroup(List<Path> configList, LoggingAdapter log) {
+    RobotGroupMaker m = _robotGroupMaker;
+
+    Map<String, RobotGroup> templateMap = new HashMap<>(configList.size());
+    List<RobotGroup> groupList = new ArrayList<>(configList.size());
+
+    for (Path path : configList) {
+      RobotGroup group = _robotInstanceFactory.readGroup(path);
+      m.classifyGroup(group, templateMap, groupList);
+    }
+
+    return groupList.stream()
+        .map(group -> m.expandGroup(group, templateMap, log))
+        .filter(Objects::nonNull)
+        .collect(Collectors.toList());
+  }
+
+  public void spawnRobot(List<RobotGroup> groupList, EventLoopGroup eventGroup,
       UntypedActorContext actorCtx, LoggingAdapter log) {
-    RobotInstanceActorFactory f = _robotInstanceFactory;
-
-    for (Path path : pathList) {
-      RobotGroup group = f.readGroup(path);
-      if (!f.validateGroup(group)) {
-        log.warning("无效的机器人配置 -> {}", path);
-      }
-
+    for (RobotGroup group : groupList) {
       log.debug("启动机器人组 -> {}", group.getName());
       spawnGroup(group, eventGroup, actorCtx);
     }
@@ -76,6 +94,8 @@ public class RobotSpawner {
 
   private final FileTool _fileTool;
   private final DataFilePathGetter _dataFilePathGetter;
+
+  private final RobotGroupMaker _robotGroupMaker;
 
   private final RobotInstanceActorFactory _robotInstanceFactory;
   private final RobotConfigReader _robotConfigReader;
