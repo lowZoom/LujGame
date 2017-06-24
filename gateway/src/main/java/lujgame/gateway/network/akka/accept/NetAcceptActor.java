@@ -3,10 +3,10 @@ package lujgame.gateway.network.akka.accept;
 import akka.actor.ActorRef;
 import io.netty.bootstrap.ServerBootstrap;
 import lujgame.core.akka.CaseActor;
-import lujgame.gateway.network.akka.accept.logic.ConnKiller;
-import lujgame.gateway.network.akka.accept.logic.NewConnCreator;
 import lujgame.gateway.network.akka.accept.logic.ConnItem;
+import lujgame.gateway.network.akka.accept.logic.ConnKiller;
 import lujgame.gateway.network.akka.accept.logic.NettyRunner;
+import lujgame.gateway.network.akka.accept.logic.NewConnCreator;
 import lujgame.gateway.network.akka.accept.message.KillConnMsg;
 import lujgame.gateway.network.akka.accept.message.NewConnMsg;
 
@@ -23,6 +23,7 @@ public class NetAcceptActor extends CaseActor {
     _newConnCreator = newConnCreator;
     _connKiller = connKiller;
 
+    //-- 注册消息处理 --//
     registerMessage();
   }
 

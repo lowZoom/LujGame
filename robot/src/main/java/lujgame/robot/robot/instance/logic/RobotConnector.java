@@ -1,12 +1,12 @@
 package lujgame.robot.robot.instance.logic;
 
+import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.typesafe.config.Config;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import java.util.function.BiConsumer;
+import lujgame.robot.netty.RobotNettyInit;
 import lujgame.robot.robot.instance.RobotInstanceState;
 import lujgame.robot.robot.spawn.logic.RobotConfigReader;
 import lujgame.robot.robot.spawn.logic.RobotGroup;
@@ -21,8 +21,7 @@ public class RobotConnector {
     _robotConfigReader = robotConfigReader;
   }
 
-  public void startConnect(RobotInstanceState state,
-      BiConsumer<Boolean, LoggingAdapter> listener, LoggingAdapter log) {
+  public void startConnect(RobotInstanceState state, ActorRef instanceRef, LoggingAdapter log) {
     RobotGroup robotGroup = state.getRobotGroup();
     Config robotCfg = robotGroup.getConfig();
 
@@ -31,19 +30,22 @@ public class RobotConnector {
     int port = r.getPort(robotCfg);
     log.info("检测目标服务器 -> {}:{}", ip, port);
 
-    //TODO: 只创一个，整个APP重用
     new Bootstrap()
         .group(state.getWorkerGroup())
         .channel(NioSocketChannel.class)
 //        .option(ChannelOption.SO_KEEPALIVE, true)
-        .handler(new ChannelInitializer<SocketChannel>() {
-          @Override
-          protected void initChannel(SocketChannel socketChannel) throws Exception {
-
-          }
-        })
+        .handler(new RobotNettyInit(instanceRef))
         .connect(ip, port)
-        .addListener(f -> listener.accept(f.isSuccess(), log));
+//        .addListener(f -> listener.accept(f.isSuccess(), log))
+    ;
+  }
+
+  public void handleConnectOk(RobotInstanceState state,
+      ChannelHandlerContext nettyContext, LoggingAdapter log) {
+    state.setNettyContext(nettyContext);
+
+    //TODO: 连接成功时执行行为列表
+    log.debug("连接成功，需要执行行为列表");
   }
 
   public void onConnectDone(boolean success, LoggingAdapter log) {
