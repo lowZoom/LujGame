@@ -1,17 +1,21 @@
-<configuration>
+<configuration scan="true">
+
+  <property name="LOG_FORMAT" value="%d{yyyy/M/d}.%d{HH:mm:ss}[%.-1level]%logger{30} - %msg%n"/>
+  <!--<property name="LOG_PATH_PREFIX" value="logs/cross/log${game.log.start_time}/debug"/>-->
 
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <!-- encoders are assigned the type
          ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
     <encoder>
-      <!--FIXME: 日志格式需要更新 -->
-      <pattern>%d{HH:mm:ss}[%.-1level]%logger{30} - %msg%n</pattern>
+      <pattern>${LOG_FORMAT}</pattern>
     </encoder>
+    <!--<filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
+    <!--<level>INFO</level>-->
+    <!--</filter>-->
   </appender>
 
   <root level="debug">
     <appender-ref ref="STDOUT"/>
   </root>
 
-  <logger name="akka.remote.RemoteWatcher" level="OFF"/>
 </configuration>
