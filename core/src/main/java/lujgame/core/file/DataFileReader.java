@@ -21,7 +21,7 @@ public class DataFileReader {
   public Config readConfig(String path) {
     Path cfgPath = _pathGetter.getConfigPath(path);
 
-//    System.out.println(cfgFile.getAbsolutePath());
+//    System.out.println(cfgPath.toAbsolutePath());
     return ConfigFactory.parseFile(cfgPath.toFile());
   }
 
