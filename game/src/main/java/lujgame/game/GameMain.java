@@ -7,14 +7,14 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 public class GameMain {
 
   public static void main(String[] args) {
-    new GameMain().start();
+    new GameMain().start(args);
   }
 
-  private void start() {
+  private void start(String[] args) {
     try (AnnotationConfigApplicationContext appCtx =
         new AnnotationConfigApplicationContext(GameInjectConfig.class)) {
       GameBoot boot = appCtx.getBean(GameBoot.class);
-      boot.boot();
+      boot.boot(args);
     }
   }
 }

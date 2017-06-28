@@ -2,7 +2,6 @@ package lujgame.game.boot;
 
 import akka.actor.ActorSystem;
 import com.typesafe.config.Config;
-import lujgame.core.file.DataFileReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,20 +9,36 @@ import org.springframework.stereotype.Component;
 public class GameBoot {
 
   @Autowired
-  public GameBoot(DataFileReader dataFileReader) {
-    _dataFileReader = dataFileReader;
+  public GameBoot(GameBootConfigLoader bootConfigLoader) {
+    _bootConfigLoader = bootConfigLoader;
   }
 
-  public void boot() {
-    DataFileReader r = _dataFileReader;
-    Config gameCfg = r.readConfig("game_seed.conf").getConfig("game").resolve();;
+  public void boot(String[] args) {
+    String fileName = args[0];
 
-    Config akkaCfg = r.readConfig("game_seed_akka.conf");
-    ActorSystem system = ActorSystem.create("Game", gameCfg
-        .withFallback(akkaCfg));
+    GameBootConfigLoader l = _bootConfigLoader;
+    Config gameCfg = l.loadGameConfig(fileName);
 
-    //TODO: 根据配置，如果有服务器ID，则启动游戏服务器，否则启动seed
+    if (l.isSeed(gameCfg)) {
+      startSeed(gameCfg);
+      return;
+    }
+
+    startGame(gameCfg);
   }
 
-  private final DataFileReader _dataFileReader;
+  private void startSeed(Config gameCfg) {
+    Config akkaCfg = _bootConfigLoader.loadAkkaConfig(gameCfg);
+    ActorSystem system = ActorSystem.create("Game", akkaCfg);
+
+  }
+
+  private void startGame(Config gameCfg) {
+    GameBootConfigLoader l = _bootConfigLoader;
+    Config akkaCfg = l.loadAkkaConfig(gameCfg);
+    ActorSystem system = ActorSystem.create("Game", akkaCfg);
+
+  }
+
+  private final GameBootConfigLoader _bootConfigLoader;
 }

@@ -1,7 +1,10 @@
 package lujgame.core.file;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,6 +23,7 @@ public class DataFileReader {
 
   public Config readConfig(String path) {
     Path cfgPath = _pathGetter.getConfigPath(path);
+    checkArgument(Files.exists(cfgPath), "不存在配置文件 -> %s", cfgPath);
 
 //    System.out.println(cfgPath.toAbsolutePath());
     return ConfigFactory.parseFile(cfgPath.toFile());
