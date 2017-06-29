@@ -7,6 +7,7 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lujgame.robot.netty.RobotNettyInit;
+import lujgame.robot.robot.instance.RobotInstanceActor;
 import lujgame.robot.robot.instance.RobotInstanceState;
 import lujgame.robot.robot.spawn.logic.RobotConfigReader;
 import lujgame.robot.robot.spawn.logic.RobotGroup;
@@ -17,8 +18,10 @@ import org.springframework.stereotype.Component;
 public class RobotConnector {
 
   @Autowired
-  public RobotConnector(RobotConfigReader robotConfigReader) {
+  public RobotConnector(RobotConfigReader robotConfigReader,
+      RobotBehaver robotBehaver) {
     _robotConfigReader = robotConfigReader;
+    _robotBehaver = robotBehaver;
   }
 
   public void startConnect(RobotInstanceState state, ActorRef instanceRef, LoggingAdapter log) {
@@ -41,11 +44,13 @@ public class RobotConnector {
   }
 
   public void handleConnectOk(RobotInstanceState state,
-      ChannelHandlerContext nettyContext, LoggingAdapter log) {
+      ChannelHandlerContext nettyContext, ActorRef instanceRef, LoggingAdapter log) {
     state.setNettyContext(nettyContext);
 
-    //TODO: 连接成功时执行行为列表
-    log.debug("连接成功，需要执行行为列表");
+    log.debug("连接成功，开始执行行为列表");
+
+    _robotBehaver.initBehave(state.getBehaveState());
+    instanceRef.tell(RobotInstanceActor.Behave.MSG, instanceRef);
   }
 
   public void onConnectDone(boolean success, LoggingAdapter log) {
@@ -53,4 +58,5 @@ public class RobotConnector {
   }
 
   private final RobotConfigReader _robotConfigReader;
+  private final RobotBehaver _robotBehaver;
 }

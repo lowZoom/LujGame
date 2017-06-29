@@ -1,6 +1,8 @@
 package lujgame.robot.robot.spawn.logic;
 
+import com.google.common.collect.ImmutableList;
 import com.typesafe.config.Config;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +23,14 @@ public class RobotConfigReader {
       return Optional.empty();
     }
     return Optional.of(cfg.getString(EXTENDS));
+  }
+
+  public List<? extends Config> getBehaviorList(Config cfg) {
+    final String BEHAVIOR = "behavior";
+    if (!cfg.hasPath(BEHAVIOR)) {
+      return ImmutableList.of();
+    }
+    return cfg.getConfigList(BEHAVIOR);
   }
 
   public String getIp(Config cfg) {

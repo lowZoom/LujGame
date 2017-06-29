@@ -7,6 +7,8 @@ import com.typesafe.config.ConfigFactory;
 import io.netty.channel.EventLoopGroup;
 import java.nio.file.Path;
 import lujgame.core.file.FileTool;
+import lujgame.robot.robot.instance.logic.RobotBehaveState;
+import lujgame.robot.robot.instance.logic.RobotBehaver;
 import lujgame.robot.robot.instance.logic.RobotConnector;
 import lujgame.robot.robot.spawn.logic.RobotGroup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +20,12 @@ public class RobotInstanceActorFactory {
   @Autowired
   public RobotInstanceActorFactory(
       FileTool fileTool,
-      RobotConnector robotConnector) {
+      RobotConnector robotConnector,
+      RobotBehaver robotBehaver) {
     _fileTool = fileTool;
+
     _robotConnector = robotConnector;
+    _robotBehaver = robotBehaver;
   }
 
   public RobotGroup readGroup(Path path) {
@@ -31,11 +36,14 @@ public class RobotInstanceActorFactory {
   }
 
   public Props props(RobotGroup robotGroup, EventLoopGroup eventGroup) {
-    RobotInstanceState state = new RobotInstanceState(robotGroup, eventGroup);
+    RobotBehaveState bState = new RobotBehaveState();
+
+    RobotInstanceState iState = new RobotInstanceState(robotGroup, eventGroup, bState);
 
     Creator<RobotInstanceActor> c = () -> new RobotInstanceActor(
-        state,
-        _robotConnector);
+        iState,
+        _robotConnector,
+        _robotBehaver);
 
     return Props.create(RobotInstanceActor.class, c);
   }
@@ -43,4 +51,5 @@ public class RobotInstanceActorFactory {
   private final FileTool _fileTool;
 
   private final RobotConnector _robotConnector;
+  private final RobotBehaver _robotBehaver;
 }
