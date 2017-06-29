@@ -1,7 +1,7 @@
 package lujgame.gateway.network.akka.connection.logic;
 
 import java.net.InetSocketAddress;
-import lujgame.gateway.network.akka.connection.ConnActorState;
+import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
 import org.springframework.stereotype.Component;
 
 @Component

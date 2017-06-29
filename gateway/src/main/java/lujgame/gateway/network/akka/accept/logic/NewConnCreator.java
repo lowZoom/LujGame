@@ -10,6 +10,7 @@ import lujgame.gateway.network.akka.accept.NetAcceptActor;
 import lujgame.gateway.network.akka.accept.NetAcceptState;
 import lujgame.gateway.network.akka.accept.message.NewConnMsg;
 import lujgame.gateway.network.akka.connection.ConnActorFactory;
+import lujgame.gateway.network.akka.connection.message.ConnDataMsg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,7 @@ public class NewConnCreator {
     _connActorFactory = connActorFactory;
   }
 
-  public ConnItem createConn(NetAcceptActor acceptActor, NewConnMsg msg) {
+  public ConnectionItem createConnection(NetAcceptActor acceptActor, NewConnMsg msg) {
     UntypedActorContext ctx = acceptActor.getContext();
 
     ConnActorFactory connFactory = _connActorFactory;
@@ -32,15 +33,35 @@ public class NewConnCreator {
 
     String name = connFactory.getActorName(connId);
     ActorRef connRef = ctx.actorOf(props, name);
-    return new ConnItem(connId, connRef);
+    return new ConnectionItem(connId, connRef);
   }
 
-  public void addToMap(NetAcceptState state, ConnItem item, LoggingAdapter log) {
-    Map<String, ConnItem> connMap = state.getConnectionMap();
+  public void addToMap(NetAcceptState state, ConnectionItem item, LoggingAdapter log) {
+    Map<String, ConnectionItem> connMap = state.getConnectionMap();
     String connId = item.getConnId();
     connMap.put(connId, item);
 
     log.debug("增加新连接，当前连接数量：{}", connMap.size());
+  }
+
+  public void forwardData(NetAcceptState state, ActorRef acceptRef, ConnDataMsg msg) {
+    Map<String, ConnectionItem> connMap = state.getConnectionMap();
+    String connId = msg.getConnId();
+    ConnectionItem conn = connMap.get(connId);
+
+    ActorRef connRef = conn.getConnRef();
+    connRef.tell(msg, acceptRef);
+  }
+
+  /**
+   * 连接刚创建(create)出来的时候，对发去的消息是暂停处理的（为确保正确的数据包顺序）
+   * 该方法将启动连接的消息处理
+   */
+  public void startConnection(NetAcceptState state, String connId) {
+    Map<String, ConnectionItem> connMap = state.getConnectionMap();
+    ConnectionItem connItem = connMap.get(connId);
+
+    //TODO: resume
   }
 
   private final ConnActorFactory _connActorFactory;

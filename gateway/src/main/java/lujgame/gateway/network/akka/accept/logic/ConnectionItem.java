@@ -2,9 +2,9 @@ package lujgame.gateway.network.akka.accept.logic;
 
 import akka.actor.ActorRef;
 
-public class ConnItem {
+public class ConnectionItem {
 
-  public ConnItem(String connId, ActorRef connRef) {
+  public ConnectionItem(String connId, ActorRef connRef) {
     _connId = connId;
     _connRef = connRef;
   }
