@@ -53,7 +53,7 @@ public class ConnActor extends CaseActor {
     addCase(Dumb.class, this::onDumb);
 
     //TODO: 定夺这里要怎么写，来开启暂停处理功能
-    PauseMsgHdl.enable(this);
+//    PauseMsgHdl.enable(this);
   }
 
   private void onConnData(ConnDataMsg msg) {

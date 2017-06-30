@@ -3,14 +3,12 @@ package lujgame.gateway.network.akka.accept;
 import akka.actor.ActorRef;
 import io.netty.bootstrap.ServerBootstrap;
 import lujgame.core.akka.CaseActor;
-import lujgame.gateway.network.akka.accept.logic.ConnectionItem;
 import lujgame.gateway.network.akka.accept.logic.ConnKiller;
+import lujgame.gateway.network.akka.accept.logic.ConnectionItem;
 import lujgame.gateway.network.akka.accept.logic.NettyRunner;
 import lujgame.gateway.network.akka.accept.logic.NewConnCreator;
 import lujgame.gateway.network.akka.accept.message.KillConnMsg;
 import lujgame.gateway.network.akka.accept.message.NewConnMsg;
-import lujgame.gateway.network.akka.connection.message.ConnDataMsg;
-import lujgame.gateway.network.akka.connection.message.ConnStartMsg;
 
 public class NetAcceptActor extends CaseActor {
 
@@ -49,9 +47,6 @@ public class NetAcceptActor extends CaseActor {
 
   private void registerMessage() {
     addCase(NewConnMsg.class, this::onNewConn);
-    addCase(ConnDataMsg.class, this::onConnData);
-    addCase(ConnStartMsg.class, this::onConnStart);
-
     addCase(KillConnMsg.class, this::onKillConn);
   }
 
@@ -59,19 +54,8 @@ public class NetAcceptActor extends CaseActor {
     log().debug("accept?????????????????????????");
 
     NewConnCreator c = _newConnCreator;
-    ConnectionItem connectionItem = c.createConnection(this, msg);
+    ConnectionItem connectionItem = c.createConnection(this, _state, msg);
     c.addToMap(_state, connectionItem, log());
-  }
-
-  private void onConnData(ConnDataMsg msg) {
-    ActorRef self = getSelf();
-    _newConnCreator.forwardData(_state, self, msg);
-  }
-
-  private void onConnStart(ConnStartMsg msg) {
-    // 通知对应connActor可以resume处理消息
-    String connId = msg.getConnId();
-    _newConnCreator.startConnection(_state, connId);
   }
 
   private void onKillConn(KillConnMsg msg) {

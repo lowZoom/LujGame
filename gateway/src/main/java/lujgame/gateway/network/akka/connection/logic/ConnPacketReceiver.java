@@ -11,6 +11,8 @@ public class ConnPacketReceiver {
 
   public void updateNettyHandler(ConnActorState state, ActorRef connRef) {
     ChannelHandlerContext nettyCtx = state.getNettyContext();
+    System.out.println("packet -->> conn event~!!!! -> " + nettyCtx + ", "+nettyCtx.pipeline().toMap());
+
     NettyConnEvent event = new NettyConnEvent(connRef);
     nettyCtx.fireUserEventTriggered(event);
 
@@ -19,7 +21,7 @@ public class ConnPacketReceiver {
 
   public void receivePacket(ConnActorState state, byte[] data) {
     // 将data加进包缓存
-    System.out.println("------> 有数据！！！！");
+    System.out.println("recv ------> 有数据！！！！");
 
     // 解出header用于校验
 

@@ -9,18 +9,15 @@ import lujgame.core.id.UuidTool;
 public class GateNettyInit extends ChannelInitializer<SocketChannel> {
 
   public GateNettyInit(
-      ActorRef acceptRef,
-      UuidTool uuidTool) {
+      ActorRef acceptRef) {
     _acceptRef = acceptRef;
-    _uuidTool = uuidTool;
   }
 
   @Override
   protected void initChannel(SocketChannel channel) throws Exception {
     ChannelPipeline pipeline = channel.pipeline();
-    pipeline.addLast(new GateNettyConn(_acceptRef, _uuidTool));
+    pipeline.addLast(new GateNettyConn(_acceptRef));
   }
 
   private final ActorRef _acceptRef;
-  private final UuidTool _uuidTool;
 }

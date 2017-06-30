@@ -12,11 +12,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class NettyRunner {
 
-  @Autowired
-  public NettyRunner(UuidTool uuidTool) {
-    _uuidTool = uuidTool;
-  }
-
   public ServerBootstrap createServerBoot(ActorRef acceptRef) {
     ServerBootstrap serverBoot = new ServerBootstrap();
 
@@ -25,10 +20,8 @@ public class NettyRunner {
 
     serverBoot.group(bossGroup)
         .channel(NioServerSocketChannel.class)
-        .childHandler(new GateNettyInit(acceptRef, _uuidTool));
+        .childHandler(new GateNettyInit(acceptRef));
 
     return serverBoot;
   }
-
-  private final UuidTool _uuidTool;
 }
