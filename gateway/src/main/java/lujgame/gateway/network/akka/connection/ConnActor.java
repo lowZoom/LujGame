@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 import lujgame.core.akka.CaseActor;
+import lujgame.core.akka.message.handlers.PauseMsgHdl;
 import lujgame.core.akka.schedule.ActorScheduler;
 import lujgame.gateway.network.akka.accept.message.KillConnMsg;
 import lujgame.gateway.network.akka.connection.logic.ConnInfoGetter;
@@ -50,6 +51,9 @@ public class ConnActor extends CaseActor {
   private void registerMessage() {
     addCase(ConnDataMsg.class, this::onConnData);
     addCase(Dumb.class, this::onDumb);
+
+    //TODO: 定夺这里要怎么写，来开启暂停处理功能
+    PauseMsgHdl.enable(this);
   }
 
   private void onConnData(ConnDataMsg msg) {

@@ -6,31 +6,48 @@ import akka.actor.UntypedActorContext;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import lujgame.core.akka.message.ActorMessageHandler;
+import lujgame.core.akka.message.MessageHandleContext;
+import lujgame.core.akka.message.handlers.DefaultMsgHdl;
 
 public abstract class CaseActor extends UntypedActor {
 
   @Override
   public void onReceive(Object msg) throws Exception {
-    if (tryHandleMessage(msg)) {
+    Impl impl = Impl.SINGLETON;
+
+    if (impl.handleMessage(_state, msg)) {
       return;
     }
 
     logUnhandled(msg);
   }
 
-  protected CaseActor() {
-    _actionMap = new HashMap<>(32);
-    _log = initLog();
+  public <T> void addCase(Class<T> msgType, Consumer<T> action) {
+    Map<Class<?>, Consumer<?>> actionMap = _state.getActionMap();
+    actionMap.put(msgType, action);
   }
 
-  protected <T> void addCase(Class<T> msgType, Consumer<T> action) {
-    _actionMap.put(msgType, action);
+  public void prependMessageHandler(ActorMessageHandler handler) {
+    LinkedList<ActorMessageHandler> pipeline = _state.getMessagePipeline();
+    pipeline.addFirst(handler);
+  }
+
+  @SuppressWarnings("ThisEscapedInObjectConstruction")
+  protected CaseActor() {
+    _state = new CaseActorState(this,
+        new HashMap<>(32),
+        initLog(),
+        initMessagePipeline(),
+        new LinkedList<>());
   }
 
   protected LoggingAdapter log() {
-    return _log;
+    return _state.getLogger();
   }
 
   private LoggingAdapter initLog() {
@@ -40,18 +57,11 @@ public abstract class CaseActor extends UntypedActor {
     return Logging.getLogger(system, this);
   }
 
-  private boolean tryHandleMessage(Object msg) {
-    Class<?> msgType = msg.getClass();
-//      logDebug("消息类型：" + msgType);
+  private LinkedList<ActorMessageHandler> initMessagePipeline() {
+    LinkedList<ActorMessageHandler> pipeline = new LinkedList<>();
+    pipeline.addFirst(new DefaultMsgHdl());
 
-    @SuppressWarnings("unchecked")
-    Consumer<Object> action = (Consumer<Object>) _actionMap.get(msgType);
-    if (action == null) {
-      return false;
-    }
-
-    action.accept(msg);
-    return true;
+    return pipeline;
   }
 
   private void logUnhandled(Object msg) {
@@ -59,6 +69,46 @@ public abstract class CaseActor extends UntypedActor {
     unhandled(msg);
   }
 
-  private final Map<Class<?>, Consumer<?>> _actionMap;
-  private final LoggingAdapter _log;
+  public enum Impl {
+    SINGLETON;
+
+    public boolean handleMessage(CaseActorState state, Object msg) {
+      LinkedList<Object> msgQueue=state.getMessageQueue();
+      msgQueue.addLast(msg);
+
+      List<ActorMessageHandler> msgPipeline = state.getMessagePipeline();
+      boolean handled = false;
+
+      while (!msgQueue.isEmpty()) {
+        Object msgVar = msgQueue.removeFirst();
+        MessageHandleContext ctx = new MessageHandleContext(state, msgVar);
+
+        if (handleMsgIter(ctx, msgPipeline)) {
+          handled = true;
+        }
+      }
+
+      return handled;
+    }
+
+    static boolean handleMsgIter(MessageHandleContext ctx, List<ActorMessageHandler> msgPipeline) {
+      boolean handled = false;
+
+      for (ActorMessageHandler handler : msgPipeline) {
+        ActorMessageHandler.Result result = handler.handleMessage(ctx);
+        if (result == ActorMessageHandler.Result.SKIP) {
+          continue;
+        }
+
+        handled = true;
+        if (result == ActorMessageHandler.Result.FINISH) {
+          break;
+        }
+      }
+
+      return handled;
+    }
+  }
+
+  private final CaseActorState _state;
 }

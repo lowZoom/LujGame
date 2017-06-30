@@ -40,6 +40,13 @@ public class NetAcceptActor extends CaseActor {
     serverBoot.bind(SERVER_PORT);
   }
 
+//  @Override
+//  public void onReceive(Object msg) throws Exception {
+//    log().debug("aaaaaaaaacept收到消息 -> {}", msg);
+//
+//    super.onReceive(msg);
+//  }
+
   private void registerMessage() {
     addCase(NewConnMsg.class, this::onNewConn);
     addCase(ConnDataMsg.class, this::onConnData);
@@ -49,6 +56,8 @@ public class NetAcceptActor extends CaseActor {
   }
 
   private void onNewConn(NewConnMsg msg) {
+    log().debug("accept?????????????????????????");
+
     NewConnCreator c = _newConnCreator;
     ConnectionItem connectionItem = c.createConnection(this, msg);
     c.addToMap(_state, connectionItem, log());

@@ -26,6 +26,8 @@ public class GateNettyConn extends ChannelInboundHandlerAdapter {
 
     NewConnMsg msg = new NewConnMsg(connId, ctx);
     _actorRef.tell(msg, ActorRef.noSender());
+
+    System.out.println("aaaaaaaaaaactive???????????????????");
   }
 
   @Override
