@@ -2,6 +2,7 @@ package lujgame.gateway.network.akka.connection.logic.state;
 
 import akka.actor.ActorRef;
 import io.netty.channel.ChannelHandlerContext;
+import lujgame.gateway.network.akka.connection.logic.packet.ConnPacketBuffer;
 
 public class ConnActorState {
 

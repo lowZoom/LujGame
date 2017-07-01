@@ -9,7 +9,7 @@ import lujgame.gateway.network.akka.accept.message.NewConnMsg;
 import lujgame.gateway.network.akka.connection.message.ConnDataMsg;
 
 
-public class GateNettyConn extends ChannelInboundHandlerAdapter {
+public class GateNettyConn extends GateNettyData {
 
   public GateNettyConn(ActorRef acceptRef) {
     _acceptRef = acceptRef;
@@ -26,21 +26,21 @@ public class GateNettyConn extends ChannelInboundHandlerAdapter {
     System.out.println("conn -> aaaaaaaaaaactive??????????????????? -> " + ctx);
   }
 
-//  @Override
-//  public void onDataMsg(ConnDataMsg msg) {
-//    System.out.println("conn accept ---> 有数据");
-//
-//    _messageBuffer.add(msg);
-//  }
+  @Override
+  public void onDataMsg(ConnDataMsg msg) {
+    System.out.println("conn accept ---> 有数据");
+
+    _messageBuffer.add(msg);
+  }
 
   @Override
   public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
     System.out.println("conn eeeevent trrrrrrrrrriger??????");
 
-//    if (evt instanceof NettyConnEvent) {
-//      onConnActor(ctx, (NettyConnEvent) evt);
-//      return;
-//    }
+    if (evt instanceof NettyConnEvent) {
+      onConnActor(ctx, (NettyConnEvent) evt);
+      return;
+    }
   }
 
 //  @Override

@@ -8,7 +8,7 @@ import lujgame.core.akka.schedule.ActorScheduler;
 import lujgame.gateway.network.akka.connection.logic.ConnInfoGetter;
 import lujgame.gateway.network.akka.connection.logic.ConnPacketReceiver;
 import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
-import lujgame.gateway.network.akka.connection.logic.state.ConnPacketBuffer;
+import lujgame.gateway.network.akka.connection.logic.packet.ConnPacketBuffer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
