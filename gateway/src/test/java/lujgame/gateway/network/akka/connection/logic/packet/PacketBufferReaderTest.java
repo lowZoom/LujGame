@@ -127,6 +127,14 @@ public class PacketBufferReaderTest {
     assertThat(r.readMedium(new byte[]{1, 1, 1}), equalTo(0x010101));
   }
 
+  @Test
+  public void readMedium_负数() throws Exception {
+    PacketBufferReader r = _reader;
+    assertThat(r.readMedium(new byte[]{0, 0, -127}), equalTo(129));
+    assertThat(r.readMedium(new byte[]{0, -1, -1}), equalTo(0xFFFF));
+    assertThat(r.readMedium(new byte[]{-1, -1, -1}), equalTo(0xFFFFFF));
+  }
+
   ConnPacketBuffer mockPacketBuffer(int... len) {
     return mockPacketBuffer(Arrays.stream(len)
         .mapToObj(byte[]::new)

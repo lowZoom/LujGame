@@ -17,10 +17,10 @@ public class RobotNettyEncoder extends MessageToByteEncoder<RobotNetPacket> {
   @Override
   protected void encode(ChannelHandlerContext ctx,
       RobotNetPacket packet, ByteBuf out) throws Exception {
-    System.out.println(Thread.currentThread() + " encode!!!!!!!!!!");
-
     int opcode = packet.getOpcode();
     byte[] data = packet.getData();
+
+    System.out.println(Thread.currentThread() + " encode!!!!!!!!!! opcode -> " + opcode);
 
     out.writeMedium(opcode);
     out.writeMedium(data.length);

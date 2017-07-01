@@ -85,7 +85,7 @@ public class PacketBufferReader {
   }
 
   public int readMedium(byte[] data) {
-    return (data[0] << 16) | (data[1] << 8) | data[2];
+    return ((data[0] & 0xFF) << 16) | ((data[1] & 0xFF) << 8) | data[2] & 0xFF;
   }
 
   //TODO: GC
