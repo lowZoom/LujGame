@@ -4,7 +4,20 @@ public class ConnPacketHeader {
 
   public static final int HEADER_SIZE = 6;
 
-  private int _opcode;
+  public ConnPacketHeader(int opcode, int length) {
+    _opcode = opcode;
+    _length = length;
+  }
 
-  private int _length;
+  public int getOpcode() {
+    return _opcode;
+  }
+
+  public int getLength() {
+    return _length;
+  }
+
+  private final int _opcode;
+
+  private final int _length;
 }

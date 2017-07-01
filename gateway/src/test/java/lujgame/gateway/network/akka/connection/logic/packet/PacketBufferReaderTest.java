@@ -18,7 +18,7 @@ public class PacketBufferReaderTest {
   }
 
   @Test
-  public void readableBytes_index在中间的数组的一半() throws Exception {
+  public void readableBytes_readIndex在中间的数组的一半() throws Exception {
     //-- Arrange --//
     ConnPacketBuffer buf = mockPacketBuffer(4, 5, 6);
     buf.setReadIndex(6);
@@ -31,7 +31,7 @@ public class PacketBufferReaderTest {
   }
 
   @Test
-  public void readableBytes_index在开头() throws Exception {
+  public void readableBytes_readIndex在开头() throws Exception {
     //-- Arrange --//
     ConnPacketBuffer buf = mockPacketBuffer(4, 5, 6);
     buf.setReadIndex(0);
@@ -44,7 +44,7 @@ public class PacketBufferReaderTest {
   }
 
   @Test
-  public void readableBytes_index在最后() throws Exception {
+  public void readableBytes_readIndex在最后() throws Exception {
     //-- Arrange --//
     ConnPacketBuffer buf = mockPacketBuffer(4, 5, 6);
     buf.setReadIndex(14);
@@ -57,7 +57,7 @@ public class PacketBufferReaderTest {
   }
 
   @Test
-  public void readableBytes_index超过可读数() throws Exception {
+  public void readableBytes_readIndex超过可读数() throws Exception {
     //-- Arrange --//
     ConnPacketBuffer buf = mockPacketBuffer(4, 5, 6);
     buf.setReadIndex(15);
@@ -69,14 +69,75 @@ public class PacketBufferReaderTest {
     assertThat(result, equalTo(0));
   }
 
+  @Test
+  public void readBytes_在一个数组内() throws Exception {
+    //-- Arrange --//
+    ConnPacketBuffer buf = mockPacketBuffer(
+        new byte[]{1, 2, 3},
+        new byte[]{4, 5, 6},
+        new byte[]{7, 8, 9});
+    buf.setReadIndex(4);
+
+    //-- Act --//
+    byte[] result = _reader.readBytes(buf, new byte[2]);
+
+    //-- Assert --//
+    assertThat(result, equalTo(new byte[]{5, 6}));
+    assertThat(buf.getReadIndex(), equalTo(6));
+  }
+
+  @Test
+  public void readBytes_跨越两个数组() throws Exception {
+    //-- Arrange --//
+    ConnPacketBuffer buf = mockPacketBuffer(
+        new byte[]{1, 2, 3},
+        new byte[]{4, 5, 6});
+    buf.setReadIndex(2);
+
+    //-- Act --//
+    byte[] result = _reader.readBytes(buf, new byte[2]);
+
+    //-- Assert --//
+    assertThat(result, equalTo(new byte[]{3, 4}));
+    assertThat(buf.getReadIndex(), equalTo(4));
+  }
+
+  @Test
+  public void readBytes_跨越三个数组() throws Exception {
+    //-- Arrange --//
+    ConnPacketBuffer buf = mockPacketBuffer(
+        new byte[]{1, 2, 3},
+        new byte[]{4},
+        new byte[]{5, 6});
+    buf.setReadIndex(1);
+
+    //-- Act --//
+    byte[] result = _reader.readBytes(buf, new byte[5]);
+
+    //-- Assert --//
+    assertThat(result, equalTo(new byte[]{2, 3, 4, 5, 6}));
+    assertThat(buf.getReadIndex(), equalTo(6));
+  }
+
+  @Test
+  public void readMedium_正数() throws Exception {
+    PacketBufferReader r = _reader;
+    assertThat(r.readMedium(new byte[]{0, 0, 1}), equalTo(0x01));
+    assertThat(r.readMedium(new byte[]{0, 1, 1}), equalTo(0x0101));
+    assertThat(r.readMedium(new byte[]{1, 1, 1}), equalTo(0x010101));
+  }
+
   ConnPacketBuffer mockPacketBuffer(int... len) {
+    return mockPacketBuffer(Arrays.stream(len)
+        .mapToObj(byte[]::new)
+        .toArray(byte[][]::new));
+  }
+
+  ConnPacketBuffer mockPacketBuffer(byte[]... data) {
     ConnPacketBuffer packetBuf = new ConnPacketBuffer();
     List<byte[]> bufferList = packetBuf.getBufferList();
 
-    Arrays.stream(len)
-        .mapToObj(byte[]::new)
-        .forEach(bufferList::add);
-
+    Arrays.stream(data).forEach(bufferList::add);
     return packetBuf;
   }
 }

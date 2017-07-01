@@ -57,8 +57,7 @@ public class ConnActor extends CaseActor {
   }
 
   private void onConnData(ConnDataMsg msg) {
-    byte[] data = msg.getData();
-    _packetReceiver.receivePacket(_state, data);
+    _packetReceiver.receivePacket(_state, msg.getData(), log());
   }
 
   private void onDumb(Dumb ignored) {
