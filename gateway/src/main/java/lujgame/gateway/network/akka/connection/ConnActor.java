@@ -5,7 +5,6 @@ import io.netty.channel.ChannelHandlerContext;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 import lujgame.core.akka.CaseActor;
-import lujgame.core.akka.message.handlers.PauseMsgHdl;
 import lujgame.core.akka.schedule.ActorScheduler;
 import lujgame.gateway.network.akka.accept.message.KillConnMsg;
 import lujgame.gateway.network.akka.connection.logic.ConnInfoGetter;
@@ -57,7 +56,7 @@ public class ConnActor extends CaseActor {
   }
 
   private void onConnData(ConnDataMsg msg) {
-    _packetReceiver.receivePacket(_state, msg.getData(), log());
+    _packetReceiver.receivePacket(_state, msg.getData(), getSelf(), log());
   }
 
   private void onDumb(Dumb ignored) {

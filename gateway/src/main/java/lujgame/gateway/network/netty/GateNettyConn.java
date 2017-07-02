@@ -2,7 +2,6 @@ package lujgame.gateway.network.netty;
 
 import akka.actor.ActorRef;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import java.util.LinkedList;
 import java.util.List;
 import lujgame.gateway.network.akka.accept.message.NewConnMsg;
@@ -23,13 +22,12 @@ public class GateNettyConn extends GateNettyData {
     NewConnMsg msg = new NewConnMsg(ctx);
     _acceptRef.tell(msg, ActorRef.noSender());
 
-    System.out.println("conn -> aaaaaaaaaaactive??????????????????? -> " + ctx);
+//    System.out.println("conn -> aaaaaaaaaaactive??????????????????? -> " + ctx);
   }
 
   @Override
   public void onDataMsg(ConnDataMsg msg) {
-    System.out.println("conn accept ---> 有数据");
-
+//    System.out.println("conn accept ---> 有数据");
     _messageBuffer.add(msg);
   }
 

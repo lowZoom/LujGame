@@ -17,6 +17,14 @@ public class ConnActorState {
     _acceptRef = acceptRef;
   }
 
+  public ActorRef getMailBox() {
+    return _mailBox;
+  }
+
+  public void setMailBox(ActorRef mailBox) {
+    _mailBox = mailBox;
+  }
+
   public String getConnId() {
     return _connId;
   }
@@ -33,9 +41,12 @@ public class ConnActorState {
     return _acceptRef;
   }
 
-  private final String _connId;
-  private final ConnPacketBuffer _packetBuffer;
+  private ActorRef _mailBox;
 
+  private final String _connId;
+
+  private final ConnPacketBuffer _packetBuffer;
   private final ChannelHandlerContext _nettyContext;
+
   private final ActorRef _acceptRef;
 }

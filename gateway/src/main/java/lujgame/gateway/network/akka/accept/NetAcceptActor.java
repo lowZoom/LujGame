@@ -5,8 +5,10 @@ import io.netty.bootstrap.ServerBootstrap;
 import lujgame.core.akka.CaseActor;
 import lujgame.gateway.network.akka.accept.logic.ConnKiller;
 import lujgame.gateway.network.akka.accept.logic.ConnectionItem;
+import lujgame.gateway.network.akka.accept.logic.ForwardBinder;
 import lujgame.gateway.network.akka.accept.logic.NettyRunner;
 import lujgame.gateway.network.akka.accept.logic.NewConnCreator;
+import lujgame.gateway.network.akka.accept.message.BindForwardReq;
 import lujgame.gateway.network.akka.accept.message.KillConnMsg;
 import lujgame.gateway.network.akka.accept.message.NewConnMsg;
 
@@ -15,11 +17,14 @@ public class NetAcceptActor extends CaseActor {
   public NetAcceptActor(
       NetAcceptState state,
       NettyRunner nettyRunner,
+      ForwardBinder forwardBinder,
       NewConnCreator newConnCreator,
       ConnKiller connKiller) {
     _state = state;
 
     _nettyRunner = nettyRunner;
+    _forwardBinder = forwardBinder;
+
     _newConnCreator = newConnCreator;
     _connKiller = connKiller;
 
@@ -48,6 +53,8 @@ public class NetAcceptActor extends CaseActor {
   private void registerMessage() {
     addCase(NewConnMsg.class, this::onNewConn);
     addCase(KillConnMsg.class, this::onKillConn);
+
+    addCase(BindForwardReq.class, this::onBindForward);
   }
 
   private void onNewConn(NewConnMsg msg) {
@@ -63,9 +70,14 @@ public class NetAcceptActor extends CaseActor {
     _connKiller.killConnection(_state, connId, log());
   }
 
+  private void onBindForward(BindForwardReq msg) {
+    _forwardBinder.tryBindLocally(_state, msg, getSender(), getSelf());
+  }
+
   private final NetAcceptState _state;
 
   private final NettyRunner _nettyRunner;
+  private final ForwardBinder _forwardBinder;
 
   private final NewConnCreator _newConnCreator;
   private final ConnKiller _connKiller;

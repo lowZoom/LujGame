@@ -6,6 +6,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import lujgame.gateway.network.akka.accept.message.BindForwardReq;
 import lujgame.gateway.network.akka.connection.logic.packet.ConnPacket;
 import lujgame.gateway.network.akka.connection.logic.packet.ConnPacketBuffer;
 import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
@@ -25,12 +26,13 @@ public class ConnPacketReceiver {
     ChannelHandlerContext nettyCtx = state.getNettyContext();
     System.out.println("packet -->> conn event~!!!! -> " + nettyCtx);
 
-    NettyConnEvent event = new NettyConnEvent(connRef);
     ChannelPipeline pipeline = nettyCtx.pipeline();
+    NettyConnEvent event = new NettyConnEvent(connRef);
     pipeline.fireUserEventTriggered(event);
   }
 
-  public void receivePacket(ConnActorState state, byte[] data, LoggingAdapter log) {
+  public void receivePacket(ConnActorState state,
+      byte[] data, ActorRef connRef, LoggingAdapter log) {
     // 将data加进包缓存
     ConnPacketBuffer packetBuf = state.getPacketBuffer();
     List<byte[]> bufList = packetBuf.getBufferList();
@@ -44,7 +46,7 @@ public class ConnPacketReceiver {
           return;
         }
 
-        //TODO: 校验
+        //TODO: 校验包头信息，判断此包是否合法
       }
 
       d.decodeBody(packetBuf);
@@ -53,16 +55,47 @@ public class ConnPacketReceiver {
       }
 
       ConnPacket packet = packetBuf.getPendingPacket();
-
-      log.debug("收到完整包 -> {}：{}", packet.getOpcode(),
-          new String(packet.getData(), StandardCharsets.UTF_8));
-
-      //TODO: 投递给游戏服
+      forwordPacket(state, packet, connRef, log);
 
       d.finishDecode(packetBuf);
     }
 
     // 取消空连接判断
+  }
+
+  void forwordPacket(ConnActorState state,
+      ConnPacket packet, ActorRef connRef, LoggingAdapter log) {
+    log.debug("收到完整包 -> {}：{}", packet.getOpcode(),
+        new String(packet.getData(), StandardCharsets.UTF_8));
+
+    //TODO: 投递给游戏服，要先做确定/校验游戏服
+
+    ActorRef forwardRef = state.getMailBox();
+
+    Integer opcode = packet.getOpcode();
+    if (opcode == 1) {
+      bindForward(state, packet, connRef);
+      return;
+    }
+
+    if (forwardRef == null) {
+
+      //TODO: 非法，销毁连接
+      return;
+    }
+
+    forwardRef.tell(packet, connRef);
+  }
+
+  void bindForward(ConnActorState state, ConnPacket packet, ActorRef connRef) {
+    byte[] data = packet.getData();
+    String boxId = new String(data, StandardCharsets.UTF_8);
+
+    ActorRef acceptRef = state.getAcceptRef();
+    String connId = state.getConnId();
+
+    BindForwardReq req = new BindForwardReq(connId, boxId);
+    acceptRef.tell(req, connRef);
   }
 
   private final PacketBufferDecoder _packetBufferDecoder;
