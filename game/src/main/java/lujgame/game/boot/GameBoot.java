@@ -5,7 +5,7 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.cluster.Cluster;
 import com.typesafe.config.Config;
-import lujgame.game.boss.ClusterBossActorFactory;
+import lujgame.game.master.ClusterBossActorFactory;
 import lujgame.game.server.GameServerActorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -44,7 +44,7 @@ public class GameBoot {
     Cluster cluster = Cluster.get(system);
     Props props = _clusterBossActorFactory.props(cluster);
 
-    ActorRef bossRef = system.actorOf(props);
+    ActorRef bossRef = system.actorOf(props, "Master");
   }
 
   private void startGame(Config gameCfg) {
@@ -52,7 +52,8 @@ public class GameBoot {
     Config akkaCfg = l.loadAkkaConfig(gameCfg);
     ActorSystem system = ActorSystem.create("Game", akkaCfg);
 
-    Props props = _gameServerActorFactory.props(gameCfg);
+    Cluster cluster = Cluster.get(system);
+    Props props = _gameServerActorFactory.props(gameCfg, cluster);
     ActorRef serverRef = system.actorOf(props);
   }
 
