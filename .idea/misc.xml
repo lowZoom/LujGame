@@ -49,6 +49,7 @@
         <option value="$PROJECT_DIR$/core/pom.xml" />
         <option value="$PROJECT_DIR$/robot/pom.xml" />
         <option value="$PROJECT_DIR$/game/pom.xml" />
+        <option value="$PROJECT_DIR$/admin/pom.xml" />
       </list>
     </option>
   </component>

@@ -1,11 +1,10 @@
 package lujgame.gateway.network.akka.accept;
 
-import akka.actor.ActorRef;
+import akka.event.LoggingAdapter;
 import io.netty.bootstrap.ServerBootstrap;
 import lujgame.core.akka.CaseActor;
 import lujgame.gateway.network.akka.accept.logic.ConnKiller;
 import lujgame.gateway.network.akka.accept.logic.ConnectionItem;
-import lujgame.gateway.network.akka.accept.logic.ForwardBinder;
 import lujgame.gateway.network.akka.accept.logic.NettyRunner;
 import lujgame.gateway.network.akka.accept.logic.NewConnCreator;
 import lujgame.gateway.network.akka.accept.message.BindForwardReq;
@@ -17,13 +16,10 @@ public class NetAcceptActor extends CaseActor {
   public NetAcceptActor(
       NetAcceptState state,
       NettyRunner nettyRunner,
-      ForwardBinder forwardBinder,
       NewConnCreator newConnCreator,
       ConnKiller connKiller) {
     _state = state;
-
     _nettyRunner = nettyRunner;
-    _forwardBinder = forwardBinder;
 
     _newConnCreator = newConnCreator;
     _connKiller = connKiller;
@@ -34,21 +30,11 @@ public class NetAcceptActor extends CaseActor {
 
   @Override
   public void preStart() throws Exception {
-    log().debug("启动服务器监听。。。");
+    LoggingAdapter log = log();
+    log.debug("启动游戏服网络监听...");
 
-    ActorRef self = getSelf();
-    ServerBootstrap serverBoot = _nettyRunner.createServerBoot(self);
-
-    final int SERVER_PORT = 12345;
-    serverBoot.bind(SERVER_PORT);
+    _nettyRunner.startBind(_state, getSelf(), log);
   }
-
-//  @Override
-//  public void onReceive(Object msg) throws Exception {
-//    log().debug("aaaaaaaaacept收到消息 -> {}", msg);
-//
-//    super.onReceive(msg);
-//  }
 
   private void registerMessage() {
     addCase(NewConnMsg.class, this::onNewConn);
@@ -58,7 +44,7 @@ public class NetAcceptActor extends CaseActor {
   }
 
   private void onNewConn(NewConnMsg msg) {
-    log().debug("accept?????????????????????????");
+//    log().debug("accept?????????????????????????");
 
     NewConnCreator c = _newConnCreator;
     ConnectionItem connectionItem = c.createConnection(this, _state, msg);
@@ -66,18 +52,16 @@ public class NetAcceptActor extends CaseActor {
   }
 
   private void onKillConn(KillConnMsg msg) {
-    String connId = msg.getConnId();
-    _connKiller.killConnection(_state, connId, log());
+    _connKiller.killConnection(_state, msg.getConnId(), log());
   }
 
   private void onBindForward(BindForwardReq msg) {
-    _forwardBinder.tryBindLocally(_state, msg, getSender(), getSelf());
+    _state.getGlueRef().forward(msg, getContext());
   }
 
   private final NetAcceptState _state;
 
   private final NettyRunner _nettyRunner;
-  private final ForwardBinder _forwardBinder;
 
   private final NewConnCreator _newConnCreator;
   private final ConnKiller _connKiller;

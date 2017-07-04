@@ -26,7 +26,7 @@ public class GameBootConfigLoader {
   }
 
   public Config loadAkkaConfig(Config overrideCfg) {
-    Config akkaCfg = _dataFileReader.readConfig("game_akka.conf");
+    Config akkaCfg = _dataFileReader.readConfig("akka.conf");
     return overrideCfg.withFallback(akkaCfg);
   }
 

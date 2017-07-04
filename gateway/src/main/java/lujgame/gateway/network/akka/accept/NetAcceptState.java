@@ -7,11 +7,14 @@ import lujgame.gateway.network.akka.accept.logic.ConnectionItem;
 
 public class NetAcceptState {
 
-  public NetAcceptState() {
-    _nextConnId = 1;
+  public NetAcceptState(String host, int port, ActorRef glueRef) {
+    _host = host;
+    _port = port;
 
+    _glueRef = glueRef;
+
+    _nextConnId = 1;
     _connectionMap = new HashMap<>(1024);
-    _forwardMap = new HashMap<>(64);
   }
 
   public long getNextConnId() {
@@ -22,29 +25,27 @@ public class NetAcceptState {
     _nextConnId = nextConnId;
   }
 
-  public ActorRef getGateBossRef() {
-    return _gateBossRef;
-  }
-
-  public void setGateBossRef(ActorRef gateBossRef) {
-    _gateBossRef = gateBossRef;
-  }
-
   public Map<String, ConnectionItem> getConnectionMap() {
     return _connectionMap;
   }
 
-  public Map<String, ActorRef> getForwardMap() {
-    return _forwardMap;
+  public String getHost() {
+    return _host;
+  }
+
+  public int getPort() {
+    return _port;
+  }
+
+  public ActorRef getGlueRef() {
+    return _glueRef;
   }
 
   private long _nextConnId;
-  private ActorRef _gateBossRef;
-
   private final Map<String, ConnectionItem> _connectionMap;
 
-  /**
-   * 投递目标节点缓存
-   */
-  private final Map<String, ActorRef> _forwardMap;
+  private final String _host;
+  private final int _port;
+
+  private final ActorRef _glueRef;
 }

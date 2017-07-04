@@ -10,12 +10,17 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>game</artifactId>
+  <artifactId>admin</artifactId>
 
   <dependencies>
     <dependency>
       <groupId>com.lowzoom.lujgame</groupId>
       <artifactId>gateway</artifactId>
+      <version>0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.lowzoom.lujgame</groupId>
+      <artifactId>game</artifactId>
       <version>0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>

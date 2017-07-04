@@ -3,6 +3,7 @@ package lujgame.robot.robot.instance.logic;
 import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.typesafe.config.Config;
+import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigRenderOptions;
 import io.netty.channel.ChannelHandlerContext;
 import java.nio.charset.StandardCharsets;
@@ -53,12 +54,19 @@ public class RobotBehaver {
   }
 
   private RobotNetPacket encodePacket(Config behaviorCfg, LoggingAdapter log) {
+    final String KEY_DATA = "data";
+
     int opcode = behaviorCfg.getInt("op");
-    Config dataCfg = behaviorCfg.getConfig("data");
+    String dataStr;
 
-    String dataStr = dataCfg.root().render(ConfigRenderOptions.concise());
+    try {
+      Config dataCfg = behaviorCfg.getConfig(KEY_DATA);
+      dataStr = dataCfg.root().render(ConfigRenderOptions.concise());
+    } catch (ConfigException.WrongType ignored) {
+      dataStr = behaviorCfg.getString(KEY_DATA);
+    }
+
     log.debug("包 ----> {}", dataStr);
-
     return new RobotNetPacket(opcode, dataStr.getBytes(StandardCharsets.UTF_8));
   }
 

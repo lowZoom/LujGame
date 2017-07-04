@@ -28,8 +28,7 @@ public class RobotInstanceActor extends CaseActor {
 
   @Override
   public void preStart() throws Exception {
-    ActorRef self = getSelf();
-    _robotConnector.startConnect(_state, self, log());
+    _robotConnector.startConnect(_state, getSelf(), log());
   }
 
   private void registerMessage() {

@@ -11,11 +11,10 @@ public class RobotMain {
   }
 
   private void start(String[] args) {
-    //TODO: 接受控制台输入后考虑context close的问题
-    AnnotationConfigApplicationContext appCtx =
-        new AnnotationConfigApplicationContext(RobotInjectConfig.class);
-
-    RobotBoot boot = appCtx.getBean(RobotBoot.class);
-    boot.boot(args);
+    try (AnnotationConfigApplicationContext appCtx =
+        new AnnotationConfigApplicationContext(RobotInjectConfig.class)) {
+      RobotBoot boot = appCtx.getBean(RobotBoot.class);
+      boot.boot(args);
+    }
   }
 }

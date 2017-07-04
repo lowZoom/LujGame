@@ -22,6 +22,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="admin" />
         <module name="core" />
         <module name="game" />
         <module name="gateway" />
@@ -29,6 +30,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="admin" target="1.8" />
       <module name="core" target="1.8" />
       <module name="game" target="1.8" />
       <module name="gateway" target="1.8" />

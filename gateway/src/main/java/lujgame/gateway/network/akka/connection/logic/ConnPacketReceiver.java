@@ -4,6 +4,7 @@ import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import lujgame.gateway.network.akka.accept.message.BindForwardReq;
@@ -18,8 +19,11 @@ import org.springframework.stereotype.Component;
 public class ConnPacketReceiver {
 
   @Autowired
-  public ConnPacketReceiver(PacketBufferDecoder packetBufferDecoder) {
+  public ConnPacketReceiver(
+      PacketBufferDecoder packetBufferDecoder,
+      ConnInfoGetter connInfoGetter) {
     _packetBufferDecoder = packetBufferDecoder;
+    _connInfoGetter = connInfoGetter;
   }
 
   public void updateNettyHandler(ConnActorState state, ActorRef connRef) {
@@ -79,6 +83,8 @@ public class ConnPacketReceiver {
     }
 
     if (forwardRef == null) {
+      InetSocketAddress addr = _connInfoGetter.getRemoteAddress(state);
+      log.warning("非法连接，未绑定发包 -> {}", addr);
 
       //TODO: 非法，销毁连接
       return;
@@ -99,4 +105,5 @@ public class ConnPacketReceiver {
   }
 
   private final PacketBufferDecoder _packetBufferDecoder;
+  private final ConnInfoGetter _connInfoGetter;
 }

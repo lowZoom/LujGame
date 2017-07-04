@@ -1,7 +1,9 @@
 package lujgame.gateway.network.akka.accept;
 
+import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.japi.Creator;
+import com.typesafe.config.Config;
 import lujgame.gateway.network.akka.accept.logic.ConnKiller;
 import lujgame.gateway.network.akka.accept.logic.ForwardBinder;
 import lujgame.gateway.network.akka.accept.logic.NettyRunner;
@@ -15,21 +17,23 @@ public class NetAcceptActorFactory {
   @Autowired
   public NetAcceptActorFactory(
       NettyRunner nettyRunner,
-      ForwardBinder forwardBinder,
       NewConnCreator newConnCreator,
       ConnKiller connKiller) {
     _nettyRunner = nettyRunner;
-    _forwardBinder = forwardBinder;
 
     _newConnCreator = newConnCreator;
     _connKiller = connKiller;
   }
 
-  public Props props() {
+  public Props props(Config gateConfig, ActorRef glueRef) {
+    Config netCfg = gateConfig.getConfig("net-addr");
+
+    NetAcceptState state = new NetAcceptState(
+        netCfg.getString("host"), netCfg.getInt("port"), glueRef);
+
     Creator<NetAcceptActor> c = () -> new NetAcceptActor(
-        new NetAcceptState(),
+        state,
         _nettyRunner,
-        _forwardBinder,
         _newConnCreator,
         _connKiller);
 
@@ -37,7 +41,6 @@ public class NetAcceptActorFactory {
   }
 
   private final NettyRunner _nettyRunner;
-  private final ForwardBinder _forwardBinder;
 
   private final NewConnCreator _newConnCreator;
   private final ConnKiller _connKiller;
