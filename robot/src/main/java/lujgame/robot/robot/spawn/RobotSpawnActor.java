@@ -1,18 +1,15 @@
 package lujgame.robot.robot.spawn;
 
-import akka.actor.Props;
-import akka.actor.UntypedActorContext;
 import akka.event.LoggingAdapter;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import java.nio.file.Path;
 import java.util.List;
-import lujgame.core.akka.CaseActor;
+import lujgame.core.akka.common.CaseActor;
 import lujgame.robot.robot.instance.RobotInstanceActor;
 import lujgame.robot.robot.instance.RobotInstanceActorFactory;
 import lujgame.robot.robot.spawn.logic.RobotGroup;
 import lujgame.robot.robot.spawn.logic.RobotSpawner;
-import lujgame.robot.robot.spawn.message.ChangeRobotCountMsg;
 
 /**
  * 负责机器人生产和管理

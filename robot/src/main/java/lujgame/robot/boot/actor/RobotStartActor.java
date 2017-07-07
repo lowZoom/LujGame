@@ -3,9 +3,8 @@ package lujgame.robot.boot.actor;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActorContext;
-import lujgame.core.akka.CaseActor;
+import lujgame.core.akka.common.CaseActor;
 import lujgame.robot.robot.spawn.RobotSpawnActorFactory;
-import lujgame.robot.robot.spawn.message.ChangeRobotCountMsg;
 
 /**
  * 机器人启动逻辑

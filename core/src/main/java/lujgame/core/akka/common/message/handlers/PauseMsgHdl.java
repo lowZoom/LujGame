@@ -1,9 +1,9 @@
-package lujgame.core.akka.message.handlers;
+package lujgame.core.akka.common.message.handlers;
 
 import java.util.LinkedList;
-import lujgame.core.akka.CaseActor;
-import lujgame.core.akka.message.ActorMessageHandler;
-import lujgame.core.akka.message.MessageHandleContext;
+import lujgame.core.akka.common.CaseActor;
+import lujgame.core.akka.common.message.ActorMessageHandler;
+import lujgame.core.akka.common.message.MessageHandleContext;
 
 public class PauseMsgHdl extends ActorMessageHandler {
 

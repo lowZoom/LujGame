@@ -32,6 +32,10 @@ public class GateGlueActorState {
     return _forwardMap;
   }
 
+  public String getGlueUrl() {
+    return _glueUrl;
+  }
+
   /**
    * 本地连接管理节点
    */

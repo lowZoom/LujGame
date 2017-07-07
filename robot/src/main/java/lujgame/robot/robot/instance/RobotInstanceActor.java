@@ -1,8 +1,6 @@
 package lujgame.robot.robot.instance;
 
-import akka.actor.ActorRef;
-import io.netty.channel.ChannelHandlerContext;
-import lujgame.core.akka.CaseActor;
+import lujgame.core.akka.common.CaseActor;
 import lujgame.robot.robot.instance.logic.RobotBehaver;
 import lujgame.robot.robot.instance.logic.RobotConnector;
 import lujgame.robot.robot.instance.message.ConnectOkMsg;

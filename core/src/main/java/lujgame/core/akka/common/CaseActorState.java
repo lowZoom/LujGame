@@ -1,10 +1,10 @@
-package lujgame.core.akka;
+package lujgame.core.akka.common;
 
 import akka.event.LoggingAdapter;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Consumer;
-import lujgame.core.akka.message.ActorMessageHandler;
+import lujgame.core.akka.common.message.ActorMessageHandler;
 
 public class CaseActorState {
 

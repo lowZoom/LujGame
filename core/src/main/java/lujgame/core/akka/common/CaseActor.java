@@ -1,4 +1,4 @@
-package lujgame.core.akka;
+package lujgame.core.akka.common;
 
 import akka.actor.ActorSystem;
 import akka.actor.UntypedActor;
@@ -10,9 +10,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import lujgame.core.akka.message.ActorMessageHandler;
-import lujgame.core.akka.message.MessageHandleContext;
-import lujgame.core.akka.message.handlers.DefaultMsgHdl;
+import lujgame.core.akka.common.message.ActorMessageHandler;
+import lujgame.core.akka.common.message.MessageHandleContext;
+import lujgame.core.akka.common.message.handlers.DefaultMsgHdl;
 
 public abstract class CaseActor extends UntypedActor {
 

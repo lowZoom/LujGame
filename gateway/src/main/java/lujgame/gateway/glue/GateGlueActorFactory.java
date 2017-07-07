@@ -11,7 +11,10 @@ import org.springframework.stereotype.Component;
 public class GateGlueActorFactory {
 
   @Autowired
-  public GateGlueActorFactory(ForwardBinder forwardBinder) {
+  public GateGlueActorFactory(
+      GlueAdminConnector adminConnector,
+      ForwardBinder forwardBinder) {
+    _adminConnector = adminConnector;
     _forwardBinder = forwardBinder;
   }
 
@@ -19,10 +22,11 @@ public class GateGlueActorFactory {
     String glueUrl = gateCfg.getString("admin-url");
 
     Creator<GateGlueActor> c = () -> new GateGlueActor(
-        new GateGlueActorState(glueUrl), _forwardBinder);
+        new GateGlueActorState(glueUrl), _adminConnector, _forwardBinder);
 
     return Props.create(GateGlueActor.class, c);
   }
 
+  private final GlueAdminConnector _adminConnector;
   private final ForwardBinder _forwardBinder;
 }

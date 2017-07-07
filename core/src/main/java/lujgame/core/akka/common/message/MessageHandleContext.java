@@ -1,4 +1,4 @@
-package lujgame.core.akka.message;
+package lujgame.core.akka.common.message;
 
 import akka.event.LoggingAdapter;
 import java.util.HashSet;
@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
-import lujgame.core.akka.CaseActor;
-import lujgame.core.akka.CaseActorState;
+import lujgame.core.akka.common.CaseActorState;
 
 public class MessageHandleContext {
 

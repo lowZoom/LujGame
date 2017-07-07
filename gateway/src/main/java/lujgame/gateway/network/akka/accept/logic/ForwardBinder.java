@@ -31,8 +31,8 @@ public class ForwardBinder {
   public void finishBind(ConnActorState state, ActorRef forwardRef,
       String forwardId, ActorRef connRef, LoggingAdapter log) {
     if (forwardRef == null) {
-      log.warning("[非法]无效的转发节点 -> {}", forwardId);
-      log.warning("连接即将被销毁 -> ");
+      log.warning("[非法]无效的转发节点绑定 -> {}", forwardId);
+      log.warning("连接即将被销毁 -> {}", state.getConnId());
 
       _connKiller.requestKill(state, connRef);
       return;

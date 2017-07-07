@@ -1,4 +1,4 @@
-package lujgame.core.akka.message;
+package lujgame.core.akka.common.message;
 
 public abstract class ActorMessageHandler {
 

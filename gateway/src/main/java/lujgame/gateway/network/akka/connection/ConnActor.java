@@ -2,7 +2,7 @@ package lujgame.gateway.network.akka.connection;
 
 import akka.actor.ActorRef;
 import java.net.InetSocketAddress;
-import lujgame.core.akka.CaseActor;
+import lujgame.core.akka.common.CaseActor;
 import lujgame.core.akka.schedule.ActorScheduler;
 import lujgame.gateway.network.akka.accept.logic.ConnKiller;
 import lujgame.gateway.network.akka.accept.logic.ForwardBinder;
@@ -56,7 +56,7 @@ public class ConnActor extends CaseActor {
 
   @Override
   public void postStop() throws Exception {
-    log().debug("连接被销毁 -> {}", _state.getConnId());
+//    log().debug("连接被销毁 -> {}", _state.getConnId());
     _state.getNettyContext().close();
   }
 

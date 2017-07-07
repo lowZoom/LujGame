@@ -8,8 +8,10 @@ import static org.mockito.Mockito.when;
 
 import com.google.common.collect.ImmutableList;
 import java.util.LinkedList;
-import lujgame.core.akka.message.ActorMessageHandler;
-import lujgame.core.akka.message.MessageHandleContext;
+import lujgame.core.akka.common.CaseActor;
+import lujgame.core.akka.common.CaseActorState;
+import lujgame.core.akka.common.message.ActorMessageHandler;
+import lujgame.core.akka.common.message.MessageHandleContext;
 import org.junit.Before;
 import org.junit.Test;
 

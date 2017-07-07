@@ -1,8 +1,8 @@
-package lujgame.core.akka.message.handlers;
+package lujgame.core.akka.common.message.handlers;
 
 import java.util.function.Consumer;
-import lujgame.core.akka.message.ActorMessageHandler;
-import lujgame.core.akka.message.MessageHandleContext;
+import lujgame.core.akka.common.message.ActorMessageHandler;
+import lujgame.core.akka.common.message.MessageHandleContext;
 
 public class DefaultMsgHdl extends ActorMessageHandler {
 

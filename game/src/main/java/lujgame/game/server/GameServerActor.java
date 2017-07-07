@@ -3,7 +3,7 @@ package lujgame.game.server;
 import akka.cluster.ClusterEvent;
 import akka.cluster.Member;
 import lujgame.core.akka.AkkaTool;
-import lujgame.core.akka.CaseActor;
+import lujgame.core.akka.common.CaseActor;
 import lujgame.game.master.GameNodeRegistrar;
 
 public class GameServerActor extends CaseActor {

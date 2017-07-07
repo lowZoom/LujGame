@@ -5,7 +5,7 @@ import akka.actor.ActorSystem;
 import akka.actor.Scheduler;
 import akka.actor.UntypedActorContext;
 import java.util.concurrent.TimeUnit;
-import lujgame.core.akka.CaseActor;
+import lujgame.core.akka.common.CaseActor;
 import org.springframework.stereotype.Component;
 import scala.concurrent.ExecutionContextExecutor;
 import scala.concurrent.duration.Duration;

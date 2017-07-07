@@ -1,7 +1,7 @@
 package lujgame.gateway.network.akka.accept;
 
 import akka.event.LoggingAdapter;
-import lujgame.core.akka.CaseActor;
+import lujgame.core.akka.common.CaseActor;
 import lujgame.gateway.network.akka.accept.logic.ConnKiller;
 import lujgame.gateway.network.akka.accept.logic.ConnectionItem;
 import lujgame.gateway.network.akka.accept.logic.NettyRunner;

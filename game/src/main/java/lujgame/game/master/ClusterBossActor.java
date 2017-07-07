@@ -1,7 +1,7 @@
 package lujgame.game.master;
 
 import lujgame.core.akka.AkkaTool;
-import lujgame.core.akka.CaseActor;
+import lujgame.core.akka.common.CaseActor;
 import lujgame.game.master.message.GNodeRegMsg;
 
 public class ClusterBossActor extends CaseActor {
