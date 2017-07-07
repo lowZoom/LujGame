@@ -1,29 +1,47 @@
 package lujgame.gateway.network.akka.accept.logic;
 
 import akka.actor.ActorRef;
+import akka.event.LoggingAdapter;
 import java.util.Map;
-import lujgame.gateway.network.akka.accept.NetAcceptState;
-import lujgame.gateway.network.akka.accept.message.BindForwardReq;
+import lujgame.gateway.glue.GateGlueActorState;
 import lujgame.gateway.network.akka.accept.message.BindForwardRsp;
+import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ForwardBinder {
 
-//  public void bind(NetAcceptState state, BindForwardReq req,
-//      ActorRef connRef, ActorRef acceptRef) {
-//    Map<String, ActorRef> forwardMap = state.getForwardMap();
-//    String boxId = req.getBoxId();
-//    ActorRef forwardRef = forwardMap.get(boxId);
-//
-//    if (forwardRef != null) {
-//      BindForwardRsp rsp = new BindForwardRsp(forwardRef);
-//      connRef.tell(rsp, acceptRef);
-//      return;
-//    }
-//
-//    // 发送到网关中心服查询
-//    ActorRef gateMasterRef = state.getGateMasterRef();
-//    gateMasterRef.tell(req, acceptRef);
-//  }
+  @Autowired
+  public ForwardBinder(ConnKiller connKiller) {
+    _connKiller = connKiller;
+  }
+
+  public void findForward(GateGlueActorState state, String boxId,
+      ActorRef connRef, ActorRef glueRef) {
+    // 所有看转发的节点全在这里了，glueActor会根据管理节点的推送来维护
+
+    Map<String, ActorRef> forwardMap = state.getForwardMap();
+    ActorRef forwardRef = forwardMap.get(boxId);
+
+    BindForwardRsp rsp = new BindForwardRsp(boxId, forwardRef);
+    connRef.tell(rsp, glueRef);
+  }
+
+  public void finishBind(ConnActorState state, ActorRef forwardRef,
+      String forwardId, ActorRef connRef, LoggingAdapter log) {
+    if (forwardRef == null) {
+      log.warning("[非法]无效的转发节点 -> {}", forwardId);
+      log.warning("连接即将被销毁 -> ");
+
+      _connKiller.requestKill(state, connRef);
+      return;
+    }
+
+    state.setForwardRef(forwardRef);
+
+    //TODO: 是否需要回复客户端？
+  }
+
+  private final ConnKiller _connKiller;
 }

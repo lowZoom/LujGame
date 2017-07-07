@@ -17,12 +17,12 @@ public class ConnActorState {
     _acceptRef = acceptRef;
   }
 
-  public ActorRef getMailBox() {
-    return _mailBox;
+  public ActorRef getForwardRef() {
+    return _forwardRef;
   }
 
-  public void setMailBox(ActorRef mailBox) {
-    _mailBox = mailBox;
+  public void setForwardRef(ActorRef forwardRef) {
+    _forwardRef = forwardRef;
   }
 
   public String getConnId() {
@@ -41,7 +41,7 @@ public class ConnActorState {
     return _acceptRef;
   }
 
-  private ActorRef _mailBox;
+  private ActorRef _forwardRef;
 
   private final String _connId;
 

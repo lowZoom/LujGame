@@ -74,7 +74,7 @@ public class ConnPacketReceiver {
 
     //TODO: 投递给游戏服，要先做确定/校验游戏服
 
-    ActorRef forwardRef = state.getMailBox();
+    ActorRef forwardRef = state.getForwardRef();
 
     Integer opcode = packet.getOpcode();
     if (opcode == 1) {

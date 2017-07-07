@@ -16,7 +16,7 @@ public class GateGlueActorFactory {
   }
 
   public Props props(Config gateCfg) {
-    String glueUrl = gateCfg.getString("glue-url");
+    String glueUrl = gateCfg.getString("admin-url");
 
     Creator<GateGlueActor> c = () -> new GateGlueActor(
         new GateGlueActorState(glueUrl), _forwardBinder);

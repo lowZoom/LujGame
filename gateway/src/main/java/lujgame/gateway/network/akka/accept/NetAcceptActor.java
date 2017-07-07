@@ -1,7 +1,6 @@
 package lujgame.gateway.network.akka.accept;
 
 import akka.event.LoggingAdapter;
-import io.netty.bootstrap.ServerBootstrap;
 import lujgame.core.akka.CaseActor;
 import lujgame.gateway.network.akka.accept.logic.ConnKiller;
 import lujgame.gateway.network.akka.accept.logic.ConnectionItem;
@@ -52,7 +51,7 @@ public class NetAcceptActor extends CaseActor {
   }
 
   private void onKillConn(KillConnMsg msg) {
-    _connKiller.killConnection(_state, msg.getConnId(), log());
+    _connKiller.killConnection(_state, msg.getConnId(), getContext(), log());
   }
 
   private void onBindForward(BindForwardReq msg) {

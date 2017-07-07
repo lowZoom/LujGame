@@ -6,5 +6,6 @@ import org.springframework.stereotype.Component;
 public class GlueAdminConnector {
 
   public void connectAdmin() {
+
   }
 }

@@ -5,10 +5,12 @@ import akka.actor.Props;
 import akka.japi.Creator;
 import io.netty.channel.ChannelHandlerContext;
 import lujgame.core.akka.schedule.ActorScheduler;
+import lujgame.gateway.network.akka.accept.logic.ConnKiller;
+import lujgame.gateway.network.akka.accept.logic.ForwardBinder;
 import lujgame.gateway.network.akka.connection.logic.ConnInfoGetter;
 import lujgame.gateway.network.akka.connection.logic.ConnPacketReceiver;
-import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
 import lujgame.gateway.network.akka.connection.logic.packet.ConnPacketBuffer;
+import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,13 +18,19 @@ import org.springframework.stereotype.Component;
 public class ConnActorFactory {
 
   @Autowired
-  public ConnActorFactory(ActorScheduler actorScheduler,
+  public ConnActorFactory(
+      ActorScheduler actorScheduler,
       ConnPacketReceiver connPacketReceiver,
-      ConnInfoGetter connInfoGetter) {
+      ForwardBinder forwardBinder,
+      ConnInfoGetter connInfoGetter,
+      ConnKiller connKiller) {
     _actorScheduler = actorScheduler;
-
     _connPacketReceiver = connPacketReceiver;
+
+    _forwardBinder = forwardBinder;
     _connInfoGetter = connInfoGetter;
+
+    _connKiller = connKiller;
   }
 
   public Props props(String connId, ChannelHandlerContext nettyContext, ActorRef acceptRef) {
@@ -30,7 +38,7 @@ public class ConnActorFactory {
         new ConnPacketBuffer(), nettyContext, acceptRef);
 
     Creator<ConnActor> c = () -> new ConnActor(state, _actorScheduler,
-        _connPacketReceiver, _connInfoGetter);
+        _connPacketReceiver, _forwardBinder, _connKiller, _connInfoGetter);
 
     return Props.create(ConnActor.class, c);
   }
@@ -40,7 +48,10 @@ public class ConnActorFactory {
   }
 
   private final ActorScheduler _actorScheduler;
-
   private final ConnPacketReceiver _connPacketReceiver;
+
+  private final ForwardBinder _forwardBinder;
   private final ConnInfoGetter _connInfoGetter;
+
+  private final ConnKiller _connKiller;
 }
