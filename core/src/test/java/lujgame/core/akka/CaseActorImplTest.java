@@ -55,8 +55,7 @@ public class CaseActorImplTest {
   }
 
   boolean invokeHandleMessage(LinkedList<ActorMessageHandler> msgPipeline) {
-    return _impl.handleMessage(new CaseActorState(
-        null, null, null, msgPipeline, new LinkedList<>()), new Object());
+    return _impl.handleMessage(new CaseActorState(null, null, msgPipeline), new Object());
   }
 
   static ActorMessageHandler mockMessageHandler(ActorMessageHandler.Result result) {

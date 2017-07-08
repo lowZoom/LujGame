@@ -1,8 +1,8 @@
-package lujgame.core.akka.link.logic;
+package lujgame.core.akka.link;
 
 import akka.actor.Props;
 import akka.actor.UntypedActorContext;
-import lujgame.core.akka.link.LinkActorFactory;
+import lujgame.core.akka.link.client.LinkClientActorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class ActorLinker {
 
   @Autowired
-  public ActorLinker(LinkActorFactory linkActorFactory) {
+  public ActorLinker(LinkClientActorFactory linkActorFactory) {
     _linkActorFactory = linkActorFactory;
   }
 
@@ -19,5 +19,5 @@ public class ActorLinker {
     ctx.actorOf(props);
   }
 
-  private final LinkActorFactory _linkActorFactory;
+  private final LinkClientActorFactory _linkActorFactory;
 }

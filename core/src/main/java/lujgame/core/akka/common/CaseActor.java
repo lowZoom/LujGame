@@ -5,7 +5,6 @@ import akka.actor.UntypedActor;
 import akka.actor.UntypedActorContext;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -40,10 +39,8 @@ public abstract class CaseActor extends UntypedActor {
   @SuppressWarnings("ThisEscapedInObjectConstruction")
   protected CaseActor() {
     _state = new CaseActorState(this,
-        new HashMap<>(32),
         initLog(),
-        initMessagePipeline(),
-        new LinkedList<>());
+        initMessagePipeline());
   }
 
   protected LoggingAdapter log() {
@@ -73,7 +70,7 @@ public abstract class CaseActor extends UntypedActor {
     SINGLETON;
 
     public boolean handleMessage(CaseActorState state, Object msg) {
-      LinkedList<Object> msgQueue=state.getMessageQueue();
+      LinkedList<Object> msgQueue = new LinkedList<>();
       msgQueue.addLast(msg);
 
       List<ActorMessageHandler> msgPipeline = state.getMessagePipeline();
@@ -81,9 +78,9 @@ public abstract class CaseActor extends UntypedActor {
 
       while (!msgQueue.isEmpty()) {
         Object msgVar = msgQueue.removeFirst();
-        MessageHandleContext ctx = new MessageHandleContext(state, msgVar);
+        MessageHandleContext ctx = new MessageHandleContext(state, msgVar, msgQueue);
 
-        if (handleMsgIter(ctx, msgPipeline)) {
+        if (handleOneMsg(ctx, msgPipeline)) {
           handled = true;
         }
       }
@@ -91,7 +88,8 @@ public abstract class CaseActor extends UntypedActor {
       return handled;
     }
 
-    static boolean handleMsgIter(MessageHandleContext ctx, List<ActorMessageHandler> msgPipeline) {
+    private static boolean handleOneMsg(MessageHandleContext ctx,
+        List<ActorMessageHandler> msgPipeline) {
       boolean handled = false;
 
       for (ActorMessageHandler handler : msgPipeline) {
@@ -110,5 +108,5 @@ public abstract class CaseActor extends UntypedActor {
     }
   }
 
-  private final CaseActorState _state;
+  final CaseActorState _state;
 }

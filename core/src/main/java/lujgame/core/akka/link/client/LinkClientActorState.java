@@ -1,10 +1,10 @@
-package lujgame.core.akka.link;
+package lujgame.core.akka.link.client;
 
 import akka.actor.ActorRef;
 
-public class LinkActorState {
+public class LinkClientActorState {
 
-  public LinkActorState(String linkUrl) {
+  public LinkClientActorState(String linkUrl) {
     _linkUrl = linkUrl;
   }
 

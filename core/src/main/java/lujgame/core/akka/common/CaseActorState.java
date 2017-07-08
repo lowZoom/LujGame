@@ -1,6 +1,9 @@
 package lujgame.core.akka.common;
 
+import akka.actor.Cancellable;
 import akka.event.LoggingAdapter;
+import com.google.common.collect.Multimap;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -10,17 +13,23 @@ public class CaseActorState {
 
   public CaseActorState(
       CaseActor actor,
-      Map<Class<?>, Consumer<?>> actionMap,
       LoggingAdapter logger,
-      LinkedList<ActorMessageHandler> messagePipeline,
-      LinkedList<Object> messageQueue) {
+      LinkedList<ActorMessageHandler> messagePipeline) {
     _actor = actor;
 
-    _actionMap = actionMap;
     _logger = logger;
-
     _messagePipeline = messagePipeline;
-    _messageQueue = messageQueue;
+
+    _actionMap = new HashMap<>(32);
+  }
+
+  public Multimap<Class<?>, Cancellable> getScheduleInterruptMap() {
+    return _scheduleInterruptMap;
+  }
+
+  public void setScheduleInterruptMap(
+      Multimap<Class<?>, Cancellable> scheduleInterruptMap) {
+    _scheduleInterruptMap = scheduleInterruptMap;
   }
 
   public CaseActor getActor() {
@@ -39,15 +48,11 @@ public class CaseActorState {
     return _messagePipeline;
   }
 
-  public LinkedList<Object> getMessageQueue() {
-    return _messageQueue;
-  }
-
-  private final CaseActor _actor;
+  private Multimap<Class<?>, Cancellable> _scheduleInterruptMap;
 
   private final Map<Class<?>, Consumer<?>> _actionMap;
-  private final LoggingAdapter _logger;
+  private final CaseActor _actor;
 
+  private final LoggingAdapter _logger;
   private final LinkedList<ActorMessageHandler> _messagePipeline;
-  private final LinkedList<Object> _messageQueue;
 }

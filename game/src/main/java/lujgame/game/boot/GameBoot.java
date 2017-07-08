@@ -45,6 +45,8 @@ public class GameBoot {
     Props props = _clusterBossActorFactory.props(cluster);
 
     ActorRef bossRef = system.actorOf(props, "Master");
+
+    //TODO: 启动网关管理节点
   }
 
   private void startGame(Config gameCfg) {

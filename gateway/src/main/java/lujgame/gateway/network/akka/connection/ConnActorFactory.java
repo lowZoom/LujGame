@@ -4,6 +4,7 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.japi.Creator;
 import io.netty.channel.ChannelHandlerContext;
+import lujgame.core.akka.AkkaTool;
 import lujgame.core.akka.schedule.ActorScheduler;
 import lujgame.gateway.network.akka.accept.logic.ConnKiller;
 import lujgame.gateway.network.akka.accept.logic.ForwardBinder;
@@ -19,12 +20,12 @@ public class ConnActorFactory {
 
   @Autowired
   public ConnActorFactory(
-      ActorScheduler actorScheduler,
+      AkkaTool akkaTool,
       ConnPacketReceiver connPacketReceiver,
       ForwardBinder forwardBinder,
       ConnInfoGetter connInfoGetter,
       ConnKiller connKiller) {
-    _actorScheduler = actorScheduler;
+    _akkaTool = akkaTool;
     _connPacketReceiver = connPacketReceiver;
 
     _forwardBinder = forwardBinder;
@@ -37,7 +38,7 @@ public class ConnActorFactory {
     ConnActorState state = new ConnActorState(connId,
         new ConnPacketBuffer(), nettyContext, acceptRef);
 
-    Creator<ConnActor> c = () -> new ConnActor(state, _actorScheduler,
+    Creator<ConnActor> c = () -> new ConnActor(state, _akkaTool,
         _connPacketReceiver, _forwardBinder, _connKiller, _connInfoGetter);
 
     return Props.create(ConnActor.class, c);
@@ -47,7 +48,7 @@ public class ConnActorFactory {
     return "Conn_" + connId;
   }
 
-  private final ActorScheduler _actorScheduler;
+  private final AkkaTool _akkaTool;
   private final ConnPacketReceiver _connPacketReceiver;
 
   private final ForwardBinder _forwardBinder;

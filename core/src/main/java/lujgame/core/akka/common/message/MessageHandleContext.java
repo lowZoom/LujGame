@@ -11,16 +11,15 @@ import lujgame.core.akka.common.CaseActorState;
 
 public class MessageHandleContext {
 
-  public MessageHandleContext(
-      CaseActorState state,
-      Object message) {
+  public MessageHandleContext(CaseActorState state, Object message, List<Object> msgQueue) {
     _state = state;
+
     _message = message;
+    _msgQueue = msgQueue;
   }
 
   public void addExtraMessage(Object msg) {
-    List<Object> msgList = getOrNewExtraMessageList();
-    msgList.add(msg);
+    _msgQueue.add(msg);
   }
 
   public void removeHandler(ActorMessageHandler handler) {
@@ -54,16 +53,10 @@ public class MessageHandleContext {
     return _removeSet;
   }
 
-  private List<Object> getOrNewExtraMessageList() {
-    if (_extraMessageList == null) {
-      _extraMessageList = new LinkedList<>();
-    }
-    return _extraMessageList;
-  }
-
   private Set<ActorMessageHandler> _removeSet;
-  private List<Object> _extraMessageList;
+
+  private final CaseActorState _state;
 
   private final Object _message;
-  private final CaseActorState _state;
+  private final List<Object>  _msgQueue;
 }

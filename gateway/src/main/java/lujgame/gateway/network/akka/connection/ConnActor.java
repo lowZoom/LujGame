@@ -2,8 +2,9 @@ package lujgame.gateway.network.akka.connection;
 
 import akka.actor.ActorRef;
 import java.net.InetSocketAddress;
+import java.util.concurrent.TimeUnit;
+import lujgame.core.akka.AkkaTool;
 import lujgame.core.akka.common.CaseActor;
-import lujgame.core.akka.schedule.ActorScheduler;
 import lujgame.gateway.network.akka.accept.logic.ConnKiller;
 import lujgame.gateway.network.akka.accept.logic.ForwardBinder;
 import lujgame.gateway.network.akka.accept.message.BindForwardRsp;
@@ -23,14 +24,14 @@ public class ConnActor extends CaseActor {
 
   public ConnActor(
       ConnActorState state,
-      ActorScheduler actorScheduler,
+      AkkaTool akkaTool,
       ConnPacketReceiver packetReceiver,
       ForwardBinder forwardBinder,
       ConnKiller connKiller,
       ConnInfoGetter connInfoGetter) {
     _state = state;
 
-    _actorScheduler = actorScheduler;
+    _akkaTool = akkaTool;
     _packetReceiver = packetReceiver;
 
     _forwardBinder = forwardBinder;
@@ -51,7 +52,7 @@ public class ConnActor extends CaseActor {
     _packetReceiver.updateNettyHandler(state, self);
 
     // 启动空连接检测
-//    _actorScheduler.schedule(this, 3, TimeUnit.SECONDS, Dumb.MSG);
+    _akkaTool.schedule(this, 3, TimeUnit.SECONDS, Dumb.MSG, ConnDataMsg.class);
   }
 
   @Override
@@ -95,7 +96,7 @@ public class ConnActor extends CaseActor {
 
   private final ConnActorState _state;
 
-  private final ActorScheduler _actorScheduler;
+  private final AkkaTool _akkaTool;
   private final ConnPacketReceiver _packetReceiver;
 
   private final ForwardBinder _forwardBinder;
