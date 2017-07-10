@@ -38,6 +38,10 @@ public class AkkaTool {
     _actorLinker.link(actor.getContext(), linkUrl);
   }
 
+  public void linkListen(CaseActor actor) {
+    //TODO: 特殊处理link连接请求消息
+  }
+
   private final ActorScheduler _actorScheduler;
   private final ActorLinker _actorLinker;
 }
