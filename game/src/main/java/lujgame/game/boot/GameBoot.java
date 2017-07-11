@@ -5,6 +5,7 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.cluster.Cluster;
 import com.typesafe.config.Config;
+import lujgame.game.gate.CommGateActorFactory;
 import lujgame.game.master.ClusterBossActorFactory;
 import lujgame.game.server.GameServerActorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,13 @@ public class GameBoot {
   @Autowired
   public GameBoot(GameBootConfigLoader bootConfigLoader,
       ClusterBossActorFactory clusterBossActorFactory,
+      CommGateActorFactory commGateActorFactory,
       GameServerActorFactory gameServerActorFactory) {
     _bootConfigLoader = bootConfigLoader;
 
     _clusterBossActorFactory = clusterBossActorFactory;
+    _commGateActorFactory = commGateActorFactory;
+
     _gameServerActorFactory = gameServerActorFactory;
   }
 
@@ -42,11 +46,9 @@ public class GameBoot {
     ActorSystem system = ActorSystem.create("Game", akkaCfg);
 
     Cluster cluster = Cluster.get(system);
-    Props props = _clusterBossActorFactory.props(cluster);
 
-    ActorRef bossRef = system.actorOf(props, "Master");
-
-    //TODO: 启动网关管理节点
+    ActorRef masterRef = system.actorOf(_clusterBossActorFactory.props(cluster), "Master");
+    ActorRef gateCommRef = system.actorOf(_commGateActorFactory.props(), "GateComm");
   }
 
   private void startGame(Config gameCfg) {
@@ -62,5 +64,7 @@ public class GameBoot {
   private final GameBootConfigLoader _bootConfigLoader;
 
   private final ClusterBossActorFactory _clusterBossActorFactory;
+  private final CommGateActorFactory _commGateActorFactory;
+
   private final GameServerActorFactory _gameServerActorFactory;
 }
