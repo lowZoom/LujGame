@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 import lujgame.core.akka.common.message.ActorMessageHandler;
 import lujgame.core.akka.common.message.MessageHandleContext;
 import lujgame.core.akka.common.message.handlers.DefaultMsgHdl;
+import lujgame.core.akka.schedule.ScheduleMsgHdl;
 
 public abstract class CaseActor extends UntypedActor {
 
@@ -56,7 +57,9 @@ public abstract class CaseActor extends UntypedActor {
 
   private LinkedList<ActorMessageHandler> initMessagePipeline() {
     LinkedList<ActorMessageHandler> pipeline = new LinkedList<>();
-    pipeline.addFirst(new DefaultMsgHdl());
+
+    pipeline.addLast(new ScheduleMsgHdl());
+    pipeline.addLast(new DefaultMsgHdl());
 
     return pipeline;
   }

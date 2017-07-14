@@ -1,7 +1,6 @@
 package lujgame.gateway.network.akka.accept.message;
 
 import akka.actor.ActorRef;
-import java.io.Serializable;
 
 public class BindForwardRsp {
 
@@ -15,7 +14,7 @@ public class BindForwardRsp {
   }
 
   /**
-   * null表示请求的forwardId无效
+   * @return null表示请求的forwardId无效
    */
   public ActorRef getForwardRef() {
     return _forwardRef;

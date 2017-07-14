@@ -31,8 +31,9 @@ public class AkkaTool {
         ClusterEvent.initialStateAsEvents(), ClusterEvent.MemberUp.class);
   }
 
-  public void schedule(CaseActor actor, long len, TimeUnit unit, Object msg, Class<?> interrupt) {
-    _actorScheduler.schedule(actor, len, unit, msg, interrupt);
+  public void schedule(CaseActor actor, long len, TimeUnit unit,
+      String scheduleId, Object msg, Class<?> interrupt) {
+    _actorScheduler.schedule(actor, len, unit, scheduleId, msg, interrupt);
   }
 
   public void link(CaseActor actor, String linkUrl) {

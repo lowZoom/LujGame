@@ -24,8 +24,6 @@ public class LinkClientActor extends CaseActor {
 
   @Override
   public void preStart() throws Exception {
-    log().debug("开始尝试连接 -> {}", _state.getLinkUrl());
-
     ActorRef self = getSelf();
     self.tell(TryConnect.MSG, self);
   }

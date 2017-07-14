@@ -28,7 +28,7 @@ public class PauseMsgHdl extends ActorMessageHandler {
       return Result.CONTINUE;
     }
 
-    ctx.log().debug("Pause!!!!!!!!!!!!!! -> {} -> {}", ctx, msg.getClass());
+    log(ctx).debug("Pause!!!!!!!!!!!!!! -> {} -> {}", ctx, msg.getClass());
 
     // 将暂停处理的消息缓存起来，以便恢复时处理
     _messageBuf.addLast(msg);

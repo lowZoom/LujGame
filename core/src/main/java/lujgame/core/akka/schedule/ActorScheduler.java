@@ -6,6 +6,7 @@ import akka.actor.Cancellable;
 import akka.actor.Scheduler;
 import akka.actor.UntypedActorContext;
 import com.google.common.collect.Multimap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import lujgame.core.akka.common.CaseActor;
 import lujgame.core.akka.common.CaseActorInternal;
@@ -20,8 +21,10 @@ import scala.concurrent.duration.FiniteDuration;
 public class ActorScheduler {
 
   @Autowired
-  public ActorScheduler(CaseActorInternal caseActorInternal) {
+  public ActorScheduler(CaseActorInternal caseActorInternal,
+      ScheduleItemFactory scheduleItemFactory) {
     _caseActorInternal = caseActorInternal;
+    _scheduleItemFactory = scheduleItemFactory;
   }
 
   public void schedule(CaseActor actor, long len, TimeUnit unit, Object msg) {
@@ -36,8 +39,8 @@ public class ActorScheduler {
     scheduler.scheduleOnce(dur, actorRef, msg, dispatcher, actorRef);
   }
 
-  public void schedule(CaseActor actor, long len,
-      TimeUnit unit, Object msg, Class<?> interrupt) {
+  public void schedule(CaseActor actor, long len, TimeUnit unit,
+      String scheduleId, Object msg, Class<?> interruptType) {
     UntypedActorContext ctx = actor.getContext();
     ActorSystem system = ctx.system();
     Scheduler scheduler = system.scheduler();
@@ -46,13 +49,31 @@ public class ActorScheduler {
     ActorRef actorRef = actor.getSelf();
     ExecutionContextExecutor dispatcher = system.dispatcher();
 
+    // 取消重复调度
+    CaseActorInternal i = _caseActorInternal;
+    CaseActorState state = i.getState(actor);
+    Map<String, ScheduleItem> scheduleMap = i.getOrNewScheduleMap(state);
+    cancelLast(scheduleMap, scheduleId);
+
+    // 存放新的调度
     Cancellable c = scheduler.scheduleOnce(dur, actorRef, msg, dispatcher, actorRef);
-    //TODO: 要存放在某个地方，后面才能打断
+    ScheduleItem item = _scheduleItemFactory.createItem(scheduleId, interruptType, c);
+    scheduleMap.put(scheduleId, item);
 
-    CaseActorState state = _caseActorInternal.getState(actor);
-    Multimap<Class<?>, Cancellable> interruptMap = state.getScheduleInterruptMap();
+    Multimap<Class<?>, ScheduleItem> interruptMap = i.getOrNewInterruptMap(state);
+    interruptMap.put(interruptType, item);
+  }
 
+  private static void cancelLast(Map<String, ScheduleItem> scheduleMap, String scheduleId) {
+    ScheduleItem item = scheduleMap.get(scheduleId);
+    if (item == null) {
+      return;
+    }
+
+    Cancellable cancellable = item.getCancellable();
+    cancellable.cancel();
   }
 
   private final CaseActorInternal _caseActorInternal;
+  private final ScheduleItemFactory _scheduleItemFactory;
 }

@@ -1,6 +1,5 @@
 package lujgame.core.akka.common;
 
-import akka.actor.Cancellable;
 import akka.event.LoggingAdapter;
 import com.google.common.collect.Multimap;
 import java.util.HashMap;
@@ -8,6 +7,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Consumer;
 import lujgame.core.akka.common.message.ActorMessageHandler;
+import lujgame.core.akka.schedule.ScheduleItem;
 
 public class CaseActorState {
 
@@ -23,13 +23,20 @@ public class CaseActorState {
     _actionMap = new HashMap<>(32);
   }
 
-  public Multimap<Class<?>, Cancellable> getScheduleInterruptMap() {
-    return _scheduleInterruptMap;
+  public Map<String, ScheduleItem> getScheduleMap() {
+    return _scheduleMap;
   }
 
-  public void setScheduleInterruptMap(
-      Multimap<Class<?>, Cancellable> scheduleInterruptMap) {
-    _scheduleInterruptMap = scheduleInterruptMap;
+  public void setScheduleMap(Map<String, ScheduleItem> scheduleMap) {
+    _scheduleMap = scheduleMap;
+  }
+
+  public Multimap<Class<?>, ScheduleItem> getInterruptMap() {
+    return _interruptMap;
+  }
+
+  public void setInterruptMap(Multimap<Class<?>, ScheduleItem> interruptMap) {
+    _interruptMap = interruptMap;
   }
 
   public CaseActor getActor() {
@@ -48,7 +55,8 @@ public class CaseActorState {
     return _messagePipeline;
   }
 
-  private Multimap<Class<?>, Cancellable> _scheduleInterruptMap;
+  private Map<String, ScheduleItem> _scheduleMap;
+  private Multimap<Class<?>, ScheduleItem> _interruptMap;
 
   private final Map<Class<?>, Consumer<?>> _actionMap;
   private final CaseActor _actor;

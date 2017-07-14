@@ -2,14 +2,13 @@ package lujgame.gateway.network.akka.connection;
 
 import akka.actor.ActorRef;
 import java.net.InetSocketAddress;
-import java.util.concurrent.TimeUnit;
-import lujgame.core.akka.AkkaTool;
 import lujgame.core.akka.common.CaseActor;
 import lujgame.gateway.network.akka.accept.logic.ConnKiller;
 import lujgame.gateway.network.akka.accept.logic.ForwardBinder;
 import lujgame.gateway.network.akka.accept.message.BindForwardRsp;
 import lujgame.gateway.network.akka.connection.logic.ConnInfoGetter;
 import lujgame.gateway.network.akka.connection.logic.ConnPacketReceiver;
+import lujgame.gateway.network.akka.connection.logic.DumbDetector;
 import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
 import lujgame.gateway.network.akka.connection.message.ConnDataMsg;
 
@@ -20,23 +19,22 @@ public class ConnActor extends CaseActor {
 
   public enum Destroy {MSG}
 
-  enum Dumb {MSG}
+  public enum Dumb {MSG}
 
   public ConnActor(
       ConnActorState state,
-      AkkaTool akkaTool,
       ConnPacketReceiver packetReceiver,
       ForwardBinder forwardBinder,
       ConnKiller connKiller,
-      ConnInfoGetter connInfoGetter) {
+      DumbDetector dumbDetector, ConnInfoGetter connInfoGetter) {
     _state = state;
 
-    _akkaTool = akkaTool;
     _packetReceiver = packetReceiver;
 
     _forwardBinder = forwardBinder;
     _connKiller = connKiller;
 
+    _dumbDetector = dumbDetector;
     _connInfoGetter = connInfoGetter;
 
     registerMessage();
@@ -52,7 +50,7 @@ public class ConnActor extends CaseActor {
     _packetReceiver.updateNettyHandler(state, self);
 
     // 启动空连接检测
-    _akkaTool.schedule(this, 3, TimeUnit.SECONDS, Dumb.MSG, ConnDataMsg.class);
+    _dumbDetector.startDetect(this);
   }
 
   @Override
@@ -87,20 +85,16 @@ public class ConnActor extends CaseActor {
 
   @SuppressWarnings("unused")
   private void onDumb(Dumb ignored) {
-    InetSocketAddress remoteAddr = _connInfoGetter.getRemoteAddress(_state);
-    log().warning("[非法]检测到空连接，即将销毁 -> {}", remoteAddr);
-
-    ActorRef self = getSelf();
-    self.tell(Destroy.MSG, self);
+    _dumbDetector.destroyDumb(_state, getSelf(), log());
   }
 
   private final ConnActorState _state;
 
-  private final AkkaTool _akkaTool;
   private final ConnPacketReceiver _packetReceiver;
 
   private final ForwardBinder _forwardBinder;
   private final ConnKiller _connKiller;
 
+  private final DumbDetector _dumbDetector;
   private final ConnInfoGetter _connInfoGetter;
 }

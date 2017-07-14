@@ -30,7 +30,12 @@ public class LinkConnector {
     selection.tell(LinkConnect.Try.MSG, ctx.self());
 
     _actorScheduler.schedule(actor, 3, TimeUnit.SECONDS,
-        LinkClientActor.TryConnect.MSG, LinkConnect.Ok.class);
+        ScheduleId.TRY, LinkClientActor.TryConnect.MSG, LinkConnect.Ok.class);
+  }
+
+  private interface ScheduleId {
+
+    String TRY = LinkClientActor.TryConnect.class.getName();
   }
 
   private final ActorScheduler _actorScheduler;

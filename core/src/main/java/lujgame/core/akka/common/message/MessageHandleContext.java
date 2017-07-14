@@ -1,12 +1,8 @@
 package lujgame.core.akka.common.message;
 
-import akka.event.LoggingAdapter;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import lujgame.core.akka.common.CaseActorState;
 
 public class MessageHandleContext {
@@ -27,14 +23,8 @@ public class MessageHandleContext {
     removeSet.add(handler);
   }
 
-  public LoggingAdapter log() {
-    return _state.getLogger();
-  }
-
-  @SuppressWarnings("unchecked")
-  public Consumer<Object> getMessageAction(Class<?> msgType) {
-    Map<Class<?>, Consumer<?>> actionMap = _state.getActionMap();
-    return (Consumer<Object>) actionMap.get(msgType);
+  public CaseActorState getActorState() {
+    return _state;
   }
 
   public Object getMessage() {
@@ -58,5 +48,5 @@ public class MessageHandleContext {
   private final CaseActorState _state;
 
   private final Object _message;
-  private final List<Object>  _msgQueue;
+  private final List<Object> _msgQueue;
 }
