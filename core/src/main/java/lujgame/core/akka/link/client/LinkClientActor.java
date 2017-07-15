@@ -28,14 +28,12 @@ public class LinkClientActor extends CaseActor {
     self.tell(TryConnect.MSG, self);
   }
 
-  @SuppressWarnings("unused")
-  private void onTryConnect(TryConnect ignored) {
+  private void onTryConnect(@SuppressWarnings("unused") TryConnect msg) {
     _linkConnector.tryConnect(_state, this, log());
   }
 
-  @SuppressWarnings("unused")
-  private void onConnectOk(LinkConnect.Ok ignored) {
-    log().debug("link连接成功！！！！！！！！！！！！！！！！！！！");
+  private void onConnectOk(@SuppressWarnings("unused") LinkConnect.Ok msg) {
+    _linkConnector.finishConnect(_state, getSelf());
   }
 
   private final LinkClientActorState _state;

@@ -4,8 +4,12 @@ import akka.actor.Cancellable;
 
 public class ScheduleItem {
 
-  public ScheduleItem(String scheduleId, Class<?> interruptType, Cancellable cancellable) {
+  public ScheduleItem(String scheduleId,
+      Object message,
+      Class<?> interruptType,
+      Cancellable cancellable) {
     _scheduleId = scheduleId;
+    _message = message;
 
     _interruptType = interruptType;
     _cancellable = cancellable;
@@ -15,15 +19,20 @@ public class ScheduleItem {
     return _scheduleId;
   }
 
-  public Class<?> getInterruptType() {
-    return _interruptType;
+  public Object getMessage() {
+    return _message;
   }
 
   public Cancellable getCancellable() {
     return _cancellable;
   }
 
+  public Class<?> getInterruptType() {
+    return _interruptType;
+  }
+
   private final String _scheduleId;
+  private final Object _message;
 
   private final Class<?> _interruptType;
   private final Cancellable _cancellable;

@@ -1,9 +1,9 @@
 package lujgame.core.akka.link.client;
 
+import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.japi.Creator;
 import lujgame.core.akka.link.client.logic.LinkConnector;
-import lujgame.core.akka.schedule.ActorScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,8 +16,8 @@ public class LinkClientActorFactory {
     _linkConnector = linkConnector;
   }
 
-  public Props props(String linkUrl) {
-    LinkClientActorState state = new LinkClientActorState(linkUrl);
+  public Props props(String linkUrl, ActorRef requestorRef, Enum<?> okMsg) {
+    LinkClientActorState state = new LinkClientActorState(linkUrl, requestorRef, okMsg);
 
     Creator<LinkClientActor> c = () ->
         new LinkClientActor(state, _linkConnector);

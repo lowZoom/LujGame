@@ -63,7 +63,9 @@ public class ScheduleMsgHdl extends ActorMessageHandler {
       String scheduleId = item.getScheduleId();
       ScheduleItem oldItem = scheduleMap.remove(scheduleId);
 
-      checkState(Objects.equals(item, oldItem), "不应该不相等，检查put逻辑");
+      checkState(Objects.equals(item, oldItem),
+          "不应该不相等，检查put逻辑：%s <-> %s", item, oldItem);
+
 //      log(ctx).debug("******** {}", item.getScheduleId());
     }
 
@@ -78,13 +80,13 @@ public class ScheduleMsgHdl extends ActorMessageHandler {
     Map<String, ScheduleItem> scheduleMap = actorState.getScheduleMap();
     checkNotNull(scheduleMap, "这里不可能为空，在请求定时后就应该已初始化");
 
-    // 调用对应的消息处理器
-    Object msg = scheduleMsg.getMsg();
-    ctx.addExtraMessage(msg);
-
-    // 删除对应cancellable
+    // 取出对应调度项
     String scheduleId = scheduleMsg.getScheduleId();
     ScheduleItem item = scheduleMap.remove(scheduleId);
+
+    // 调用对应消息处理器
+    Object msg = item.getMessage();
+    ctx.addExtraMessage(msg);
 
     // 没有注册过打断消息，中止
     Class<?> interruptType = item.getInterruptType();
@@ -92,7 +94,7 @@ public class ScheduleMsgHdl extends ActorMessageHandler {
       return;
     }
 
-    // 清除打断消息
+    // 清理打断注册消息
     Multimap<Class<?>, ScheduleItem> interruptMap = actorState.getInterruptMap();
     checkNotNull(interruptMap, "都注册过打断消息了还没初始化，检查打断注册逻辑");
 

@@ -2,6 +2,9 @@ package lujgame.gateway.network.akka.accept.message;
 
 import java.io.Serializable;
 
+/**
+ * ConnActor绑定投递节点请求
+ */
 public class BindForwardReq implements Serializable {
 
   public BindForwardReq(String connId, String boxId) {

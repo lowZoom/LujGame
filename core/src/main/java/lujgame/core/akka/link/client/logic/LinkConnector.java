@@ -1,5 +1,6 @@
 package lujgame.core.akka.link.client.logic;
 
+import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import akka.actor.UntypedActorContext;
 import akka.event.LoggingAdapter;
@@ -29,8 +30,17 @@ public class LinkConnector {
     ActorSelection selection = ctx.actorSelection(url);
     selection.tell(LinkConnect.Try.MSG, ctx.self());
 
-    _actorScheduler.schedule(actor, 3, TimeUnit.SECONDS,
+    _actorScheduler.scheduleSelf(actor, 3, TimeUnit.SECONDS,
         ScheduleId.TRY, LinkClientActor.TryConnect.MSG, LinkConnect.Ok.class);
+  }
+
+  public void finishConnect(LinkClientActorState state, ActorRef clientRef) {
+//    log().debug("link连接成功！！！！！！！！！！！！！！！！！！！");
+
+    ActorRef reqRef = state.getRequestorRef();
+    Enum<?> okMsg = state.getOkMsg();
+
+    reqRef.tell(okMsg, clientRef);
   }
 
   private interface ScheduleId {

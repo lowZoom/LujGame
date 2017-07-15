@@ -18,7 +18,6 @@ public class AkkaTool {
   public AkkaTool(
       ActorScheduler actorScheduler,
       ActorLinker actorLinker) {
-
     _actorScheduler = actorScheduler;
     _actorLinker = actorLinker;
   }
@@ -33,16 +32,15 @@ public class AkkaTool {
 
   public void schedule(CaseActor actor, long len, TimeUnit unit,
       String scheduleId, Object msg, Class<?> interrupt) {
-    _actorScheduler.schedule(actor, len, unit, scheduleId, msg, interrupt);
+    _actorScheduler.scheduleSelf(actor, len, unit, scheduleId, msg, interrupt);
   }
 
-  public void link(CaseActor actor, String linkUrl) {
-    _actorLinker.link(actor.getContext(), linkUrl);
+  public void link(CaseActor requestor, String linkUrl, Enum<?> okMsg) {
+    _actorLinker.link(linkUrl, requestor, okMsg);
   }
 
   public void linkListen(CaseActor actor, Consumer<LinkConnect.Try> action) {
     //TODO: 特殊处理link连接请求消息
-
 
     actor.addCase(LinkConnect.Try.class, action);
   }

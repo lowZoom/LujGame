@@ -39,7 +39,7 @@ public class ActorScheduler {
     scheduler.scheduleOnce(dur, actorRef, msg, dispatcher, actorRef);
   }
 
-  public void schedule(CaseActor actor, long len, TimeUnit unit,
+  public void scheduleSelf(CaseActor actor, long len, TimeUnit unit,
       String scheduleId, Object msg, Class<?> interruptType) {
     UntypedActorContext ctx = actor.getContext();
     ActorSystem system = ctx.system();
@@ -55,9 +55,12 @@ public class ActorScheduler {
     Map<String, ScheduleItem> scheduleMap = i.getOrNewScheduleMap(state);
     cancelLast(scheduleMap, scheduleId);
 
+    // 新建调度
+    ScheduleMsg scheduleMsg = new ScheduleMsg(scheduleId);
+    Cancellable c = scheduler.scheduleOnce(dur, actorRef, scheduleMsg, dispatcher, actorRef);
+
     // 存放新的调度
-    Cancellable c = scheduler.scheduleOnce(dur, actorRef, msg, dispatcher, actorRef);
-    ScheduleItem item = _scheduleItemFactory.createItem(scheduleId, interruptType, c);
+    ScheduleItem item = _scheduleItemFactory.createItem(scheduleId, msg, interruptType, c);
     scheduleMap.put(scheduleId, item);
 
     Multimap<Class<?>, ScheduleItem> interruptMap = i.getOrNewInterruptMap(state);

@@ -13,9 +13,9 @@ public class GlueAdminConnector {
     _akkaTool = akkaTool;
   }
 
-  public void connectAdmin(GateGlueActorState state, CaseActor actor) {
+  public void connectAdmin(GateGlueActorState state, CaseActor actor, Enum<?> okMsg) {
     String url = state.getGlueUrl();
-    _akkaTool.link(actor, url);
+    _akkaTool.link(actor, url, okMsg);
   }
 
   private final AkkaTool _akkaTool;
