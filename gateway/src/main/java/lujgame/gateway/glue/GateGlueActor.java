@@ -22,7 +22,7 @@ public class GateGlueActor extends CaseActor {
   @Override
   public void preStart() throws Exception {
     // 开始尝试连接网关管理节点
-    _adminConnector.connectAdmin(_state, this, AdminOk.MSG);
+    _adminConnector.startConnect(_state, this, AdminOk.MSG);
   }
 
   private void onBindForward(BindForwardReq msg) {
@@ -30,9 +30,7 @@ public class GateGlueActor extends CaseActor {
   }
 
   private void onAdminConnect(@SuppressWarnings("unused") AdminOk msg) {
-    //TODO: 请求查询投递节点map
-
-    log().debug("连通！！！！！————————————————————++++++++++");
+    _adminConnector.finishConnect();
   }
 
   enum AdminOk {MSG}

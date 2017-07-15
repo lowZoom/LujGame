@@ -39,7 +39,8 @@ public class AkkaTool {
     _actorLinker.link(linkUrl, requestor, okMsg);
   }
 
-  public void linkListen(CaseActor actor, Consumer<LinkConnect.Try> action) {
+  public void linkListen(CaseActor listener, Enum<?> newMsg) {
+
     //TODO: 特殊处理link连接请求消息
 
     actor.addCase(LinkConnect.Try.class, action);

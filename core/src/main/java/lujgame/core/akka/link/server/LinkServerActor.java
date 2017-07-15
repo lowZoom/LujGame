@@ -10,8 +10,7 @@ public class LinkServerActor extends CaseActor {
     addCase(LinkConnect.Try.class, this::onConnectTry);
   }
 
-  @SuppressWarnings("unused")
-  private void onConnectTry(LinkConnect.Try ignored) {
+  private void onConnectTry(@SuppressWarnings("unused") LinkConnect.Try ignored) {
     ActorRef clientRef = getSender();
     clientRef.tell(LinkConnect.Ok.MSG, getSelf());
   }

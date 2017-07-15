@@ -6,7 +6,7 @@ import lujgame.core.akka.link.client.logic.LinkConnector;
 import lujgame.core.akka.link.message.LinkConnect;
 
 /**
- * 让两个actor保持连接
+ * 让两个远程actor保持连接
  */
 public class LinkClientActor extends CaseActor {
 
