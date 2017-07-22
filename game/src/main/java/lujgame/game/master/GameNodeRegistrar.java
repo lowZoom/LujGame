@@ -20,8 +20,8 @@ public class GameNodeRegistrar {
   public void requestRegister(Member masterInfo, String serverId,
       ActorRef nodeRef, UntypedActorContext ctx) {
     Address addr = masterInfo.address();
-
     ActorSelection masterSelect = ctx.actorSelection(addr + "/user/Master");
+
     GNodeRegMsg msg = new GNodeRegMsg(serverId);
     masterSelect.tell(msg, nodeRef);
   }

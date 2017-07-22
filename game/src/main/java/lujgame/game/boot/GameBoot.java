@@ -47,18 +47,17 @@ public class GameBoot {
 
     Cluster cluster = Cluster.get(system);
 
-    ActorRef masterRef = system.actorOf(_clusterBossActorFactory.props(cluster), "GameMaster");
+    ActorRef masterRef = system.actorOf(_clusterBossActorFactory.props(cluster), "Master");
     ActorRef gateCommRef = system.actorOf(_commGateActorFactory.props(masterRef), "GateComm");
   }
 
   private void startGame(Config gameCfg) {
-    GameBootConfigLoader l = _bootConfigLoader;
-    Config akkaCfg = l.loadAkkaConfig(gameCfg);
+    Config akkaCfg = _bootConfigLoader.loadAkkaConfig(gameCfg);
     ActorSystem system = ActorSystem.create("Game", akkaCfg);
 
     Cluster cluster = Cluster.get(system);
     Props props = _gameServerActorFactory.props(gameCfg, cluster);
-    ActorRef serverRef = system.actorOf(props);
+    ActorRef serverRef = system.actorOf(props, "Slave");
   }
 
   private final GameBootConfigLoader _bootConfigLoader;
