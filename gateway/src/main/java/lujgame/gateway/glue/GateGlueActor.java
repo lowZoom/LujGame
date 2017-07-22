@@ -1,6 +1,7 @@
 package lujgame.gateway.glue;
 
 import lujgame.core.akka.common.CaseActor;
+import lujgame.gateway.glue.message.NewForwardMsg;
 import lujgame.gateway.network.akka.accept.logic.ForwardBinder;
 import lujgame.gateway.network.akka.accept.message.BindForwardReq;
 
@@ -15,8 +16,10 @@ public class GateGlueActor extends CaseActor {
     _adminConnector = adminConnector;
     _forwardBinder = forwardBinder;
 
-    addCase(BindForwardReq.class, this::onBindForward);
     addCase(AdminOk.class, this::onAdminConnect);
+    addCase(NewForwardMsg.class, this::onNewForward);
+
+    addCase(BindForwardReq.class, this::onBindForward);
   }
 
   @Override
@@ -25,12 +28,16 @@ public class GateGlueActor extends CaseActor {
     _adminConnector.startConnect(_state, this, AdminOk.MSG);
   }
 
-  private void onBindForward(BindForwardReq msg) {
-    _forwardBinder.findForward(_state, msg.getBoxId(), getSender(), getSelf());
+  private void onAdminConnect(@SuppressWarnings("unused") AdminOk msg) {
+    _adminConnector.finishConnect(getSender(), getSelf(), log());
   }
 
-  private void onAdminConnect(@SuppressWarnings("unused") AdminOk msg) {
-    _adminConnector.finishConnect();
+  private void onNewForward(NewForwardMsg msg) {
+    _forwardBinder.addForward(_state, msg.getForwardId(), msg.getForwardRef(),log());
+  }
+
+  private void onBindForward(BindForwardReq msg) {
+    _forwardBinder.findForward(_state, msg.getBoxId(), getSender(), getSelf());
   }
 
   enum AdminOk {MSG}

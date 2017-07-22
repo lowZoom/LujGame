@@ -47,8 +47,8 @@ public class GameBoot {
 
     Cluster cluster = Cluster.get(system);
 
-    ActorRef masterRef = system.actorOf(_clusterBossActorFactory.props(cluster), "Master");
-    ActorRef gateCommRef = system.actorOf(_commGateActorFactory.props(), "GateComm");
+    ActorRef masterRef = system.actorOf(_clusterBossActorFactory.props(cluster), "GameMaster");
+    ActorRef gateCommRef = system.actorOf(_commGateActorFactory.props(masterRef), "GateComm");
   }
 
   private void startGame(Config gameCfg) {

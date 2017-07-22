@@ -1,5 +1,6 @@
 package lujgame.game.gate;
 
+import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.japi.Creator;
 import lujgame.core.akka.AkkaTool;
@@ -15,12 +16,11 @@ public class CommGateActorFactory {
     _gateAdder = gateAdder;
   }
 
-  public Props props() {
-    CommGateActorState state = new CommGateActorState();
+  public Props props(ActorRef masterRef) {
+    CommGateActorState state = new CommGateActorState(masterRef);
 
-    Creator<CommGateActor> c = () -> {
-      return new CommGateActor(state, _akkaTool, _gateAdder);
-    };
+    Creator<CommGateActor> c = () -> new CommGateActor(state, _akkaTool, _gateAdder);
+
     return Props.create(CommGateActor.class, c);
   }
 

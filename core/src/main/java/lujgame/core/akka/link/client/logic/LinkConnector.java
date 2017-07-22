@@ -34,13 +34,13 @@ public class LinkConnector {
         ScheduleId.TRY, LinkClientActor.TryConnect.MSG, LinkConnect.Ok.class);
   }
 
-  public void finishConnect(LinkClientActorState state, ActorRef clientRef) {
+  public void finishConnect(LinkClientActorState state, ActorRef listenRef) {
 //    log().debug("link连接成功！！！！！！！！！！！！！！！！！！！");
 
     ActorRef reqRef = state.getRequestorRef();
     Enum<?> okMsg = state.getOkMsg();
 
-    reqRef.tell(okMsg, clientRef);
+    reqRef.tell(okMsg, listenRef);
   }
 
   private interface ScheduleId {

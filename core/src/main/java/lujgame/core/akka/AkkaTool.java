@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import lujgame.core.akka.common.CaseActor;
 import lujgame.core.akka.link.ActorLinker;
-import lujgame.core.akka.link.message.LinkConnect;
 import lujgame.core.akka.schedule.ActorScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,10 +39,7 @@ public class AkkaTool {
   }
 
   public void linkListen(CaseActor listener, Enum<?> newMsg) {
-
-    //TODO: 特殊处理link连接请求消息
-
-    actor.addCase(LinkConnect.Try.class, action);
+    _actorLinker.linkListen(listener, newMsg);
   }
 
   private final ActorScheduler _actorScheduler;

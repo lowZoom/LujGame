@@ -20,17 +20,32 @@ public class ForwardBinder {
     _connKiller = connKiller;
   }
 
-  public void findForward(GateGlueActorState state,
-      String boxId, ActorRef connRef, ActorRef glueRef) {
-    // 所有看转发的节点全在这里了，glueActor会根据管理节点的推送来维护
+  /**
+   * 增加新的转发节点
+   */
+  public void addForward(GateGlueActorState state,
+      String forwardId, ActorRef forwardRef, LoggingAdapter log) {
+    log.info("新的转发节点：{} -> {}", forwardId, forwardRef.path());
 
     Map<String, ActorRef> forwardMap = state.getForwardMap();
-    ActorRef forwardRef = forwardMap.get(boxId);
+    forwardMap.put(forwardId, forwardRef);
+  }
 
-    BindForwardRsp rsp = new BindForwardRsp(boxId, forwardRef);
+  /**
+   * @param forwardId 在glueActor中查询此id对应转发节点
+   */
+  public void findForward(GateGlueActorState state,
+      String forwardId, ActorRef connRef, ActorRef glueRef) {
+    Map<String, ActorRef> forwardMap = state.getForwardMap();
+    ActorRef forwardRef = forwardMap.get(forwardId);
+
+    BindForwardRsp rsp = new BindForwardRsp(forwardId, forwardRef);
     connRef.tell(rsp, glueRef);
   }
 
+  /**
+   * 在connActor中结束绑定
+   */
   public void finishBind(ConnActorState state, ActorRef forwardRef,
       String forwardId, ActorRef connRef, LoggingAdapter log) {
     if (forwardRef == null) {

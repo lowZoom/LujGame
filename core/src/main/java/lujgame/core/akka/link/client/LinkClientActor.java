@@ -33,7 +33,7 @@ public class LinkClientActor extends CaseActor {
   }
 
   private void onConnectOk(@SuppressWarnings("unused") LinkConnect.Ok msg) {
-    _linkConnector.finishConnect(_state, getSelf());
+    _linkConnector.finishConnect(_state, getSender());
   }
 
   private final LinkClientActorState _state;

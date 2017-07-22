@@ -1,21 +1,22 @@
 package lujgame.game.master;
 
-import lujgame.core.akka.AkkaTool;
 import lujgame.core.akka.common.CaseActor;
 import lujgame.game.master.message.GNodeRegMsg;
+import lujgame.game.master.message.ReplyGateMsg;
 
 public class ClusterBossActor extends CaseActor {
 
   public ClusterBossActor(
       ClusterBossActorState state,
-      AkkaTool akkaTool,
-      GameNodeRegistrar nodeRegistrar) {
+      GameNodeRegistrar nodeRegistrar,
+      GateReplier gateReplier) {
     _state = state;
 
-    _akkaTool = akkaTool;
+    _gateReplier = gateReplier;
     _nodeRegistrar = nodeRegistrar;
 
     addCase(GNodeRegMsg.class, this::onNodeReg);
+    addCase(ReplyGateMsg.class, this::onReplyGate);
   }
 
   @Override
@@ -27,8 +28,12 @@ public class ClusterBossActor extends CaseActor {
     _nodeRegistrar.addServerNode(_state, msg.getServerId(), getSender(), log());
   }
 
+  private void onReplyGate(ReplyGateMsg msg) {
+    _gateReplier.replyGate(_state, msg.getGateRef(), getSender(), log());
+  }
+
   private final ClusterBossActorState _state;
 
-  private final AkkaTool _akkaTool;
   private final GameNodeRegistrar _nodeRegistrar;
+  private final GateReplier _gateReplier;
 }
