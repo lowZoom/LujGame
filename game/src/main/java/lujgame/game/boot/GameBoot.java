@@ -46,7 +46,6 @@ public class GameBoot {
     ActorSystem system = ActorSystem.create("Game", akkaCfg);
 
     Cluster cluster = Cluster.get(system);
-
     ActorRef masterRef = system.actorOf(_clusterBossActorFactory.props(cluster), "Master");
     ActorRef gateCommRef = system.actorOf(_commGateActorFactory.props(masterRef), "GateComm");
   }

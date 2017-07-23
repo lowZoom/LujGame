@@ -1,6 +1,11 @@
 package lujgame.gateway.network.akka.connection.logic.packet;
 
-public class ConnPacket {
+import java.io.Serializable;
+
+/**
+ * 网关服投递出去的包裹
+ */
+public class ConnPacket implements Serializable {
 
   public ConnPacket(int opcode, byte[] data) {
     _opcode = opcode;

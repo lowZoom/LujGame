@@ -30,8 +30,7 @@ public class ConnPacketBuffer {
     return _pendingPacket;
   }
 
-  public void setPendingPacket(
-      ConnPacket pendingPacket) {
+  public void setPendingPacket(ConnPacket pendingPacket) {
     _pendingPacket = pendingPacket;
   }
 
