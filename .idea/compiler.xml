@@ -9,6 +9,8 @@
         <module name="admin" />
         <module name="core" />
         <module name="example" />
+        <module name="example_game" />
+        <module name="example_proto" />
         <module name="game" />
         <module name="gateway" />
         <module name="robot" />
@@ -18,6 +20,8 @@
       <module name="admin" target="1.8" />
       <module name="core" target="1.8" />
       <module name="example" target="1.5" />
+      <module name="example_game" target="1.8" />
+      <module name="example_proto" target="1.5" />
       <module name="game" target="1.8" />
       <module name="gateway" target="1.8" />
       <module name="lujgame" target="1.8" />

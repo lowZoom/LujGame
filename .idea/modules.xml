@@ -4,7 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/admin/admin.iml" filepath="$PROJECT_DIR$/admin/admin.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
-      <module fileurl="file://$PROJECT_DIR$/example/example.iml" filepath="$PROJECT_DIR$/example/example.iml" />
+      <module fileurl="file://$PROJECT_DIR$/example_game/example_game.iml" filepath="$PROJECT_DIR$/example_game/example_game.iml" group="example" />
+      <module fileurl="file://$PROJECT_DIR$/example_proto/example_proto.iml" filepath="$PROJECT_DIR$/example_proto/example_proto.iml" group="example" />
       <module fileurl="file://$PROJECT_DIR$/game/game.iml" filepath="$PROJECT_DIR$/game/game.iml" />
       <module fileurl="file://$PROJECT_DIR$/gateway/gateway.iml" filepath="$PROJECT_DIR$/gateway/gateway.iml" />
       <module fileurl="file://$PROJECT_DIR$/lujgame.iml" filepath="$PROJECT_DIR$/lujgame.iml" />
