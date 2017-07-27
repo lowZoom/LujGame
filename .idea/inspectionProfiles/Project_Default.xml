@@ -339,7 +339,7 @@
       <option name="m_minLength" value="5" />
       <option name="m_maxLength" value="64" />
     </inspection_tool>
-    <inspection_tool class="InterfaceNeverImplemented" enabled="true" level="WARNING" enabled_by_default="true">
+    <inspection_tool class="InterfaceNeverImplemented" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="ignoreInterfacesThatOnlyDeclareConstants" value="true" />
     </inspection_tool>
     <inspection_tool class="IteratorHasNextCallsIteratorNext" enabled="true" level="WARNING" enabled_by_default="true" />
