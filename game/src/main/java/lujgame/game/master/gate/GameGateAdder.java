@@ -1,10 +1,9 @@
-package lujgame.game.gate;
+package lujgame.game.master.gate;
 
 import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import java.util.Set;
-import lujgame.core.akka.link.message.LinkConnect;
-import lujgame.game.master.message.ReplyGateMsg;
+import lujgame.game.master.cluster.message.ReplyGateMsg;
 import org.springframework.stereotype.Component;
 
 @Component

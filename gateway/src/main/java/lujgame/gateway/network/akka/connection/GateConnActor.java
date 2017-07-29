@@ -15,13 +15,13 @@ import lujgame.gateway.network.akka.connection.message.ConnDataMsg;
 /**
  * 处理一条连接相关逻辑
  */
-public class ConnActor extends CaseActor {
+public class GateConnActor extends CaseActor {
 
   public enum Destroy {MSG}
 
   public enum Dumb {MSG}
 
-  public ConnActor(
+  public GateConnActor(
       ConnActorState state,
       ConnPacketReceiver packetReceiver,
       ForwardBinder forwardBinder,

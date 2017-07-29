@@ -1,4 +1,4 @@
-package lujgame.game.master;
+package lujgame.game.master.cluster;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
@@ -7,7 +7,7 @@ import akka.actor.UntypedActorContext;
 import akka.cluster.Member;
 import akka.event.LoggingAdapter;
 import java.util.Map;
-import lujgame.game.master.message.GNodeRegMsg;
+import lujgame.game.master.cluster.message.GNodeRegMsg;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,4 +1,4 @@
-package lujgame.game.master.message;
+package lujgame.game.master.cluster.message;
 
 import akka.actor.ActorRef;
 

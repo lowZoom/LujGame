@@ -4,7 +4,6 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.japi.Creator;
 import io.netty.channel.ChannelHandlerContext;
-import lujgame.core.akka.AkkaTool;
 import lujgame.gateway.network.akka.accept.logic.ConnKiller;
 import lujgame.gateway.network.akka.accept.logic.ForwardBinder;
 import lujgame.gateway.network.akka.connection.logic.ConnInfoGetter;
@@ -16,10 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ConnActorFactory {
+public class GateConnActorFactory {
 
   @Autowired
-  public ConnActorFactory(
+  public GateConnActorFactory(
       ConnPacketReceiver connPacketReceiver,
       ForwardBinder forwardBinder,
       ConnInfoGetter connInfoGetter,
@@ -38,10 +37,10 @@ public class ConnActorFactory {
     ConnActorState state = new ConnActorState(connId,
         new ConnPacketBuffer(), nettyContext, acceptRef);
 
-    Creator<ConnActor> c = () -> new ConnActor(state, _connPacketReceiver,
+    Creator<GateConnActor> c = () -> new GateConnActor(state, _connPacketReceiver,
         _forwardBinder, _connKiller, _dumbDetector, _connInfoGetter);
 
-    return Props.create(ConnActor.class, c);
+    return Props.create(GateConnActor.class, c);
   }
 
   public String getActorName(String connId) {

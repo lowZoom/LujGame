@@ -1,4 +1,4 @@
-package lujgame.game.gate;
+package lujgame.game.master.gate;
 
 import lujgame.core.akka.AkkaTool;
 import lujgame.core.akka.common.CaseActor;

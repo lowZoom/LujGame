@@ -1,4 +1,4 @@
-package lujgame.game.gate;
+package lujgame.game.master.gate;
 
 import akka.actor.ActorRef;
 import akka.actor.Props;

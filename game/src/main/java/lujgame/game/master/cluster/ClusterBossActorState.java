@@ -1,4 +1,4 @@
-package lujgame.game.master;
+package lujgame.game.master.cluster;
 
 import akka.actor.ActorRef;
 import akka.cluster.Cluster;

@@ -9,7 +9,7 @@ import java.util.Map;
 import lujgame.gateway.network.akka.accept.NetAcceptActor;
 import lujgame.gateway.network.akka.accept.NetAcceptState;
 import lujgame.gateway.network.akka.accept.message.NewConnMsg;
-import lujgame.gateway.network.akka.connection.ConnActorFactory;
+import lujgame.gateway.network.akka.connection.GateConnActorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 public class NewConnCreator {
 
   @Autowired
-  public NewConnCreator(ConnActorFactory connActorFactory) {
+  public NewConnCreator(GateConnActorFactory connActorFactory) {
     _connActorFactory = connActorFactory;
   }
 
@@ -26,7 +26,7 @@ public class NewConnCreator {
     String connId = Long.toString(state.getNextConnId());
     state.setNextConnId(state.getNextConnId() + 1);
 
-    ConnActorFactory connFactory = _connActorFactory;
+    GateConnActorFactory connFactory = _connActorFactory;
     ChannelHandlerContext nettyCtx = msg.getNettyContext();
     ActorRef acceptRef = acceptActor.getSelf();
     Props props = connFactory.props(connId, nettyCtx, acceptRef);
@@ -45,5 +45,5 @@ public class NewConnCreator {
     log.debug("增加新连接，当前连接数量：{}", connMap.size());
   }
 
-  private final ConnActorFactory _connActorFactory;
+  private final GateConnActorFactory _connActorFactory;
 }

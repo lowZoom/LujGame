@@ -1,8 +1,9 @@
-package lujgame.game.master;
+package lujgame.game.master.cluster;
 
 import akka.actor.Props;
 import akka.cluster.Cluster;
 import akka.japi.Creator;
+import lujgame.game.master.gate.GateReplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

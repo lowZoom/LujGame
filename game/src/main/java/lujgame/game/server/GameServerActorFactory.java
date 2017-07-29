@@ -6,7 +6,7 @@ import akka.japi.Creator;
 import com.typesafe.config.Config;
 import lujgame.core.akka.AkkaTool;
 import lujgame.game.boot.GameBootConfigLoader;
-import lujgame.game.master.GameNodeRegistrar;
+import lujgame.game.master.cluster.GameNodeRegistrar;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

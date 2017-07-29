@@ -26,11 +26,11 @@ public class ConnPacketBuffer {
     _pendingHeader = pendingHeader;
   }
 
-  public ConnPacket getPendingPacket() {
+  public GateNetPacket getPendingPacket() {
     return _pendingPacket;
   }
 
-  public void setPendingPacket(ConnPacket pendingPacket) {
+  public void setPendingPacket(GateNetPacket pendingPacket) {
     _pendingPacket = pendingPacket;
   }
 
@@ -41,7 +41,7 @@ public class ConnPacketBuffer {
   private int _readIndex;
 
   private ConnPacketHeader _pendingHeader;
-  private ConnPacket _pendingPacket;
+  private GateNetPacket _pendingPacket;
 
   private final List<byte[]> _bufferList;
 }

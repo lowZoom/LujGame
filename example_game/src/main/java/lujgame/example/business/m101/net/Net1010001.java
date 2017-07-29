@@ -19,6 +19,11 @@ public class Net1010001 extends GameNetHandler {
   }
 
   @Override
+  public String desc() {
+    return "处理玩家登录";
+  }
+
+  @Override
   public void onHandle(GameNetHandleContext ctx) {
     Req packet = ctx.getPacket();
 

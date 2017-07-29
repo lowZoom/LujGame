@@ -5,8 +5,8 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.cluster.Cluster;
 import com.typesafe.config.Config;
-import lujgame.game.gate.CommGateActorFactory;
-import lujgame.game.master.ClusterBossActorFactory;
+import lujgame.game.master.gate.CommGateActorFactory;
+import lujgame.game.master.cluster.ClusterBossActorFactory;
 import lujgame.game.server.GameServerActorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,29 +32,25 @@ public class GameBoot {
 
     GameBootConfigLoader l = _bootConfigLoader;
     Config gameCfg = l.loadGameConfig(fileName);
+    Config akkaCfg = l.loadAkkaConfig(gameCfg);
+
+    ActorSystem system = ActorSystem.create("Game", akkaCfg);
+    Cluster cluster = Cluster.get(system);
 
     if (l.isSeed(gameCfg)) {
-      startSeed(gameCfg);
+      startSeed(system, cluster);
       return;
     }
 
-    startGame(gameCfg);
+    startGame(gameCfg, system, cluster);
   }
 
-  private void startSeed(Config gameCfg) {
-    Config akkaCfg = _bootConfigLoader.loadAkkaConfig(gameCfg);
-    ActorSystem system = ActorSystem.create("Game", akkaCfg);
-
-    Cluster cluster = Cluster.get(system);
+  private void startSeed(ActorSystem system, Cluster cluster) {
     ActorRef masterRef = system.actorOf(_clusterBossActorFactory.props(cluster), "Master");
     ActorRef gateCommRef = system.actorOf(_commGateActorFactory.props(masterRef), "GateComm");
   }
 
-  private void startGame(Config gameCfg) {
-    Config akkaCfg = _bootConfigLoader.loadAkkaConfig(gameCfg);
-    ActorSystem system = ActorSystem.create("Game", akkaCfg);
-
-    Cluster cluster = Cluster.get(system);
+  private void startGame(Config gameCfg, ActorSystem system, Cluster cluster) {
     Props props = _gameServerActorFactory.props(gameCfg, cluster);
     ActorRef serverRef = system.actorOf(props, "Slave");
   }

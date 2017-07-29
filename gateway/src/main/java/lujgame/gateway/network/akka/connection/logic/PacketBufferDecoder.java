@@ -1,6 +1,6 @@
 package lujgame.gateway.network.akka.connection.logic;
 
-import lujgame.gateway.network.akka.connection.logic.packet.ConnPacket;
+import lujgame.gateway.network.akka.connection.logic.packet.GateNetPacket;
 import lujgame.gateway.network.akka.connection.logic.packet.ConnPacketBuffer;
 import lujgame.gateway.network.akka.connection.logic.packet.ConnPacketHeader;
 import lujgame.gateway.network.akka.connection.logic.packet.PacketBufferReader;
@@ -41,7 +41,7 @@ public class PacketBufferDecoder {
     byte[] data = new byte[length];
     r.readBytes(packetBuf, data);
 
-    ConnPacket packet = new ConnPacket(header.getOpcode(), data);
+    GateNetPacket packet = new GateNetPacket(header.getOpcode(), data);
     packetBuf.setPendingPacket(packet);
   }
 

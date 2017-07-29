@@ -3,7 +3,7 @@ package lujgame.gateway.glue;
 import lujgame.core.akka.common.CaseActor;
 import lujgame.gateway.glue.message.NewForwardMsg;
 import lujgame.gateway.network.akka.accept.logic.ForwardBinder;
-import lujgame.gateway.network.akka.accept.message.BindForwardReq;
+import lujgame.gateway.network.akka.accept.message.BindForwardReqLocal;
 
 public class GateGlueActor extends CaseActor {
 
@@ -19,7 +19,7 @@ public class GateGlueActor extends CaseActor {
     addCase(AdminOk.class, this::onAdminConnect);
     addCase(NewForwardMsg.class, this::onNewForward);
 
-    addCase(BindForwardReq.class, this::onBindForward);
+    addCase(BindForwardReqLocal.class, this::onBindForward);
   }
 
   @Override
@@ -33,11 +33,11 @@ public class GateGlueActor extends CaseActor {
   }
 
   private void onNewForward(NewForwardMsg msg) {
-    _forwardBinder.addForward(_state, msg.getForwardId(), msg.getForwardRef(),log());
+    _forwardBinder.addForward(_state, msg.getForwardId(), msg.getForwardRef(), log());
   }
 
-  private void onBindForward(BindForwardReq msg) {
-    _forwardBinder.findForward(_state, msg.getBoxId(), getSender(), getSelf());
+  private void onBindForward(BindForwardReqLocal msg) {
+    _forwardBinder.findForward(_state, msg.getForwardId(), msg.getConnId(), getSender());
   }
 
   enum AdminOk {MSG}

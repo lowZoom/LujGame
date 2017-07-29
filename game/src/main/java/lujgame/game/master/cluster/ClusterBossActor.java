@@ -1,8 +1,9 @@
-package lujgame.game.master;
+package lujgame.game.master.cluster;
 
 import lujgame.core.akka.common.CaseActor;
-import lujgame.game.master.message.GNodeRegMsg;
-import lujgame.game.master.message.ReplyGateMsg;
+import lujgame.game.master.cluster.message.GNodeRegMsg;
+import lujgame.game.master.cluster.message.ReplyGateMsg;
+import lujgame.game.master.gate.GateReplier;
 
 public class ClusterBossActor extends CaseActor {
 

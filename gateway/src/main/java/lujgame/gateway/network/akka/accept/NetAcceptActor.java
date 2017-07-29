@@ -6,7 +6,7 @@ import lujgame.gateway.network.akka.accept.logic.ConnKiller;
 import lujgame.gateway.network.akka.accept.logic.ConnectionItem;
 import lujgame.gateway.network.akka.accept.logic.NettyRunner;
 import lujgame.gateway.network.akka.accept.logic.NewConnCreator;
-import lujgame.gateway.network.akka.accept.message.BindForwardReq;
+import lujgame.gateway.network.akka.accept.message.BindForwardReqLocal;
 import lujgame.gateway.network.akka.accept.message.KillConnMsg;
 import lujgame.gateway.network.akka.accept.message.NewConnMsg;
 
@@ -39,7 +39,7 @@ public class NetAcceptActor extends CaseActor {
     addCase(NewConnMsg.class, this::onNewConn);
     addCase(KillConnMsg.class, this::onKillConn);
 
-    addCase(BindForwardReq.class, this::onBindForward);
+    addCase(BindForwardReqLocal.class, this::onBindForward);
   }
 
   private void onNewConn(NewConnMsg msg) {
@@ -54,7 +54,7 @@ public class NetAcceptActor extends CaseActor {
     _connKiller.killConnection(_state, msg.getConnId(), getContext(), log());
   }
 
-  private void onBindForward(BindForwardReq msg) {
+  private void onBindForward(BindForwardReqLocal msg) {
     _state.getGlueRef().forward(msg, getContext());
   }
 

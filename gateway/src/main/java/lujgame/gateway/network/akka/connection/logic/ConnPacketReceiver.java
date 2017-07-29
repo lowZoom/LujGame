@@ -7,9 +7,9 @@ import io.netty.channel.ChannelPipeline;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import lujgame.gateway.network.akka.accept.message.BindForwardReq;
-import lujgame.gateway.network.akka.connection.logic.packet.ConnPacket;
+import lujgame.gateway.network.akka.accept.message.BindForwardReqLocal;
 import lujgame.gateway.network.akka.connection.logic.packet.ConnPacketBuffer;
+import lujgame.gateway.network.akka.connection.logic.packet.GateNetPacket;
 import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
 import lujgame.gateway.network.netty.NettyConnEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +58,7 @@ public class ConnPacketReceiver {
         return;
       }
 
-      ConnPacket packet = packetBuf.getPendingPacket();
+      GateNetPacket packet = packetBuf.getPendingPacket();
       forwordPacket(state, packet, connRef, log);
 
       d.finishDecode(packetBuf);
@@ -68,7 +68,7 @@ public class ConnPacketReceiver {
   }
 
   void forwordPacket(ConnActorState state,
-      ConnPacket packet, ActorRef connRef, LoggingAdapter log) {
+      GateNetPacket packet, ActorRef connRef, LoggingAdapter log) {
     log.debug("收到完整包 -> {}：{}", packet.getOpcode(),
         new String(packet.getData(), StandardCharsets.UTF_8));
 
@@ -93,14 +93,14 @@ public class ConnPacketReceiver {
     forwardRef.tell(packet, connRef);
   }
 
-  void bindForward(ConnActorState state, ConnPacket packet, ActorRef connRef) {
+  void bindForward(ConnActorState state, GateNetPacket packet, ActorRef connRef) {
     byte[] data = packet.getData();
-    String boxId = new String(data, StandardCharsets.UTF_8);
+    String forwardId = new String(data, StandardCharsets.UTF_8);
 
     ActorRef acceptRef = state.getAcceptRef();
     String connId = state.getConnId();
 
-    BindForwardReq req = new BindForwardReq(connId, boxId);
+    BindForwardReqLocal req = new BindForwardReqLocal(connId, forwardId);
     acceptRef.tell(req, connRef);
   }
 

@@ -4,7 +4,7 @@ import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import java.util.Map;
 import lujgame.gateway.glue.GateGlueActorState;
-import lujgame.gateway.network.akka.accept.message.BindForwardRsp;
+import lujgame.gateway.network.akka.accept.message.BindForwardReqRemote;
 import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,12 +35,19 @@ public class ForwardBinder {
    * @param forwardId 在glueActor中查询此id对应转发节点
    */
   public void findForward(GateGlueActorState state,
-      String forwardId, ActorRef connRef, ActorRef glueRef) {
+      String forwardId, String connId, ActorRef connRef) {
     Map<String, ActorRef> forwardMap = state.getForwardMap();
-    ActorRef forwardRef = forwardMap.get(forwardId);
+    ActorRef forwardBossRef = forwardMap.get(forwardId);
 
-    BindForwardRsp rsp = new BindForwardRsp(forwardId, forwardRef);
-    connRef.tell(rsp, glueRef);
+    //TODO: 判断bossRef为null的情况
+
+    // 将绑定请求转发给游戏服
+    BindForwardReqRemote req = new BindForwardReqRemote(connId);
+    forwardBossRef.tell(req, connRef);
+
+//    //FIXME: 不再
+//    BindForwardRsp rsp = new BindForwardRsp(forwardId, forwardBossRef);
+//    connRef.tell(rsp, glueRef);
   }
 
   /**

@@ -1,8 +1,9 @@
-package lujgame.game.master;
+package lujgame.game.master.gate;
 
 import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import java.util.Map;
+import lujgame.game.master.cluster.ClusterBossActorState;
 import lujgame.gateway.glue.message.NewForwardMsg;
 import org.springframework.stereotype.Component;
 

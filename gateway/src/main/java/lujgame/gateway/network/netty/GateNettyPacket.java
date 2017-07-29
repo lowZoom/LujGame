@@ -3,7 +3,7 @@ package lujgame.gateway.network.netty;
 import akka.actor.ActorRef;
 import io.netty.channel.ChannelHandlerContext;
 import java.io.IOException;
-import lujgame.gateway.network.akka.connection.ConnActor;
+import lujgame.gateway.network.akka.connection.GateConnActor;
 import lujgame.gateway.network.akka.connection.message.ConnDataMsg;
 
 public class GateNettyPacket extends GateNettyData {
@@ -20,7 +20,7 @@ public class GateNettyPacket extends GateNettyData {
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
     if (cause.getClass() == IOException.class) {
-      _connRef.tell(ConnActor.Destroy.MSG, ActorRef.noSender());
+      _connRef.tell(GateConnActor.Destroy.MSG, ActorRef.noSender());
     }
   }
 
