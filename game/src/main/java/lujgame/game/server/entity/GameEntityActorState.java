@@ -1,16 +1,16 @@
 package lujgame.game.server.entity;
 
-import com.google.common.collect.ImmutableMap;
-import lujgame.game.server.net.GameNetHandler;
+import lujgame.game.server.net.NetHandlerMap;
 
 public class GameEntityActorState {
 
-  public GameEntityActorState(
-      ImmutableMap<Integer, GameNetHandler> netHandlerMap) {
+  public GameEntityActorState(NetHandlerMap netHandlerMap) {
     _netHandlerMap = netHandlerMap;
   }
 
+  public NetHandlerMap getNetHandlerMap() {
+    return _netHandlerMap;
+  }
 
-
-  private final ImmutableMap<Integer, GameNetHandler> _netHandlerMap;
+  private final NetHandlerMap _netHandlerMap;
 }

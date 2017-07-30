@@ -44,10 +44,6 @@ public class ForwardBinder {
     // 将绑定请求转发给游戏服
     BindForwardReqRemote req = new BindForwardReqRemote(connId);
     forwardBossRef.tell(req, connRef);
-
-//    //FIXME: 不再
-//    BindForwardRsp rsp = new BindForwardRsp(forwardId, forwardBossRef);
-//    connRef.tell(rsp, glueRef);
   }
 
   /**

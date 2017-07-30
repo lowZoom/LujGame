@@ -5,17 +5,22 @@ import akka.cluster.Member;
 import lujgame.core.akka.AkkaTool;
 import lujgame.core.akka.common.CaseActor;
 import lujgame.game.master.cluster.GameNodeRegistrar;
+import lujgame.game.server.entity.logic.EntityBinder;
+import lujgame.gateway.network.akka.accept.message.BindForwardReqRemote;
 
 public class GameServerActor extends CaseActor {
 
   public GameServerActor(
       GameServerActorState state,
       AkkaTool akkaTool,
-      GameNodeRegistrar serverRegistrar) {
+      GameNodeRegistrar serverRegistrar,
+      EntityBinder entityBinder) {
     _state = state;
 
     _akkaTool = akkaTool;
     _serverRegistrar = serverRegistrar;
+
+    _entityBinder = entityBinder;
   }
 
   @Override
@@ -37,8 +42,14 @@ public class GameServerActor extends CaseActor {
     }
   }
 
+  private void onBindForward(BindForwardReqRemote msg) {
+    _entityBinder.bindEntity(_state, msg.getConnId(), getContext(), getSender(), getSelf());
+  }
+
   private final GameServerActorState _state;
 
   private final AkkaTool _akkaTool;
   private final GameNodeRegistrar _serverRegistrar;
+
+  private final EntityBinder _entityBinder;
 }

@@ -17,6 +17,9 @@ public class GameNodeRegistrar {
     return member.roles().contains("seed");
   }
 
+  /**
+   * 请求注册到分布式中心上
+   */
   public void requestRegister(Member masterInfo, String serverId,
       ActorRef nodeRef, UntypedActorContext ctx) {
     Address addr = masterInfo.address();
@@ -26,6 +29,9 @@ public class GameNodeRegistrar {
     masterSelect.tell(msg, nodeRef);
   }
 
+  /**
+   * 分布式中心添加新注册的节点
+   */
   public void addServerNode(ClusterBossActorState state,
       String serverId, ActorRef nodeRef, LoggingAdapter log) {
     Map<String, ActorRef> nodeMap = state.getGameNodeMap();
