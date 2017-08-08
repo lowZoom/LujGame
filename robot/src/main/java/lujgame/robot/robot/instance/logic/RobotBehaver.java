@@ -1,13 +1,15 @@
 package lujgame.robot.robot.instance.logic;
 
-import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigRenderOptions;
 import io.netty.channel.ChannelHandlerContext;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import lujgame.core.akka.schedule.ActorScheduler;
 import lujgame.robot.netty.RobotNetPacket;
 import lujgame.robot.robot.instance.RobotInstanceActor;
 import lujgame.robot.robot.instance.RobotInstanceState;
@@ -20,7 +22,8 @@ import org.springframework.stereotype.Component;
 public class RobotBehaver {
 
   @Autowired
-  public RobotBehaver(RobotConfigReader robotConfigReader) {
+  public RobotBehaver(ActorScheduler actorScheduler, RobotConfigReader robotConfigReader) {
+    _actorScheduler = actorScheduler;
     _robotConfigReader = robotConfigReader;
   }
 
@@ -29,7 +32,8 @@ public class RobotBehaver {
     state.setBehaviorConfig(null);
   }
 
-  public void doBehave(RobotInstanceState iState, ActorRef instanceRef, LoggingAdapter log) {
+  public void doBehave(RobotInstanceState iState, RobotInstanceActor instanceActor,
+      LoggingAdapter log) {
     RobotBehaveState bState = iState.getBehaveState();
     int behaviorIndex = bState.getBehaviorIndex() + 1;
     bState.setBehaviorIndex(behaviorIndex);
@@ -37,7 +41,9 @@ public class RobotBehaver {
     RobotGroup robotGroup = iState.getRobotGroup();
     Config robotCfg = robotGroup.getConfig();
 
-    List<? extends Config> behaviorList = _robotConfigReader.getBehaviorList(robotCfg);
+    RobotConfigReader r = _robotConfigReader;
+    List<? extends Config> behaviorList = r.getBehaviorList(robotCfg);
+
     if (behaviorIndex >= behaviorList.size()) {
       log.info("机器人行为结束");
       return;
@@ -50,7 +56,9 @@ public class RobotBehaver {
     log.debug("发送操作码 -> {}", packet.getOpcode());
     nettyContext.writeAndFlush(packet);
 
-    instanceRef.tell(RobotInstanceActor.Behave.MSG, instanceRef);
+    long waitDur = r.getWaitDuration(behaviorCfg);
+    _actorScheduler.schedule(instanceActor, waitDur,
+        TimeUnit.MILLISECONDS, RobotInstanceActor.Behave.MSG);
   }
 
   private RobotNetPacket encodePacket(Config behaviorCfg, LoggingAdapter log) {
@@ -69,6 +77,8 @@ public class RobotBehaver {
     log.debug("包 ----> {}", dataStr);
     return new RobotNetPacket(opcode, dataStr.getBytes(StandardCharsets.UTF_8));
   }
+
+  private final ActorScheduler _actorScheduler;
 
   private final RobotConfigReader _robotConfigReader;
 }

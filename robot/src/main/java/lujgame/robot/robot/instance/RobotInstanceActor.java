@@ -42,8 +42,8 @@ public class RobotInstanceActor extends CaseActor {
 
   //TODO: 连接失败时根据配置是否重连
 
-  private void onBehave(Behave msg) {
-    _robotBehaver.doBehave(_state, getSelf(), log());
+  private void onBehave(@SuppressWarnings("unused") Behave msg) {
+    _robotBehaver.doBehave(_state, this, log());
   }
 
   private final RobotInstanceState _state;

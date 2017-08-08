@@ -21,6 +21,8 @@ public class GameServerActor extends CaseActor {
     _serverRegistrar = serverRegistrar;
 
     _entityBinder = entityBinder;
+
+    addCase(BindForwardReqRemote.class, this::onBindForward);
   }
 
   @Override

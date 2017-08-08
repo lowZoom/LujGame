@@ -72,16 +72,15 @@ public class ConnPacketReceiver {
     log.debug("收到完整包 -> {}：{}", packet.getOpcode(),
         new String(packet.getData(), StandardCharsets.UTF_8));
 
-    //TODO: 投递给游戏服，要先做确定/校验游戏服
-
-    ActorRef forwardRef = state.getForwardRef();
-
     Integer opcode = packet.getOpcode();
     if (opcode == 1) {
       bindForward(state, packet, connRef);
       return;
     }
 
+    //TODO: 投递给游戏服，要先做确定/校验游戏服
+
+    ActorRef forwardRef = state.getForwardRef();
     if (forwardRef == null) {
       InetSocketAddress addr = _connInfoGetter.getRemoteAddress(state);
       log.warning("非法连接，未绑定发包 -> {}", addr);

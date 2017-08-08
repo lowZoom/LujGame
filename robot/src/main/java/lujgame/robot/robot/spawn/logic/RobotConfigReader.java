@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.typesafe.config.Config;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,14 +26,6 @@ public class RobotConfigReader {
     return Optional.of(cfg.getString(EXTENDS));
   }
 
-  public List<? extends Config> getBehaviorList(Config cfg) {
-    final String BEHAVIOR = "behavior";
-    if (!cfg.hasPath(BEHAVIOR)) {
-      return ImmutableList.of();
-    }
-    return cfg.getConfigList(BEHAVIOR);
-  }
-
   public String getIp(Config cfg) {
     return cfg.getString("ip");
   }
@@ -46,5 +39,19 @@ public class RobotConfigReader {
    */
   public int getAmount(Config cfg) {
     return cfg.getInt("num");
+  }
+
+  public List<? extends Config> getBehaviorList(Config cfg) {
+    final String BEHAVIOR = "behavior";
+    if (!cfg.hasPath(BEHAVIOR)) {
+      return ImmutableList.of();
+    }
+    return cfg.getConfigList(BEHAVIOR);
+  }
+
+  public long getWaitDuration(Config behaviorCfg) {
+    final String KEY_WAIT = "wait";
+    return behaviorCfg.hasPath(KEY_WAIT) ?
+        behaviorCfg.getDuration(KEY_WAIT, TimeUnit.MILLISECONDS) : 0;
   }
 }

@@ -22,7 +22,7 @@ public class GameEntityActor extends CaseActor {
    * 处理网关服投递过来的包
    */
   private void onNetPacket(GateNetPacket msg) {
-    _netPacketConsumer.consumePacket(_state, msg);
+    _netPacketConsumer.consumePacket(_state, msg, log());
   }
 
   private final GameEntityActorState _state;

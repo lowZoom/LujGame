@@ -24,11 +24,8 @@ public class RobotStartActor extends CaseActor {
   }
 
   private void loadConfig() {
-    String ip = "127.0.0.1";
-    int port = 12345;
-
     UntypedActorContext ctx = getContext();
-    Props spawnProps = _spawnActorFactory.props(ip, port);
+    Props spawnProps = _spawnActorFactory.props();
     ActorRef spawnActor = ctx.actorOf(spawnProps, "Spawn");
 
 //    ChangeRobotCountMsg msg = new ChangeRobotCountMsg(1);

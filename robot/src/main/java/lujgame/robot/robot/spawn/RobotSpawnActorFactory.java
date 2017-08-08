@@ -19,11 +19,8 @@ public class RobotSpawnActorFactory {
     _robotInstanceFactory = robotInstanceFactory;
   }
 
-  public Props props(String ip, int port) {
+  public Props props() {
     Creator<RobotSpawnActor> c = () -> new RobotSpawnActor(
-        ip,
-        port,
-        new ArrayList<>(64),
         _robotSpawner,
         _robotInstanceFactory);
 

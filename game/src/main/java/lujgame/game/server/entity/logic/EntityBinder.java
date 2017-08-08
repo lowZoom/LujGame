@@ -30,13 +30,15 @@ public class EntityBinder {
       return;
     }
 
+    // 绑定时，创建对应处理实体
     NetHandlerMap netHandlerMap = state.getNetHandlerMap();
     Props props = _entityActorFactory.props(netHandlerMap);
     ActorRef entityRef = ctx.actorOf(props);
+    entityMap.put(connId, entityRef);
 
+    // 回复网关
     String serverId = state.getServerId();
     BindForwardRsp rsp = new BindForwardRsp(serverId, entityRef);
-
     connRef.tell(rsp, serverRef);
   }
 

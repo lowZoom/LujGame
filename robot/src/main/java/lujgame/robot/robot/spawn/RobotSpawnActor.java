@@ -4,6 +4,7 @@ import akka.event.LoggingAdapter;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import lujgame.core.akka.common.CaseActor;
 import lujgame.robot.robot.instance.RobotInstanceActor;
@@ -16,16 +17,13 @@ import lujgame.robot.robot.spawn.logic.RobotSpawner;
  */
 public class RobotSpawnActor extends CaseActor {
 
-  public RobotSpawnActor(String ip, int port,
-      List<RobotInstanceActor> robotList,
-      RobotSpawner robotSpawner, RobotInstanceActorFactory robotInstanceFactory) {
-    _ip = ip;
-    _port = port;
-
-    _robotList = robotList;
-
+  public RobotSpawnActor(
+      RobotSpawner robotSpawner,
+      RobotInstanceActorFactory robotInstanceFactory) {
     _robotSpawner = robotSpawner;
     _robotInstanceFactory = robotInstanceFactory;
+
+    _robotList = new ArrayList<>(64);
 
 //    addCase(ChangeRobotCountMsg.class, this::onChangeRobotCount);
   }
@@ -46,26 +44,7 @@ public class RobotSpawnActor extends CaseActor {
     s.spawnRobot(groupList, _eventGroup, getContext(), log);
   }
 
-//  private void onChangeRobotCount(ChangeRobotCountMsg msg) {
-//    int oldCount = _robotList.size();
-//    int newCount = msg.getCount();
-//
-//    int delta = newCount - oldCount;
-//    if (delta == 0) {
-//      return;
-//    }
-//
-//    log().info("更改机器人数量 -> {}", newCount);
-//
-//    UntypedActorContext ctx = getContext();
-//    Props robotProps = _robotInstanceFactory.props(_eventGroup, _ip, _port);
-//    ctx.actorOf(robotProps, "Robot");
-//  }
-
   private EventLoopGroup _eventGroup;
-
-  private final String _ip;
-  private final int _port;
 
   private final List<RobotInstanceActor> _robotList;
 

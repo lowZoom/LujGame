@@ -13,7 +13,7 @@ public class GateReplier {
   public void replyGate(ClusterBossActorState state,
       ActorRef gateRef, ActorRef commRef, LoggingAdapter log) {
     Map<String, ActorRef> nodeMap = state.getGameNodeMap();
-    log.info("与网关同步游戏服集群信息，节点数量：{}", nodeMap.size());
+    log.info("向网关同步游戏服集群信息，节点数量：{}", nodeMap.size());
 
     for (Map.Entry<String, ActorRef> e : nodeMap.entrySet()) {
       String gameId = e.getKey();
