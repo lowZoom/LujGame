@@ -11,6 +11,12 @@ public class NetPacketConsumer {
   public void consumePacket(GameEntityActorState state, GateNetPacket packet, LoggingAdapter log) {
     //TODO: 解包并调用对应处理器
 
-    log.debug("游戏服收到包，等待处理 -> {}", packet.getOpcode());
+    Integer opcode = packet.getOpcode();
+    log.debug("游戏服收到包，等待处理 -> {}", opcode);
+
+//    GameNetHandler handler = _netHandlerMap.getNetHandler(opcode);
+//    GameNetHandleContext ctx = new GameNetHandleContext();
+//
+//    handler.onHandle(ctx);
   }
 }

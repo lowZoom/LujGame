@@ -2,10 +2,16 @@ package lujgame.game.server;
 
 import akka.cluster.ClusterEvent;
 import akka.cluster.Member;
+import akka.event.LoggingAdapter;
+import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 import lujgame.core.akka.AkkaTool;
 import lujgame.core.akka.common.CaseActor;
 import lujgame.game.master.cluster.GameNodeRegistrar;
 import lujgame.game.server.entity.logic.EntityBinder;
+import lujgame.game.server.net.GameNetHandler;
+import lujgame.game.server.net.NetHandlerMap;
+import lujgame.game.server.start.GameStarter;
 import lujgame.gateway.network.akka.accept.message.BindForwardReqRemote;
 
 public class GameServerActor extends CaseActor {
@@ -27,8 +33,13 @@ public class GameServerActor extends CaseActor {
 
   @Override
   public void preStart() throws Exception {
+    LoggingAdapter log = log();
+
     GameServerActorState state = _state;
-    log().debug("游戏服启动，ID：{}", state.getServerId());
+    log.debug("游戏服启动，ID：{}", state.getServerId());
+
+    Map<Integer, GameNetHandler> netHandlerMap = state.getNetHandlerMap();
+    log.debug("网络处理器数量 -> {}", netHandlerMap.size());
 
     _akkaTool.subscribeClusterMemberUp(state.getCluster(), this, this::onMemberUp);
   }

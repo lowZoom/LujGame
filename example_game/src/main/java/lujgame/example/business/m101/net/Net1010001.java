@@ -5,7 +5,9 @@ import lujgame.game.server.net.GameNetHandleContext;
 import lujgame.game.server.net.GameNetHandler;
 import lujgame.game.server.type.JLong;
 import lujgame.game.server.type.JStr;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Net1010001 extends GameNetHandler {
 
   public interface Req {

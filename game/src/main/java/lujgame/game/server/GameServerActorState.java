@@ -2,19 +2,19 @@ package lujgame.game.server;
 
 import akka.actor.ActorRef;
 import akka.cluster.Cluster;
+import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import java.util.Map;
-import lujgame.game.server.net.NetHandlerMap;
+import lujgame.game.server.net.GameNetHandler;
 
 public class GameServerActorState {
 
   public GameServerActorState(String serverId, Cluster cluster,
-      NetHandlerMap netHandlerMap) {
+      ImmutableMap<Integer, GameNetHandler> netHandlerMap) {
     _serverId = serverId;
-
     _cluster = cluster;
-    _netHandlerMap = netHandlerMap;
 
+    _netHandlerMap = netHandlerMap;
     _entityMap = new HashMap<>(1024);
   }
 
@@ -30,13 +30,14 @@ public class GameServerActorState {
     return _cluster;
   }
 
-  public NetHandlerMap getNetHandlerMap() {
+  public ImmutableMap<Integer, GameNetHandler> getNetHandlerMap() {
     return _netHandlerMap;
   }
 
-  private final String _serverId;
   private final Map<String, ActorRef> _entityMap;
 
+  private final String _serverId;
   private final Cluster _cluster;
-  private final NetHandlerMap _netHandlerMap;
+
+  private final ImmutableMap<Integer, GameNetHandler> _netHandlerMap;
 }

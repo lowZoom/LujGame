@@ -3,9 +3,11 @@ package lujgame.game.server.entity.logic;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActorContext;
+import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import lujgame.game.server.GameServerActorState;
 import lujgame.game.server.entity.GameEntityActorFactory;
+import lujgame.game.server.net.GameNetHandler;
 import lujgame.game.server.net.NetHandlerMap;
 import lujgame.gateway.network.akka.accept.message.BindForwardRsp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +33,7 @@ public class EntityBinder {
     }
 
     // 绑定时，创建对应处理实体
-    NetHandlerMap netHandlerMap = state.getNetHandlerMap();
+    ImmutableMap<Integer, GameNetHandler> netHandlerMap = state.getNetHandlerMap();
     Props props = _entityActorFactory.props(netHandlerMap);
     ActorRef entityRef = ctx.actorOf(props);
     entityMap.put(connId, entityRef);

@@ -5,7 +5,6 @@ import akka.japi.Creator;
 import com.google.common.collect.ImmutableMap;
 import lujgame.game.server.entity.logic.NetPacketConsumer;
 import lujgame.game.server.net.GameNetHandler;
-import lujgame.game.server.net.NetHandlerMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +16,7 @@ public class GameEntityActorFactory {
     _netPacketConsumer = netPacketConsumer;
   }
 
-  public Props props(NetHandlerMap handlerMap) {
+  public Props props(ImmutableMap<Integer, GameNetHandler> handlerMap) {
     GameEntityActorState state = new GameEntityActorState(handlerMap);
 
     Creator<GameEntityActor> c = () -> {
