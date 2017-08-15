@@ -8,8 +8,12 @@ import org.omg.CORBA.NO_IMPLEMENT;
 
 public class GameNetHandleContext {
 
-  public <T> T getPacket() {
-    throw new NO_IMPLEMENT("getPacket尚未实现");
+  public GameNetHandleContext(Object proto) {
+    _proto = proto;
+  }
+
+  public <T> T getPacket(GameNetHandler<T> handler) {
+    return (T) _proto;
   }
 
   public long get(JLong val) {
@@ -23,4 +27,6 @@ public class GameNetHandleContext {
   public <T> void invoke(Class<T> actionType, BiConsumer<T, DbPreloadContext> preloader) {
 
   }
+
+  private final Object _proto;
 }

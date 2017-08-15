@@ -6,11 +6,10 @@ import akka.japi.Creator;
 import com.google.common.collect.ImmutableMap;
 import com.typesafe.config.Config;
 import lujgame.core.akka.AkkaTool;
-import lujgame.core.spring.BeanCollector;
 import lujgame.game.boot.GameBootConfigLoader;
 import lujgame.game.master.cluster.GameNodeRegistrar;
 import lujgame.game.server.entity.logic.EntityBinder;
-import lujgame.game.server.net.GameNetHandler;
+import lujgame.game.server.net.NetHandleSuite;
 import lujgame.game.server.start.GameStarter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,10 +35,10 @@ public class GameServerActorFactory {
 
   public Props props(Config gameCfg, Cluster cluster) {
     String serverId = _bootConfigLoader.getServerId(gameCfg);
-    ImmutableMap<Integer, GameNetHandler> netHandlerMap = _gameStarter.loadNetHandler();
 
-    GameServerActorState state = new GameServerActorState(
-        serverId, cluster, netHandlerMap);
+    ImmutableMap<Integer, NetHandleSuite> handleSuiteMap = _gameStarter.loadHandleSuiteMap();
+
+    GameServerActorState state = new GameServerActorState(serverId, cluster, handleSuiteMap);
 
     Creator<GameServerActor> c = () -> new GameServerActor(state,
         _akkaTool, _gameNodeRegistrar, _entityBinder);

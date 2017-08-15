@@ -2,7 +2,7 @@ package lujgame.game.server.start;
 
 import com.google.common.collect.ImmutableMap;
 import lujgame.core.spring.BeanCollector;
-import lujgame.game.server.net.GameNetHandler;
+import lujgame.game.server.net.NetHandleSuite;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,12 +14,8 @@ public class GameStarter {
     _beanCollector = beanCollector;
   }
 
-  public ImmutableMap<Integer, GameNetHandler> loadNetHandler() {
-    return _beanCollector.collectBeanMap(GameNetHandler.class, h -> {
-      Class<? extends GameNetHandler> cls = h.getClass();
-      String name = cls.getSimpleName();
-      return Integer.valueOf(name.replace("Net", ""));
-    });
+  public ImmutableMap<Integer, NetHandleSuite> loadHandleSuiteMap() {
+    return _beanCollector.collectBeanMap(NetHandleSuite.class, NetHandleSuite::getOpcode);
   }
 
   private final BeanCollector _beanCollector;

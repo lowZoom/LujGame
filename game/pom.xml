@@ -12,6 +12,20 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>game</artifactId>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.6.2</version>
+        <configuration>
+          <!--<verbose>true</verbose>-->
+          <proc>none</proc>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>com.lowzoom.lujgame</groupId>

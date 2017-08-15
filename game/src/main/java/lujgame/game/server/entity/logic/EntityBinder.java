@@ -8,7 +8,7 @@ import java.util.Map;
 import lujgame.game.server.GameServerActorState;
 import lujgame.game.server.entity.GameEntityActorFactory;
 import lujgame.game.server.net.GameNetHandler;
-import lujgame.game.server.net.NetHandlerMap;
+import lujgame.game.server.net.NetHandleSuite;
 import lujgame.gateway.network.akka.accept.message.BindForwardRsp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,8 +33,8 @@ public class EntityBinder {
     }
 
     // 绑定时，创建对应处理实体
-    ImmutableMap<Integer, GameNetHandler> netHandlerMap = state.getNetHandlerMap();
-    Props props = _entityActorFactory.props(netHandlerMap);
+    ImmutableMap<Integer, NetHandleSuite> handleSuiteMap = state.getHandleSuiteMap();
+    Props props = _entityActorFactory.props(handleSuiteMap);
     ActorRef entityRef = ctx.actorOf(props);
     entityMap.put(connId, entityRef);
 

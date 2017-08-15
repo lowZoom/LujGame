@@ -1,6 +1,6 @@
 package lujgame.game.server.net;
 
-public abstract class GameNetHandler {
+public abstract class GameNetHandler<P> {
 
   public abstract String desc();
 
