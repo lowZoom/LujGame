@@ -7,10 +7,20 @@
     <groupId>com.lowzoom.lujgame.example</groupId>
     <artifactId>example_root</artifactId>
     <version>0.1-SNAPSHOT</version>
-    <relativePath>../maven/ex_root</relativePath>
+    <relativePath>../ex_root</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>example_proto</artifactId>
+  <artifactId>example_pack</artifactId>
+  <packaging>pom</packaging>
+
+  <modules>
+    <!-- Specify in the parent POM the *directories* of its modules (children POMs) -->
+    <module>../../../core</module>
+    <module>../../../gateway</module>
+    <module>../../../game</module>
+    <module>../../ex_proto</module>
+    <module>../../ex_main</module>
+  </modules>
 
 </project>

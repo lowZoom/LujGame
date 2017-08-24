@@ -7,6 +7,7 @@
     <groupId>com.lowzoom.lujgame</groupId>
     <artifactId>lujgame</artifactId>
     <version>0.1-SNAPSHOT</version>
+    <relativePath>../maven/root</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>

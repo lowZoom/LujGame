@@ -53,6 +53,7 @@
         <option value="$PROJECT_DIR$/example/maven/ex_root/pom.xml" />
         <option value="$PROJECT_DIR$/example/ex_main/pom.xml" />
         <option value="$PROJECT_DIR$/example/ex_proto/pom.xml" />
+        <option value="$PROJECT_DIR$/example/maven/ex_pack/pom.xml" />
       </list>
     </option>
   </component>

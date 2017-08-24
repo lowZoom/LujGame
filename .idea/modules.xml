@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/admin/admin.iml" filepath="$PROJECT_DIR$/admin/admin.iml" />
       <module fileurl="file://$PROJECT_DIR$/core/core.iml" filepath="$PROJECT_DIR$/core/core.iml" />
       <module fileurl="file://$PROJECT_DIR$/example/ex_main/ex_main.iml" filepath="$PROJECT_DIR$/example/ex_main/ex_main.iml" group="example" />
+      <module fileurl="file://$PROJECT_DIR$/example/maven/ex_pack/ex_pack.iml" filepath="$PROJECT_DIR$/example/maven/ex_pack/ex_pack.iml" />
       <module fileurl="file://$PROJECT_DIR$/example/ex_proto/ex_proto.iml" filepath="$PROJECT_DIR$/example/ex_proto/ex_proto.iml" group="example" />
       <module fileurl="file://$PROJECT_DIR$/example/maven/ex_root/ex_root.iml" filepath="$PROJECT_DIR$/example/maven/ex_root/ex_root.iml" group="example" />
       <module fileurl="file://$PROJECT_DIR$/game/game.iml" filepath="$PROJECT_DIR$/game/game.iml" />

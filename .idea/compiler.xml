@@ -20,6 +20,7 @@
       <module name="admin" target="1.8" />
       <module name="core" target="1.8" />
       <module name="ex_main" target="1.8" />
+      <module name="ex_pack" target="1.8" />
       <module name="ex_proto" target="1.8" />
       <module name="ex_root" target="1.8" />
       <module name="game" target="1.8" />
