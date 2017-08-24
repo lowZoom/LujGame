@@ -1,4 +1,4 @@
-package lujgame.game.server.net.anno;
+package lujgame.anno.net;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
