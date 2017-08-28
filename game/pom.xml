@@ -28,11 +28,28 @@
   </build>
 
   <dependencies>
+    <!-- https://mvnrepository.com/artifact/com.squareup/javapoet -->
     <dependency>
       <groupId>com.squareup</groupId>
       <artifactId>javapoet</artifactId>
       <version>1.9.0</version>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/com.google.auto/auto-common -->
+    <dependency>
+      <groupId>com.google.auto</groupId>
+      <artifactId>auto-common</artifactId>
+      <version>0.8</version>
+
+      <!-- 避免版本冲突 -->
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
     <dependency>
       <groupId>com.lowzoom.lujgame</groupId>
       <artifactId>gateway</artifactId>
