@@ -3,10 +3,10 @@ package lujgame.game.server.entity.logic;
 import akka.event.LoggingAdapter;
 import com.google.common.collect.ImmutableMap;
 import lujgame.game.server.entity.GameEntityActorState;
-import lujgame.game.server.net.GameNetCodec;
 import lujgame.game.server.net.GameNetHandleContext;
 import lujgame.game.server.net.GameNetHandler;
 import lujgame.game.server.net.NetHandleSuite;
+import lujgame.game.server.net.NetPacketCodec;
 import lujgame.gateway.network.akka.connection.logic.packet.GateNetPacket;
 import org.springframework.stereotype.Component;
 
@@ -22,10 +22,10 @@ public class NetPacketConsumer {
     ImmutableMap<Integer, NetHandleSuite> suiteMap = state.getHandleSuiteMap();
     NetHandleSuite suite = suiteMap.get(opcode);
 
-    GameNetCodec codec = suite.getNetCodec();
+    NetPacketCodec codec = suite.getPacketCodec();
     Object proto = codec.decode(packet.getData());
 
-    GameNetHandler<?> handler = suite.getNetHandler();
+    GameNetHandler<?> handler = suite.getHandleMeta().handler();
     GameNetHandleContext ctx = new GameNetHandleContext(proto);
 
     handler.onHandle(ctx);

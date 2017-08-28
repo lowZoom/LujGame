@@ -1,5 +1,6 @@
-package lujgame.anno;
+package lujgame.anno.core.processor;
 
+import java.lang.annotation.Annotation;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.processing.AbstractProcessor;
@@ -12,7 +13,7 @@ import javax.lang.model.util.Elements;
 @SuppressWarnings("FieldAccessedSynchronizedAndUnsynchronized")
 public abstract class AnnoProc extends AbstractProcessor {
 
-  public abstract Set<Class<?>> initSupportedAnnotationTypes();
+  public abstract Set<Class<? extends Annotation>> initSupportedAnnotationTypes();
 
   @Override
   public synchronized void init(ProcessingEnvironment env) {

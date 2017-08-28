@@ -1,6 +1,8 @@
 package lujgame.anno.spring;
 
-import lujgame.anno.net.NetPacketProcImpl;
+import lujgame.anno.core.generate.GenerateTool;
+import lujgame.anno.net.handle.NetHandlerProcImpl;
+import lujgame.anno.net.packet.NetPacketProcImpl;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -18,6 +20,8 @@ public class AnnoSpringContext {
   AnnoSpringContext() {
     _appCtx = new AnnotationConfigApplicationContext();
 
+    addBeanDef(GenerateTool.class);
+    addBeanDef(NetHandlerProcImpl.class);
     addBeanDef(NetPacketProcImpl.class);
 
     _appCtx.refresh();

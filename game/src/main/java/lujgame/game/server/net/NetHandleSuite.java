@@ -1,10 +1,21 @@
 package lujgame.game.server.net;
 
-public abstract class NetHandleSuite {
+public class NetHandleSuite {
 
-  public abstract int getOpcode();
+  public NetHandleSuite(NetHandleMeta handleMeta, NetPacketCodec packetCodec) {
+    _handleMeta = handleMeta;
+    _packetCodec = packetCodec;
+  }
 
-  public abstract GameNetHandler<?> getNetHandler();
+  public NetHandleMeta getHandleMeta() {
+    return _handleMeta;
+  }
 
-  public abstract GameNetCodec getNetCodec();
+  public NetPacketCodec getPacketCodec() {
+    return _packetCodec;
+  }
+
+  private final NetHandleMeta _handleMeta;
+
+  private final NetPacketCodec _packetCodec;
 }

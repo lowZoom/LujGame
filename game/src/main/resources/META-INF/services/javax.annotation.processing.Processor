@@ -1,1 +1,2 @@
-lujgame.anno.net.NetPacketProc
+lujgame.anno.net.packet.NetPacketProc
+lujgame.anno.net.handle.NetHandlerProc

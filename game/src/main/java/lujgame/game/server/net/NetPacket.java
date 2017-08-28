@@ -1,11 +1,12 @@
-package lujgame.anno.net;
+package lujgame.game.server.net;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
+@Retention(RetentionPolicy.SOURCE)
 public @interface NetPacket {
+
 }
