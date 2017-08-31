@@ -16,7 +16,10 @@ import org.springframework.stereotype.Component;
 public class GenerateTool {
 
   /**
+   * 将生成文件的编码统一成UTF-8
+   *
    * @see JavaFile#writeTo(Filer)
+   * @see <a href="https://github.com/square/javapoet/pull/577">起因</a>
    */
   public void writeTo(JavaFile file, Filer filer) throws IOException {
     String packageName = file.packageName;
