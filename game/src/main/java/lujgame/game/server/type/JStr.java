@@ -1,7 +1,15 @@
 package lujgame.game.server.type;
 
-import java.util.PrimitiveIterator;
+public class JStr {
 
-public abstract class JStr {
+  public interface Impl {
 
+    String getValue();
+  }
+
+  JStr(Impl impl) {
+    _impl = impl;
+  }
+
+  Impl _impl;
 }

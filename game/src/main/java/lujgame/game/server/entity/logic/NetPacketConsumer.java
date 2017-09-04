@@ -7,11 +7,18 @@ import lujgame.game.server.net.GameNetHandleContext;
 import lujgame.game.server.net.GameNetHandler;
 import lujgame.game.server.net.NetHandleSuite;
 import lujgame.game.server.net.NetPacketCodec;
+import lujgame.game.server.type.Z1;
 import lujgame.gateway.network.akka.connection.logic.packet.GateNetPacket;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class NetPacketConsumer {
+
+  @Autowired
+  public NetPacketConsumer(Z1 typeI) {
+    _typeI = typeI;
+  }
 
   public void consumePacket(GameEntityActorState state, GateNetPacket packet, LoggingAdapter log) {
     //TODO: 解包并调用对应处理器
@@ -23,11 +30,14 @@ public class NetPacketConsumer {
     NetHandleSuite suite = suiteMap.get(opcode);
 
     NetPacketCodec codec = suite.getPacketCodec();
-    Object proto = codec.decode(packet.getData());
+    Z1 typeI = _typeI;
+
+    Object proto = codec.decode(typeI, packet.getData());
+    GameNetHandleContext ctx = new GameNetHandleContext(proto, log, typeI);
 
     GameNetHandler<?> handler = suite.getHandleMeta().handler();
-    GameNetHandleContext ctx = new GameNetHandleContext(proto);
-
     handler.onHandle(ctx);
   }
+
+  private final Z1 _typeI;
 }

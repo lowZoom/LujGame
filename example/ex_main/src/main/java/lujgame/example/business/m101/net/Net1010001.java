@@ -18,7 +18,9 @@ public class Net1010001 extends GameNetHandler<Net1010001Req> {
   public void onHandle(GameNetHandleContext ctx) {
     Net1010001Req packet = ctx.getPacket(this);
 
-    long userId = ctx.get(packet.playerId());
+    String name = ctx.get(packet.loginName());
+    ctx.log().debug("玩家请求登录：{}", name);
+
     ctx.invoke(M1LoginCmd.class, M1LoginCmd::preload);
   }
 }

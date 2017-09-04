@@ -1,5 +1,6 @@
 package lujgame.anno.net.packet;
 
+import com.google.common.collect.ImmutableMap;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
@@ -9,6 +10,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
@@ -19,6 +21,8 @@ import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import lujgame.anno.core.generate.GenerateTool;
 import lujgame.game.server.net.NetPacketCodec;
+import lujgame.game.server.type.Z1;
+import lujgame.game.server.type.JStr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +47,7 @@ public class NetPacketProcImpl {
 
   private PacketItem createPacketItem(TypeElement elem, Elements elemUtil) {
     List<FieldSpec> fieldList = elem.getEnclosedElements().stream()
-        .map(e -> toField((ExecutableElement) e))
+        .map(e -> toPacketField((ExecutableElement) e))
         .collect(Collectors.toList());
 
     return new PacketItem(
@@ -53,9 +57,9 @@ public class NetPacketProcImpl {
         fieldList);
   }
 
-  private FieldSpec toField(ExecutableElement elem) {
+  private FieldSpec toPacketField(ExecutableElement elem) {
     return FieldSpec.builder(TypeName.get(elem.getReturnType()),
-        elem.getSimpleName().toString(), Modifier.PUBLIC).build();
+        elem.getSimpleName().toString()).build();
   }
 
   /**
@@ -65,7 +69,9 @@ public class NetPacketProcImpl {
     return JavaFile.builder(item.getPackageName(), TypeSpec
         .classBuilder(getJsonName(item))
         .addModifiers(Modifier.FINAL)
-        .addFields(item.getFieldList())
+        .addFields(item.getFieldList().stream()
+            .map(this::toJsonField)
+            .collect(Collectors.toList()))
         .build()).build();
   }
 
@@ -73,59 +79,88 @@ public class NetPacketProcImpl {
     return item.getClassName() + "Json";
   }
 
+  private FieldSpec toJsonField(FieldSpec packetField) {
+    FieldType newType = FIELD_MAP.get(packetField.type);
+    if (newType == null) {
+      return packetField;
+    }
+    return FieldSpec.builder(newType.getValueType(), packetField.name, Modifier.PUBLIC).build();
+  }
+
   /**
    * 生成包实现类
    */
   private void generatePacketImpl(PacketItem item,
       Filer filer, TypeSpec jsonType) throws IOException {
-    String jsonName = "_json";
-    FieldSpec jsonField = FieldSpec.builder(ClassName.bestGuess(jsonType.name),
-        jsonName, Modifier.PRIVATE).build();
+    List<FieldSpec> fieldList = item.getFieldList().stream()
+        .map(this::toImplField)
+        .collect(Collectors.toList());
 
-    String paramName = jsonName.substring(1);
-    MethodSpec construct = MethodSpec.constructorBuilder()
-        .addModifiers(Modifier.PUBLIC)
-        .addParameter(jsonField.type, paramName)
-        .addStatement("$L = $L", jsonName, paramName)
-        .build();
+    String internalParam = "i";
+    String jsonParam = "json";
 
-    List<MethodSpec> fieldList = item.getFieldList().stream()
-        .map(f -> toFieldMethod(f, jsonName))
+    MethodSpec construct = fillConstruct(MethodSpec
+            .constructorBuilder()
+            .addParameter(TypeName.get(Z1.class), internalParam)
+            .addParameter(ClassName.bestGuess(jsonType.name), jsonParam)
+        , fieldList, internalParam, jsonParam).build();
+
+    List<MethodSpec> propertyList = fieldList.stream()
+        .map(this::toImplProperty)
         .collect(Collectors.toList());
 
     _generateTool.writeTo(JavaFile.builder(item.getPackageName(), TypeSpec
-        .classBuilder(getPacketImplName(item))
+        .classBuilder(getImplName(item))
+        .addModifiers(Modifier.FINAL)
         .addSuperinterface(TypeName.get(item.getPacketType()))
         .addMethod(construct)
-        .addMethods(fieldList)
-        .addField(jsonField)
+        .addMethods(propertyList)
+        .addFields(fieldList)
         .build()).build(), filer);
   }
 
-  private String getPacketImplName(PacketItem item) {
+  private String getImplName(PacketItem item) {
     return item.getClassName() + "Impl";
   }
 
-  private MethodSpec toFieldMethod(FieldSpec field, String jsonName) {
-    return MethodSpec.methodBuilder(field.name)
+  private FieldSpec toImplField(FieldSpec packetField) {
+    return FieldSpec.builder(packetField.type, '_' + packetField.name, Modifier.FINAL).build();
+  }
+
+  private MethodSpec toImplProperty(FieldSpec field) {
+    return MethodSpec.methodBuilder(field.name.substring(1))
         .addAnnotation(Override.class)
-        .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+        .addModifiers(Modifier.PUBLIC)
         .returns(field.type)
-        .addStatement("return $L.$L", jsonName, field.name)
+        .addStatement("return $L", field.name)
         .build();
+  }
+
+  private MethodSpec.Builder fillConstruct(MethodSpec.Builder builder,
+      List<FieldSpec> fieldList, String internalName, String jsonName) {
+    for (FieldSpec f : fieldList) {
+      FieldType fieldType = FIELD_MAP.get(f.type);
+      builder.addStatement("$L = $L.$L($L.$L)", f.name, internalName,
+          fieldType.getMaker(), jsonName, f.name.substring(1));
+    }
+    return builder;
   }
 
   /**
    * 生成编解码器类
    */
   private void generateCodec(PacketItem item, Filer filer) throws IOException {
+    String internalName = "i";
+    String dataName = "data";
+
     MethodSpec decode = MethodSpec.methodBuilder("decode")
         .addAnnotation(Override.class)
         .addModifiers(Modifier.PUBLIC)
-        .addParameter(byte[].class, "data")
+        .addParameter(TypeName.get(Z1.class), internalName)
+        .addParameter(byte[].class, dataName)
         .returns(TypeName.get(item.getPacketType()))
-        .addStatement("return new $L(readJson(data, $L.class))",
-            getPacketImplName(item), getJsonName(item))
+        .addStatement("return new $L($L, readJson($L, $L.class))",
+            getImplName(item), internalName, dataName, getJsonName(item))
         .build();
 
     _generateTool.writeTo(JavaFile.builder(item.getPackageName(), TypeSpec
@@ -146,6 +181,10 @@ public class NetPacketProcImpl {
         .addStatement("return $L.class", packetType)
         .build();
   }
+
+  private static final Map<TypeName, FieldType> FIELD_MAP = ImmutableMap.<TypeName, FieldType>builder()
+      .put(TypeName.get(JStr.class), FieldType.of(String.class, "newStr"))
+      .build();
 
   private final GenerateTool _generateTool;
 }
