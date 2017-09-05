@@ -19,12 +19,20 @@ public class GameServerActorState {
     _entityMap = new HashMap<>(1024);
   }
 
-  public String getServerId() {
-    return _serverId;
+  public ActorRef getDbCacheRef() {
+    return _dbCacheRef;
+  }
+
+  public void setDbCacheRef(ActorRef dbCacheRef) {
+    _dbCacheRef = dbCacheRef;
   }
 
   public Map<String, ActorRef> getEntityMap() {
     return _entityMap;
+  }
+
+  public String getServerId() {
+    return _serverId;
   }
 
   public Cluster getCluster() {
@@ -34,6 +42,8 @@ public class GameServerActorState {
   public ImmutableMap<Integer, NetHandleSuite> getHandleSuiteMap() {
     return _handleSuiteMap;
   }
+
+  private ActorRef _dbCacheRef;
 
   private final Map<String, ActorRef> _entityMap;
 

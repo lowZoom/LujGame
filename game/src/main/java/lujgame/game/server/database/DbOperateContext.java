@@ -1,6 +1,8 @@
 package lujgame.game.server.database;
 
+import javax.annotation.Nullable;
 import lujgame.game.server.type.JStr;
+import lujgame.game.server.type.JTime;
 import org.omg.CORBA.NO_IMPLEMENT;
 
 public class DbOperateContext {
@@ -9,9 +11,9 @@ public class DbOperateContext {
     throw new NO_IMPLEMENT("loadObject尚未实现");
   }
 
-  public <T> T getParam(String key, Class<T> paramType) {
-    throw new NO_IMPLEMENT("getParam尚未实现");
-//    return paramType.cast();
+  @Nullable
+  public <T> T getDb(Class<T> dbType, String key) {
+    throw new NO_IMPLEMENT("loadObject尚未实现");
   }
 
   public <T> T createProto(Class<T> protoType) {
@@ -26,7 +28,19 @@ public class DbOperateContext {
     throw new NO_IMPLEMENT("copy尚未实现");
   }
 
-  public void sendToClient(Object proto) {
+  public void jSet(JTime field, JTime value) {
+    throw new NO_IMPLEMENT("copy尚未实现");
+  }
+
+  public void sendError2C() {
+    throw new NO_IMPLEMENT("sendError2C尚未实现");
+  }
+
+  public void sendResponse2C(Object proto) {
     throw new NO_IMPLEMENT("sendToClient尚未实现");
+  }
+
+  public JTime now() {
+    throw new NO_IMPLEMENT("now尚未实现");
   }
 }

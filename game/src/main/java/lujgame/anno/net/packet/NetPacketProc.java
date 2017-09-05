@@ -1,6 +1,8 @@
 package lujgame.anno.net.packet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
@@ -29,7 +31,14 @@ public final class NetPacketProc extends SingleAnnoProc {
       return false;
     }
 
-    _impl.process((TypeElement) elem, getElemUtil(), getFiler(), msg);
+    try {
+      _impl.process((TypeElement) elem, getElemUtil(), getFiler(), msg);
+    } catch (RuntimeException e) {
+      StringWriter writer = new StringWriter();
+      e.printStackTrace(new PrintWriter(writer));
+      msg.printMessage(Diagnostic.Kind.ERROR, writer.toString());
+    }
+
     return true;
   }
 

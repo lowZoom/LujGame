@@ -1,12 +1,17 @@
 package lujgame.game.server;
 
+import akka.actor.ActorRef;
+import akka.actor.Props;
+import akka.actor.UntypedActorContext;
 import akka.cluster.ClusterEvent;
 import akka.cluster.Member;
 import akka.event.LoggingAdapter;
 import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 import lujgame.core.akka.AkkaTool;
 import lujgame.core.akka.common.CaseActor;
 import lujgame.game.master.cluster.GameNodeRegistrar;
+import lujgame.game.server.database.cache.DbCacheActorFactory;
 import lujgame.game.server.entity.logic.EntityBinder;
 import lujgame.game.server.net.NetHandleSuite;
 import lujgame.gateway.network.akka.accept.message.BindForwardReqRemote;
@@ -17,13 +22,15 @@ public class GameServerActor extends CaseActor {
       GameServerActorState state,
       AkkaTool akkaTool,
       GameNodeRegistrar serverRegistrar,
-      EntityBinder entityBinder) {
+      EntityBinder entityBinder,
+      DbCacheActorFactory dbCacheActorFactory) {
     _state = state;
 
     _akkaTool = akkaTool;
     _serverRegistrar = serverRegistrar;
 
     _entityBinder = entityBinder;
+    _dbCacheActorFactory = dbCacheActorFactory;
 
     addCase(BindForwardReqRemote.class, this::onBindForward);
   }
@@ -33,12 +40,21 @@ public class GameServerActor extends CaseActor {
     LoggingAdapter log = log();
 
     GameServerActorState state = _state;
+    _akkaTool.subscribeClusterMemberUp(state.getCluster(), this, this::onMemberUp);
+
     log.debug("游戏服启动，ID：{}", state.getServerId());
 
-    ImmutableMap<Integer, NetHandleSuite> handleSuiteMap = state.getHandleSuiteMap();
+    Map<Integer, NetHandleSuite> handleSuiteMap = state.getHandleSuiteMap();
     log.debug("网络包处理器数量 -> {}", handleSuiteMap.size());
 
-    _akkaTool.subscribeClusterMemberUp(state.getCluster(), this, this::onMemberUp);
+    startDbCacheActor(getContext());
+  }
+
+  private void startDbCacheActor(UntypedActorContext ctx) {
+    Props props = _dbCacheActorFactory.props();
+
+    ActorRef dbCacheRef = ctx.actorOf(props);
+    _state.setDbCacheRef(dbCacheRef);
   }
 
   /**
@@ -62,4 +78,5 @@ public class GameServerActor extends CaseActor {
   private final GameNodeRegistrar _serverRegistrar;
 
   private final EntityBinder _entityBinder;
+  private final DbCacheActorFactory _dbCacheActorFactory;
 }

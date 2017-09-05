@@ -5,8 +5,12 @@ import org.springframework.stereotype.Component;
 @Component("internal.type")
 public class Z1 {
 
-  public JStr newStr(String str) {
-    return new JStr(() -> str);
+  public JInt newInt(int val) {
+    return new JInt(() -> val);
+  }
+
+  public JStr newStr(String val) {
+    return new JStr(() -> val);
   }
 
   public JStr.Impl getImpl(JStr str) {

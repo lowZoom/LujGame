@@ -1,4 +1,4 @@
-package lujgame.anno.net.packet;
+package lujgame.anno.net.packet.output;
 
 import com.squareup.javapoet.TypeName;
 

@@ -34,7 +34,7 @@ public class EntityBinder {
 
     // 绑定时，创建对应处理实体
     ImmutableMap<Integer, NetHandleSuite> handleSuiteMap = state.getHandleSuiteMap();
-    Props props = _entityActorFactory.props(handleSuiteMap);
+    Props props = _entityActorFactory.props(handleSuiteMap, state.getDbCacheRef());
     ActorRef entityRef = ctx.actorOf(props);
     entityMap.put(connId, entityRef);
 

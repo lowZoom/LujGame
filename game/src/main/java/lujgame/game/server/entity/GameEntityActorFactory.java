@@ -1,10 +1,10 @@
 package lujgame.game.server.entity;
 
+import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.japi.Creator;
 import com.google.common.collect.ImmutableMap;
 import lujgame.game.server.entity.logic.NetPacketConsumer;
-import lujgame.game.server.net.GameNetHandler;
 import lujgame.game.server.net.NetHandleSuite;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,8 +17,8 @@ public class GameEntityActorFactory {
     _netPacketConsumer = netPacketConsumer;
   }
 
-  public Props props(ImmutableMap<Integer, NetHandleSuite> handleSuiteMap) {
-    GameEntityActorState state = new GameEntityActorState(handleSuiteMap);
+  public Props props(ImmutableMap<Integer, NetHandleSuite> handleSuiteMap, ActorRef dbCacheRef) {
+    GameEntityActorState state = new GameEntityActorState(handleSuiteMap, dbCacheRef);
 
     Creator<GameEntityActor> c = () -> {
       return new GameEntityActor(state, _netPacketConsumer);

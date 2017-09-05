@@ -1,16 +1,16 @@
 package lujgame.example.business.m101.database;
 
-import lujgame.game.server.type.JLong;
 import lujgame.game.server.type.JMap;
 import lujgame.game.server.type.JStr;
+import lujgame.game.server.type.JTime;
 
 public interface M1PlayerDb {
 
   JStr name();
 
-  JLong loginTime();
+  JTime loginTime();
 
-  JLong logoutTime();
+  JTime logoutTime();
 
   JMap<Integer, Long> attrMap();
 }

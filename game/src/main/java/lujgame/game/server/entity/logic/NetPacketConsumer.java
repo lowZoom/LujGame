@@ -1,5 +1,6 @@
 package lujgame.game.server.entity.logic;
 
+import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.google.common.collect.ImmutableMap;
 import lujgame.game.server.entity.GameEntityActorState;
@@ -20,11 +21,10 @@ public class NetPacketConsumer {
     _typeI = typeI;
   }
 
-  public void consumePacket(GameEntityActorState state, GateNetPacket packet, LoggingAdapter log) {
-    //TODO: 解包并调用对应处理器
-
+  public void consumePacket(GameEntityActorState state, ActorRef entityRef,
+      GateNetPacket packet, LoggingAdapter log) {
     Integer opcode = packet.getOpcode();
-    log.debug("游戏服收到包，等待处理 -> {}", opcode);
+    log.debug("游戏服收到网络包，等待处理 -> {}", opcode);
 
     ImmutableMap<Integer, NetHandleSuite> suiteMap = state.getHandleSuiteMap();
     NetHandleSuite suite = suiteMap.get(opcode);
@@ -33,7 +33,8 @@ public class NetPacketConsumer {
     Z1 typeI = _typeI;
 
     Object proto = codec.decode(typeI, packet.getData());
-    GameNetHandleContext ctx = new GameNetHandleContext(proto, log, typeI);
+    GameNetHandleContext ctx = new GameNetHandleContext(proto,
+        entityRef, state.getDbCacheRef(), log, typeI);
 
     GameNetHandler<?> handler = suite.getHandleMeta().handler();
     handler.onHandle(ctx);

@@ -1,6 +1,5 @@
-package lujgame.anno.net.packet;
+package lujgame.anno.net.packet.input;
 
-import com.squareup.javapoet.FieldSpec;
 import java.util.List;
 import javax.lang.model.type.TypeMirror;
 
@@ -10,7 +9,7 @@ public class PacketItem {
       String packageName,
       String className,
       TypeMirror packetType,
-      List<FieldSpec> fieldList) {
+      List<FieldItem> fieldList) {
     _packageName = packageName;
     _className = className;
 
@@ -30,7 +29,7 @@ public class PacketItem {
     return _packetType;
   }
 
-  public List<FieldSpec> getFieldList() {
+  public List<FieldItem> getFieldList() {
     return _fieldList;
   }
 
@@ -38,5 +37,5 @@ public class PacketItem {
   private final String _className;
 
   private final TypeMirror _packetType;
-  private final List<FieldSpec> _fieldList;
+  private final List<FieldItem> _fieldList;
 }

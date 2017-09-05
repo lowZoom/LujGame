@@ -12,6 +12,7 @@ import lujgame.core.akka.AkkaTool;
 import lujgame.core.spring.BeanCollector;
 import lujgame.game.boot.GameBootConfigLoader;
 import lujgame.game.master.cluster.GameNodeRegistrar;
+import lujgame.game.server.database.cache.DbCacheActorFactory;
 import lujgame.game.server.entity.logic.EntityBinder;
 import lujgame.game.server.net.NetHandleMeta;
 import lujgame.game.server.net.NetHandleSuite;
@@ -26,12 +27,14 @@ public class GameServerActorFactory {
   public GameServerActorFactory(
       BeanCollector beanCollector,
       AkkaTool akkaTool,
+      DbCacheActorFactory dbCacheActorFactory,
       GameBootConfigLoader bootConfigLoader,
       GameNodeRegistrar gameNodeRegistrar,
       EntityBinder entityBinder) {
     _beanCollector = beanCollector;
-
     _akkaTool = akkaTool;
+
+    _dbCacheActorFactory = dbCacheActorFactory;
     _bootConfigLoader = bootConfigLoader;
 
     _gameNodeRegistrar = gameNodeRegistrar;
@@ -42,11 +45,10 @@ public class GameServerActorFactory {
     String serverId = _bootConfigLoader.getServerId(gameCfg);
 
     ImmutableMap<Integer, NetHandleSuite> handleSuiteMap = makeHandleSuiteMap();
-
     GameServerActorState state = new GameServerActorState(serverId, cluster, handleSuiteMap);
 
     Creator<GameServerActor> c = () -> new GameServerActor(state,
-        _akkaTool, _gameNodeRegistrar, _entityBinder);
+        _akkaTool, _gameNodeRegistrar, _entityBinder, _dbCacheActorFactory);
 
     return Props.create(GameServerActor.class, c);
   }
@@ -79,8 +81,9 @@ public class GameServerActorFactory {
   }
 
   private final BeanCollector _beanCollector;
-
   private final AkkaTool _akkaTool;
+
+  private final DbCacheActorFactory _dbCacheActorFactory;
   private final GameBootConfigLoader _bootConfigLoader;
 
   private final GameNodeRegistrar _gameNodeRegistrar;

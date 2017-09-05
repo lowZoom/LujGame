@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.ExecutableElement;
@@ -19,10 +20,15 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
+import javax.tools.Diagnostic;
 import lujgame.anno.core.generate.GenerateTool;
+import lujgame.anno.net.packet.input.FieldItem;
+import lujgame.anno.net.packet.input.PacketItem;
+import lujgame.anno.net.packet.output.FieldType;
 import lujgame.game.server.net.NetPacketCodec;
-import lujgame.game.server.type.Z1;
+import lujgame.game.server.type.JInt;
 import lujgame.game.server.type.JStr;
+import lujgame.game.server.type.Z1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +43,9 @@ public class NetPacketProcImpl {
   public void process(TypeElement elem, Elements elemUtil,
       Filer filer, Messager msg) throws IOException {
     PacketItem item = createPacketItem(elem, elemUtil);
+    if (!checkPacketItem(item, msg)) {
+      return;
+    }
 
     JavaFile jsonFile = makeJsonFile(item);
     _generateTool.writeTo(jsonFile, filer);
@@ -46,7 +55,7 @@ public class NetPacketProcImpl {
   }
 
   private PacketItem createPacketItem(TypeElement elem, Elements elemUtil) {
-    List<FieldSpec> fieldList = elem.getEnclosedElements().stream()
+    List<FieldItem> fieldList = elem.getEnclosedElements().stream()
         .map(e -> toPacketField((ExecutableElement) e))
         .collect(Collectors.toList());
 
@@ -57,9 +66,22 @@ public class NetPacketProcImpl {
         fieldList);
   }
 
-  private FieldSpec toPacketField(ExecutableElement elem) {
-    return FieldSpec.builder(TypeName.get(elem.getReturnType()),
-        elem.getSimpleName().toString()).build();
+  private boolean checkPacketItem(PacketItem item, Messager msg) {
+    List<FieldItem> invalidList = item.getFieldList().stream()
+        .filter(f -> FIELD_MAP.get(f.getSpec().type) == null)
+        .collect(Collectors.toList());
+
+    invalidList.forEach(f -> {
+      TypeName type = f.getSpec().type;
+      msg.printMessage(Diagnostic.Kind.ERROR, "无法识别的字段类型：" + type, f.getElem());
+    });
+
+    return invalidList.isEmpty();
+  }
+
+  private FieldItem toPacketField(ExecutableElement elem) {
+    return new FieldItem(elem, FieldSpec.builder(TypeName.get(elem.getReturnType()),
+        elem.getSimpleName().toString()).build());
   }
 
   /**
@@ -79,12 +101,14 @@ public class NetPacketProcImpl {
     return item.getClassName() + "Json";
   }
 
-  private FieldSpec toJsonField(FieldSpec packetField) {
-    FieldType newType = FIELD_MAP.get(packetField.type);
+  private FieldSpec toJsonField(FieldItem packetField) {
+    FieldSpec spec = packetField.getSpec();
+    FieldType newType = FIELD_MAP.get(spec.type);
+
     if (newType == null) {
-      return packetField;
+      return spec;
     }
-    return FieldSpec.builder(newType.getValueType(), packetField.name, Modifier.PUBLIC).build();
+    return FieldSpec.builder(newType.getValueType(), spec.name, Modifier.PUBLIC).build();
   }
 
   /**
@@ -99,8 +123,7 @@ public class NetPacketProcImpl {
     String internalParam = "i";
     String jsonParam = "json";
 
-    MethodSpec construct = fillConstruct(MethodSpec
-            .constructorBuilder()
+    MethodSpec construct = fillConstruct(MethodSpec.constructorBuilder()
             .addParameter(TypeName.get(Z1.class), internalParam)
             .addParameter(ClassName.bestGuess(jsonType.name), jsonParam)
         , fieldList, internalParam, jsonParam).build();
@@ -123,8 +146,9 @@ public class NetPacketProcImpl {
     return item.getClassName() + "Impl";
   }
 
-  private FieldSpec toImplField(FieldSpec packetField) {
-    return FieldSpec.builder(packetField.type, '_' + packetField.name, Modifier.FINAL).build();
+  private FieldSpec toImplField(FieldItem packetField) {
+    FieldSpec spec = packetField.getSpec();
+    return FieldSpec.builder(spec.type, '_' + spec.name, Modifier.FINAL).build();
   }
 
   private MethodSpec toImplProperty(FieldSpec field) {
@@ -183,6 +207,7 @@ public class NetPacketProcImpl {
   }
 
   private static final Map<TypeName, FieldType> FIELD_MAP = ImmutableMap.<TypeName, FieldType>builder()
+      .put(TypeName.get(JInt.class), FieldType.of(int.class, "newInt"))
       .put(TypeName.get(JStr.class), FieldType.of(String.class, "newStr"))
       .build();
 
