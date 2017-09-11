@@ -7,7 +7,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 import lujgame.anno.core.processor.SingleAnnoProc;
-import lujgame.anno.spring.AnnoSpringContext;
+import lujgame.anno.core.spring.AnnoSpringContext;
 import lujgame.game.server.net.GameNetHandler;
 
 public final class NetHandlerProc extends SingleAnnoProc {

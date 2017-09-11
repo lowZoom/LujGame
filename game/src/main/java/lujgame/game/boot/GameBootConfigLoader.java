@@ -2,6 +2,7 @@ package lujgame.game.boot;
 
 import com.typesafe.config.Config;
 import lujgame.core.file.DataFileReader;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

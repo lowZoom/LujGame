@@ -1,4 +1,4 @@
-package lujgame.anno.spring;
+package lujgame.anno.core.spring;
 
 import lujgame.anno.core.generate.GenerateTool;
 import lujgame.anno.net.handle.NetHandlerProcImpl;

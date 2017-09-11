@@ -1,19 +1,18 @@
 package lujgame.game.server;
 
 import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.actor.UntypedActorContext;
 import akka.cluster.ClusterEvent;
 import akka.cluster.Member;
 import akka.event.LoggingAdapter;
-import com.google.common.collect.ImmutableMap;
-import java.util.Map;
 import lujgame.core.akka.AkkaTool;
 import lujgame.core.akka.common.CaseActor;
+import lujgame.game.boot.message.BootFailMsg;
 import lujgame.game.master.cluster.GameNodeRegistrar;
 import lujgame.game.server.database.cache.DbCacheActorFactory;
 import lujgame.game.server.entity.logic.EntityBinder;
-import lujgame.game.server.net.NetHandleSuite;
 import lujgame.gateway.network.akka.accept.message.BindForwardReqRemote;
 
 public class GameServerActor extends CaseActor {
@@ -32,6 +31,7 @@ public class GameServerActor extends CaseActor {
     _entityBinder = entityBinder;
     _dbCacheActorFactory = dbCacheActorFactory;
 
+    addCase(BootFailMsg.class, this::onBootFail);
     addCase(BindForwardReqRemote.class, this::onBindForward);
   }
 
@@ -40,21 +40,31 @@ public class GameServerActor extends CaseActor {
     LoggingAdapter log = log();
 
     GameServerActorState state = _state;
+    log.debug("启动Akka系统完成，服务器ID：{}", state.getServerId());
+
     _akkaTool.subscribeClusterMemberUp(state.getCluster(), this, this::onMemberUp);
 
-    log.debug("游戏服启动，ID：{}", state.getServerId());
-
-    Map<Integer, NetHandleSuite> handleSuiteMap = state.getHandleSuiteMap();
-    log.debug("网络包处理器数量 -> {}", handleSuiteMap.size());
-
-    startDbCacheActor(getContext());
+    startDatabase(state, getContext());
   }
 
-  private void startDbCacheActor(UntypedActorContext ctx) {
-    Props props = _dbCacheActorFactory.props();
-
+  private void startDatabase(GameServerActorState state, UntypedActorContext ctx) {
+    Props props = _dbCacheActorFactory.props(state.getServerConfig().getConfig("database"));
     ActorRef dbCacheRef = ctx.actorOf(props);
-    _state.setDbCacheRef(dbCacheRef);
+    state.setDbCacheRef(dbCacheRef);
+  }
+
+  private void onBootFail(BootFailMsg msg) {
+    LoggingAdapter log = log();
+
+    log.error("服务器启动失败，原因如下：");
+    log.error(msg.getMessage());
+
+    log.info("服务器开始关闭...");
+    UntypedActorContext ctx = getContext();
+    ctx.stop(getSelf());
+
+    ActorSystem system = ctx.system();
+    system.terminate();
   }
 
   /**

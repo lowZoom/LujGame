@@ -34,7 +34,7 @@ public class NetPacketConsumer {
 
     Object proto = codec.decode(typeI, packet.getData());
     GameNetHandleContext ctx = new GameNetHandleContext(proto,
-        entityRef, state.getDbCacheRef(), log, typeI);
+        state.getDbCacheRef(), entityRef, log, typeI);
 
     GameNetHandler<?> handler = suite.getHandleMeta().handler();
     handler.onHandle(ctx);

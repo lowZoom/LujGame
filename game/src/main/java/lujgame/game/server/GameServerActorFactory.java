@@ -25,27 +25,28 @@ public class GameServerActorFactory {
 
   @Autowired
   public GameServerActorFactory(
-      BeanCollector beanCollector,
       AkkaTool akkaTool,
-      DbCacheActorFactory dbCacheActorFactory,
+      BeanCollector beanCollector,
       GameBootConfigLoader bootConfigLoader,
       GameNodeRegistrar gameNodeRegistrar,
-      EntityBinder entityBinder) {
-    _beanCollector = beanCollector;
+      EntityBinder entityBinder,
+      DbCacheActorFactory dbCacheActorFactory) {
     _akkaTool = akkaTool;
+    _beanCollector = beanCollector;
 
-    _dbCacheActorFactory = dbCacheActorFactory;
     _bootConfigLoader = bootConfigLoader;
-
     _gameNodeRegistrar = gameNodeRegistrar;
+
     _entityBinder = entityBinder;
+    _dbCacheActorFactory = dbCacheActorFactory;
   }
 
-  public Props props(Config gameCfg, Cluster cluster) {
+  public Props props(Config gameCfg, Cluster cluster,
+      ImmutableMap<Integer, NetHandleSuite> handleSuiteMap) {
     String serverId = _bootConfigLoader.getServerId(gameCfg);
 
-    ImmutableMap<Integer, NetHandleSuite> handleSuiteMap = makeHandleSuiteMap();
-    GameServerActorState state = new GameServerActorState(serverId, cluster, handleSuiteMap);
+    GameServerActorState state = new GameServerActorState(serverId,
+        gameCfg, cluster, handleSuiteMap);
 
     Creator<GameServerActor> c = () -> new GameServerActor(state,
         _akkaTool, _gameNodeRegistrar, _entityBinder, _dbCacheActorFactory);
@@ -53,7 +54,7 @@ public class GameServerActorFactory {
     return Props.create(GameServerActor.class, c);
   }
 
-  private ImmutableMap<Integer, NetHandleSuite> makeHandleSuiteMap() {
+  public ImmutableMap<Integer, NetHandleSuite> makeHandleSuiteMap() {
     BeanCollector c = _beanCollector;
 
     Map<Class<?>, NetPacketCodec> codecMap = c.collectBeanMap(
@@ -63,29 +64,27 @@ public class GameServerActorFactory {
         NetHandleMeta.class, NetHandleMeta::opcode);
 
     ImmutableMap.Builder<Integer, NetHandleSuite> builder = ImmutableMap.builder();
-    handleMap.forEach((k, v) -> builder.put(k, makeSuite(v, getCodec(codecMap, v))));
+    handleMap.forEach((k, v) -> builder.put(k, makeSuite(v, codecMap)));
 
     return builder.build();
   }
 
-  private NetPacketCodec getCodec(Map<Class<?>, NetPacketCodec> codecMap, NetHandleMeta meta) {
+  private NetHandleSuite makeSuite(NetHandleMeta meta, Map<Class<?>, NetPacketCodec> codecMap) {
     Class<?> packetType = meta.packetType();
     NetPacketCodec codec = codecMap.get(packetType);
 
-    return checkNotNull(codec, "找不到Codec -> %s, Handler: %s",
+    checkNotNull(codec, "找不到Codec -> %s, Handler: %s",
         packetType.getName(), meta.handler().getClass().getName());
-  }
 
-  private NetHandleSuite makeSuite(NetHandleMeta meta, NetPacketCodec codec) {
     return new NetHandleSuite(meta, codec);
   }
 
-  private final BeanCollector _beanCollector;
   private final AkkaTool _akkaTool;
+  private final BeanCollector _beanCollector;
 
-  private final DbCacheActorFactory _dbCacheActorFactory;
   private final GameBootConfigLoader _bootConfigLoader;
-
   private final GameNodeRegistrar _gameNodeRegistrar;
+
   private final EntityBinder _entityBinder;
+  private final DbCacheActorFactory _dbCacheActorFactory;
 }
