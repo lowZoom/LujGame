@@ -1,2 +1,3 @@
 lujgame.anno.net.packet.NetPacketProc
 lujgame.anno.net.handle.NetHandlerProc
+lujgame.anno.database.DatabaseProc

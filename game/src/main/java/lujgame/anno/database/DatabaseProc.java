@@ -1,4 +1,4 @@
-package lujgame.anno.net.packet;
+package lujgame.anno.database;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -9,17 +9,17 @@ import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 import lujgame.anno.core.processor.SingleAnnoProc;
 import lujgame.anno.core.spring.AnnoSpringContext;
-import lujgame.game.server.net.NetPacket;
+import lujgame.game.server.database.bean.Database;
 
-public final class NetPacketProc extends SingleAnnoProc {
+public final class DatabaseProc extends SingleAnnoProc {
 
-  public NetPacketProc() {
-    _impl = AnnoSpringContext.getRoot(NetPacketProcImpl.class);
+  public DatabaseProc() {
+    _impl = AnnoSpringContext.getRoot(DatabaseProcImpl.class);
   }
 
   @Override
   public Class<? extends Annotation> initSupportedAnnotationType() {
-    return NetPacket.class;
+    return Database.class;
   }
 
   @Override
@@ -33,5 +33,5 @@ public final class NetPacketProc extends SingleAnnoProc {
     return true;
   }
 
-  private final NetPacketProcImpl _impl;
+  private final DatabaseProcImpl _impl;
 }

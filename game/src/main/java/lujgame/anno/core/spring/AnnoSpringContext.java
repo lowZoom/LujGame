@@ -1,6 +1,7 @@
 package lujgame.anno.core.spring;
 
 import lujgame.anno.core.generate.GenerateTool;
+import lujgame.anno.database.DatabaseProcImpl;
 import lujgame.anno.net.handle.NetHandlerProcImpl;
 import lujgame.anno.net.packet.NetPacketProcImpl;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -23,6 +24,7 @@ public class AnnoSpringContext {
     addBeanDef(GenerateTool.class);
     addBeanDef(NetHandlerProcImpl.class);
     addBeanDef(NetPacketProcImpl.class);
+    addBeanDef(DatabaseProcImpl.class);
 
     _appCtx.refresh();
   }

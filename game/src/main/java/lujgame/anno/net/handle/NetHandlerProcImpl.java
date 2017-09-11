@@ -1,5 +1,7 @@
 package lujgame.anno.net.handle;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.auto.common.AnnotationMirrors;
 import com.google.auto.common.MoreElements;
 import com.google.auto.common.MoreTypes;
@@ -22,7 +24,6 @@ import javax.lang.model.util.Elements;
 import lujgame.anno.core.generate.GenerateTool;
 import lujgame.game.server.net.GameNetHandler;
 import lujgame.game.server.net.NetHandleMeta;
-import lujgame.game.server.net.NetHandleSuite;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,8 +46,8 @@ public class NetHandlerProcImpl {
   }
 
   private HandleItem createHandleItem(TypeElement elem, Elements elemUtil) {
-    AnnotationMirror anno = MoreElements.getAnnotationMirror(
-        elem, GameNetHandler.Register.class).orNull();
+    AnnotationMirror anno = checkNotNull(MoreElements.getAnnotationMirror(
+        elem, GameNetHandler.Register.class).orNull(), "该注解处理器不可能取不出该注解");
 
     String className = elem.getSimpleName().toString();
     return new HandleItem(elemUtil.getPackageOf(elem).getQualifiedName().toString(),
@@ -80,7 +81,7 @@ public class NetHandlerProcImpl {
         .addStatement("return $L", handlerField.name)
         .build();
 
-    // 构建生成类
+    // 构建元信息类
     _generateTool.writeTo(JavaFile.builder(item.getPackageName(), TypeSpec
         .classBuilder(item.getClassName() + "Meta")
         .addAnnotation(Component.class)

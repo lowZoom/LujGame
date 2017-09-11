@@ -1,6 +1,8 @@
 package lujgame.anno.core.processor;
 
 import com.google.common.collect.ImmutableSet;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 import javax.annotation.processing.Messager;
@@ -31,12 +33,21 @@ public abstract class SingleAnnoProc extends AnnoProc {
           break;
         }
       } catch (Exception e) {
-        msg.printMessage(Diagnostic.Kind.ERROR, e.getMessage(), elem);
+        logException(msg, e, elem);
         break;
       }
     }
 
     return true;
+  }
+
+  private void logException(Messager msg, Exception ex, Element elem) {
+    // StringWriter不需要close
+    @SuppressWarnings("resource")
+    StringWriter writer = new StringWriter(128);
+
+    ex.printStackTrace(new PrintWriter(writer));
+    msg.printMessage(Diagnostic.Kind.ERROR, writer.toString(), elem);
   }
 
   private Class<? extends Annotation> _supportAnno;

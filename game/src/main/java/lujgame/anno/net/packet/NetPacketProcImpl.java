@@ -59,11 +59,8 @@ public class NetPacketProcImpl {
         .map(e -> toPacketField((ExecutableElement) e))
         .collect(Collectors.toList());
 
-    return new PacketItem(
-        elemUtil.getPackageOf(elem).getQualifiedName().toString(),
-        elem.getSimpleName().toString(),
-        elem.asType(),
-        fieldList);
+    return new PacketItem(elemUtil.getPackageOf(elem).getQualifiedName().toString(),
+        elem.getSimpleName().toString(), elem.asType(), fieldList);
   }
 
   private boolean checkPacketItem(PacketItem item, Messager msg) {

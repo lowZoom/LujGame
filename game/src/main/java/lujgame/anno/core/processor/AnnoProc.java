@@ -1,5 +1,7 @@
 package lujgame.anno.core.processor;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -9,11 +11,24 @@ import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.util.Elements;
+import javax.tools.Diagnostic;
 
 @SuppressWarnings("FieldAccessedSynchronizedAndUnsynchronized")
 public abstract class AnnoProc extends AbstractProcessor {
 
   public abstract Set<Class<? extends Annotation>> initSupportedAnnotationTypes();
+
+  public Messager getMsg() {
+    return _msg;
+  }
+
+  public Filer getFiler() {
+    return _filer;
+  }
+
+  public Elements getElemUtil() {
+    return _elemUtil;
+  }
 
   @Override
   public synchronized void init(ProcessingEnvironment env) {
@@ -38,18 +53,6 @@ public abstract class AnnoProc extends AbstractProcessor {
   @Override
   public SourceVersion getSupportedSourceVersion() {
     return SourceVersion.RELEASE_8;
-  }
-
-  public Messager getMsg() {
-    return _msg;
-  }
-
-  public Filer getFiler() {
-    return _filer;
-  }
-
-  public Elements getElemUtil() {
-    return _elemUtil;
   }
 
   private Set<String> _supportSet;
