@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.function.BiConsumer;
 import lujgame.game.server.database.DbOperateContext;
 import lujgame.game.server.database.cache.message.DbCacheUseReq;
-import lujgame.game.server.database.cache.message.UseItem;
+import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.type.JLong;
 import lujgame.game.server.type.JStr;
 import lujgame.game.server.type.Z1;
@@ -44,7 +44,7 @@ public class GameNetHandleContext {
   }
 
   public void dbPreload(Class<?> dbType, JStr dbKey, String resultKey) {
-    _useList.add(new UseItem(dbType, dbKey.toString(), resultKey));
+    _useList.add(new DbCacheUseItem(dbType, dbKey.toString(), resultKey));
   }
 
   public <T> void invoke(Class<T> cmdType, BiConsumer<T, DbOperateContext> cmdRunner) {
@@ -56,7 +56,7 @@ public class GameNetHandleContext {
   }
 
   private final Object _proto;
-  private final ImmutableList.Builder<UseItem> _useList;
+  private final ImmutableList.Builder<DbCacheUseItem> _useList;
 
   private final ActorRef _dbCacheRef;
   private final ActorRef _entityRef;

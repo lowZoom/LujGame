@@ -17,7 +17,7 @@ public class Net1010001 extends GameNetHandler<Net1010001Req> {
     JStr name = packet.loginName();
     ctx.log().debug("玩家请求登录：{}", name);
 
-    //TODO: 在这里就预读
+    //TODO: 在这里就指定预读
     ctx.dbPreload(M1PlayerDb.class, name, "0");
 
     ctx.invoke(M1LoginCmd.class, M1LoginCmd::login);

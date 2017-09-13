@@ -1,8 +1,8 @@
 package lujgame.game.server.database.cache.message;
 
-public class UseItem {
+public class DbCacheUseItem {
 
-  public UseItem(Class<?> dbType, String dbKey, String resultKey) {
+  public DbCacheUseItem(Class<?> dbType, String dbKey, String resultKey) {
     _dbType = dbType;
     _dbKey = dbKey;
 

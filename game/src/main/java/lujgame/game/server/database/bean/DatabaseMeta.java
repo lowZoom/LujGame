@@ -4,5 +4,5 @@ public interface DatabaseMeta {
 
   Class<?> databaseType();
 
-  DbMetaField[] fields();
+//  DbMetaField[] fields();
 }

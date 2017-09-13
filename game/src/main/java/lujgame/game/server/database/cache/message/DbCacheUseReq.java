@@ -7,7 +7,7 @@ import lujgame.game.server.database.DbOperateContext;
 public class DbCacheUseReq {
 
   public DbCacheUseReq(
-      ImmutableList<UseItem> useList,
+      ImmutableList<DbCacheUseItem> useList,
       Class<?> cmdType,
       BiConsumer<?, DbOperateContext> cmdRunner) {
     _useList = useList;
@@ -16,7 +16,7 @@ public class DbCacheUseReq {
     _cmdRunner = cmdRunner;
   }
 
-  public ImmutableList<UseItem> getUseList() {
+  public ImmutableList<DbCacheUseItem> getUseList() {
     return _useList;
   }
 
@@ -28,7 +28,7 @@ public class DbCacheUseReq {
     return _cmdRunner;
   }
 
-  private final ImmutableList<UseItem> _useList;
+  private final ImmutableList<DbCacheUseItem> _useList;
 
   private final Class<?> _cmdType;
   private final BiConsumer<?, DbOperateContext> _cmdRunner;

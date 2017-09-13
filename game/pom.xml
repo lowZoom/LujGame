@@ -21,7 +21,7 @@
         <version>3.6.2</version>
         <configuration>
           <!--<verbose>true</verbose>-->
-          <proc>none</proc>
+          <proc>none</proc> <!--TODO: 抽到父配置-->
         </configuration>
       </plugin>
     </plugins>

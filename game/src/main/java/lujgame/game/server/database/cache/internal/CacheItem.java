@@ -1,4 +1,4 @@
-package lujgame.game.server.database.cache;
+package lujgame.game.server.database.cache.internal;
 
 public class CacheItem {
 
