@@ -9,6 +9,7 @@ import com.typesafe.config.Config;
 import lujgame.game.master.cluster.ClusterBossActorFactory;
 import lujgame.game.master.gate.CommGateActorFactory;
 import lujgame.game.server.GameServerActorFactory;
+import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.net.NetHandleSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,11 +70,14 @@ public class GameBoot {
     ImmutableMap<Integer, NetHandleSuite> handleSuiteMap = f.makeHandleSuiteMap();
     log.debug("扫描网络处理器完成，数量：{}", handleSuiteMap.size());
 
+    ImmutableMap<Class<?>, CacheOkCommand> cmdMap = f.makeCmdMap();
+    log.debug("扫描数据处理器，数量：{}", cmdMap.size());
+
     log.debug("启动Akka系统...");
     ActorSystem system = createActorSystem(akkaCfg);
     Cluster cluster = Cluster.get(system);
 
-    Props props = f.props(gameCfg, cluster, handleSuiteMap);
+    Props props = f.props(gameCfg, cluster, handleSuiteMap, cmdMap);
     ActorRef serverRef = system.actorOf(props, "Slave");
   }
 

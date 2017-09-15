@@ -12,6 +12,7 @@ import lujgame.core.akka.AkkaTool;
 import lujgame.core.spring.BeanCollector;
 import lujgame.game.boot.GameBootConfigLoader;
 import lujgame.game.master.cluster.GameNodeRegistrar;
+import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.cache.DbCacheActorFactory;
 import lujgame.game.server.entity.logic.EntityBinder;
 import lujgame.game.server.net.NetHandleMeta;
@@ -42,11 +43,12 @@ public class GameServerActorFactory {
   }
 
   public Props props(Config gameCfg, Cluster cluster,
-      ImmutableMap<Integer, NetHandleSuite> handleSuiteMap) {
+      ImmutableMap<Integer, NetHandleSuite> handleSuiteMap,
+      ImmutableMap<Class<?>, CacheOkCommand> cmdMap) {
     String serverId = _bootConfigLoader.getServerId(gameCfg);
 
     GameServerActorState state = new GameServerActorState(serverId,
-        gameCfg, cluster, handleSuiteMap);
+        gameCfg, cluster, handleSuiteMap, cmdMap);
 
     Creator<GameServerActor> c = () -> new GameServerActor(state,
         _akkaTool, _gameNodeRegistrar, _entityBinder, _dbCacheActorFactory);
@@ -67,6 +69,10 @@ public class GameServerActorFactory {
     handleMap.forEach((k, v) -> builder.put(k, makeSuite(v, codecMap)));
 
     return builder.build();
+  }
+
+  public ImmutableMap<Class<?>, CacheOkCommand> makeCmdMap() {
+    return _beanCollector.collectBeanMap(CacheOkCommand.class, Object::getClass);
   }
 
   private NetHandleSuite makeSuite(NetHandleMeta meta, Map<Class<?>, NetPacketCodec> codecMap) {

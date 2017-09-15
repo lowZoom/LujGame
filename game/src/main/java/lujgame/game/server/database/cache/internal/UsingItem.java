@@ -12,10 +12,15 @@ public class UsingItem {
     _cacheItem = cacheItem;
   }
 
+  public DbCacheUseItem getUseItem() {
+    return _useItem;
+  }
+
   public CacheItem getCacheItem() {
     return _cacheItem;
   }
 
+  @Deprecated
   private final String _cacheKey;
 
   private final DbCacheUseItem _useItem;

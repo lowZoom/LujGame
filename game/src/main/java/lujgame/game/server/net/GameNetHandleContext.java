@@ -4,9 +4,10 @@ import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.google.common.collect.ImmutableList;
 import java.util.function.BiConsumer;
+import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.DbOperateContext;
-import lujgame.game.server.database.cache.message.DbCacheUseReq;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
+import lujgame.game.server.database.cache.message.DbCacheUseReq;
 import lujgame.game.server.type.JLong;
 import lujgame.game.server.type.JStr;
 import lujgame.game.server.type.Z1;
@@ -43,16 +44,21 @@ public class GameNetHandleContext {
     return _typeI.getImpl(val).getValue();
   }
 
-  public void dbPreload(Class<?> dbType, JStr dbKey, String resultKey) {
-    _useList.add(new DbCacheUseItem(dbType, dbKey.toString(), resultKey));
+  public void dbLoadSet(Class<?> dbType, JStr dbKey, String resultKey) {
+    String cacheKey = makeCacheKey(dbType, dbKey.toString());
+    _useList.add(new DbCacheUseItem(cacheKey, dbType, dbKey.toString(), resultKey));
   }
 
-  public <T> void invoke(Class<T> cmdType, BiConsumer<T, DbOperateContext> cmdRunner) {
-    _dbCacheRef.tell(new DbCacheUseReq(_useList.build(), cmdType, cmdRunner), _entityRef);
+  public <T extends CacheOkCommand> void invoke(Class<T> cmdType) {
+    _dbCacheRef.tell(new DbCacheUseReq(_useList.build(), cmdType, _entityRef, 0), _entityRef);
   }
 
   public LoggingAdapter log() {
     return _log;
+  }
+
+  private String makeCacheKey(Class<?> dbType, String dbKey) {
+    return dbType.getSimpleName() + ".Set#" + dbKey;
   }
 
   private final Object _proto;
@@ -64,4 +70,5 @@ public class GameNetHandleContext {
   private final LoggingAdapter _log;
 
   private final Z1 _typeI;
+
 }

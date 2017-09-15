@@ -6,17 +6,21 @@ import com.google.common.collect.ImmutableMap;
 import com.typesafe.config.Config;
 import java.util.HashMap;
 import java.util.Map;
+import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.net.NetHandleSuite;
 
 public class GameServerActorState {
 
   public GameServerActorState(String serverId, Config serverConfig, Cluster cluster,
-      ImmutableMap<Integer, NetHandleSuite> handleSuiteMap) {
+      ImmutableMap<Integer, NetHandleSuite> handleSuiteMap,
+      ImmutableMap<Class<?>, CacheOkCommand> cmdMap) {
     _serverId = serverId;
     _serverConfig = serverConfig;
 
     _cluster = cluster;
+
     _handleSuiteMap = handleSuiteMap;
+    _cmdMap = cmdMap;
 
     _entityMap = new HashMap<>(1024);
   }
@@ -49,6 +53,10 @@ public class GameServerActorState {
     return _handleSuiteMap;
   }
 
+  public ImmutableMap<Class<?>, CacheOkCommand> getCmdMap() {
+    return _cmdMap;
+  }
+
   private ActorRef _dbCacheRef;
 
   private final Map<String, ActorRef> _entityMap;
@@ -57,5 +65,7 @@ public class GameServerActorState {
   private final Config _serverConfig;
 
   private final Cluster _cluster;
+
   private final ImmutableMap<Integer, NetHandleSuite> _handleSuiteMap;
+  private final ImmutableMap<Class<?>, CacheOkCommand> _cmdMap;
 }

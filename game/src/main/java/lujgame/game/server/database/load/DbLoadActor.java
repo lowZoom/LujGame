@@ -20,16 +20,19 @@ public class DbLoadActor extends CaseActor {
   }
 
   private void onLoadSet(DbLoadSetReq msg) {
-    String tableName = msg.getKey();
-    log().debug("数据库IO：{}", tableName);
+    String cacheKey = msg.getKey();
+    String[] keyInfo = cacheKey.split("#");
+
+    String tableName = keyInfo[0];
+    String sql = "select val from `" + tableName + "` where key='" + keyInfo[1] + '\'';
+
+    log().debug("数据库IO：{}", sql);
 
     HikariDataSource dataSource = _state.getDataSource();
-    try {
-      Connection conn = dataSource.getConnection();
-      Statement stmt = conn.createStatement();
 
-      ResultSet result = stmt.executeQuery("select val from '"
-          + tableName + "' where key='" + msg.getKey() + '\'');
+    try (Connection conn = dataSource.getConnection();
+        Statement stmt = conn.createStatement();
+        ResultSet result = stmt.executeQuery(sql)) {
 
       ImmutableSet.Builder<Long> builder = ImmutableSet.builder();
 
@@ -38,10 +41,11 @@ public class DbLoadActor extends CaseActor {
         builder.add(objId);
       }
 
-      DbLoadSetRsp rsp = new DbLoadSetRsp(builder.build());
+      DbLoadSetRsp rsp = new DbLoadSetRsp(cacheKey, builder.build());
       ActorRef cacheRef = getSender();
 
       cacheRef.tell(rsp, getSelf());
+
     } catch (SQLException e) {
       e.printStackTrace();
     }

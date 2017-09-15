@@ -18,8 +18,8 @@ public class Net1010001 extends GameNetHandler<Net1010001Req> {
     ctx.log().debug("玩家请求登录：{}", name);
 
     //TODO: 在这里就指定预读
-    ctx.dbPreload(M1PlayerDb.class, name, "0");
+    ctx.dbLoadSet(M1PlayerDb.class, name, "0");
 
-    ctx.invoke(M1LoginCmd.class, M1LoginCmd::login);
+    ctx.invoke(M1LoginCmd.class);
   }
 }

@@ -1,14 +1,10 @@
 package lujgame.game.server.entity.logic;
 
 import akka.actor.ActorRef;
-import akka.actor.Props;
 import akka.actor.UntypedActorContext;
-import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import lujgame.game.server.GameServerActorState;
 import lujgame.game.server.entity.GameEntityActorFactory;
-import lujgame.game.server.net.GameNetHandler;
-import lujgame.game.server.net.NetHandleSuite;
 import lujgame.gateway.network.akka.accept.message.BindForwardRsp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,9 +29,8 @@ public class EntityBinder {
     }
 
     // 绑定时，创建对应处理实体
-    ImmutableMap<Integer, NetHandleSuite> handleSuiteMap = state.getHandleSuiteMap();
-    Props props = _entityActorFactory.props(handleSuiteMap, state.getDbCacheRef());
-    ActorRef entityRef = ctx.actorOf(props);
+    ActorRef entityRef = ctx.actorOf(_entityActorFactory
+        .props(state.getHandleSuiteMap(), state.getCmdMap(), state.getDbCacheRef()));
     entityMap.put(connId, entityRef);
 
     // 回复网关
