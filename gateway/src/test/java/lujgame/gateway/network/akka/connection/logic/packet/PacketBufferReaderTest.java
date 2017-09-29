@@ -1,7 +1,6 @@
 package lujgame.gateway.network.akka.connection.logic.packet;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +26,7 @@ public class PacketBufferReaderTest {
     int result = _reader.readableBytes(buf);
 
     //-- Assert --//
-    assertThat(result, equalTo(9));
+    assertThat(result).isEqualTo(9);
   }
 
   @Test
@@ -40,7 +39,7 @@ public class PacketBufferReaderTest {
     int result = _reader.readableBytes(buf);
 
     //-- Assert --//
-    assertThat(result, equalTo(15));
+    assertThat(result).isEqualTo(15);
   }
 
   @Test
@@ -53,7 +52,7 @@ public class PacketBufferReaderTest {
     int result = _reader.readableBytes(buf);
 
     //-- Assert --//
-    assertThat(result, equalTo(1));
+    assertThat(result).isEqualTo(1);
   }
 
   @Test
@@ -66,7 +65,7 @@ public class PacketBufferReaderTest {
     int result = _reader.readableBytes(buf);
 
     //-- Assert --//
-    assertThat(result, equalTo(0));
+    assertThat(result).isEqualTo(0);
   }
 
   @Test
@@ -82,8 +81,8 @@ public class PacketBufferReaderTest {
     byte[] result = _reader.readBytes(buf, new byte[2]);
 
     //-- Assert --//
-    assertThat(result, equalTo(new byte[]{5, 6}));
-    assertThat(buf.getReadIndex(), equalTo(6));
+    assertThat(result).isEqualTo(new byte[]{5, 6});
+    assertThat(buf.getReadIndex()).isEqualTo(6);
   }
 
   @Test
@@ -98,8 +97,8 @@ public class PacketBufferReaderTest {
     byte[] result = _reader.readBytes(buf, new byte[2]);
 
     //-- Assert --//
-    assertThat(result, equalTo(new byte[]{3, 4}));
-    assertThat(buf.getReadIndex(), equalTo(4));
+    assertThat(result).isEqualTo(new byte[]{3, 4});
+    assertThat(buf.getReadIndex()).isEqualTo(4);
   }
 
   @Test
@@ -115,24 +114,24 @@ public class PacketBufferReaderTest {
     byte[] result = _reader.readBytes(buf, new byte[5]);
 
     //-- Assert --//
-    assertThat(result, equalTo(new byte[]{2, 3, 4, 5, 6}));
-    assertThat(buf.getReadIndex(), equalTo(6));
+    assertThat(result).isEqualTo(new byte[]{2, 3, 4, 5, 6});
+    assertThat(buf.getReadIndex()).isEqualTo(6);
   }
 
   @Test
   public void readMedium_正数() throws Exception {
     PacketBufferReader r = _reader;
-    assertThat(r.readMedium(new byte[]{0, 0, 1}), equalTo(0x01));
-    assertThat(r.readMedium(new byte[]{0, 1, 1}), equalTo(0x0101));
-    assertThat(r.readMedium(new byte[]{1, 1, 1}), equalTo(0x010101));
+    assertThat(r.readMedium(new byte[]{0, 0, 1})).isEqualTo(0x01);
+    assertThat(r.readMedium(new byte[]{0, 1, 1})).isEqualTo(0x0101);
+    assertThat(r.readMedium(new byte[]{1, 1, 1})).isEqualTo(0x010101);
   }
 
   @Test
   public void readMedium_负数() throws Exception {
     PacketBufferReader r = _reader;
-    assertThat(r.readMedium(new byte[]{0, 0, -127}), equalTo(129));
-    assertThat(r.readMedium(new byte[]{0, -1, -1}), equalTo(0xFFFF));
-    assertThat(r.readMedium(new byte[]{-1, -1, -1}), equalTo(0xFFFFFF));
+    assertThat(r.readMedium(new byte[]{0, 0, -127})).isEqualTo(129);
+    assertThat(r.readMedium(new byte[]{0, -1, -1})).isEqualTo(0xFFFF);
+    assertThat(r.readMedium(new byte[]{-1, -1, -1})).isEqualTo(0xFFFFFF);
   }
 
   ConnPacketBuffer mockPacketBuffer(int... len) {

@@ -1,7 +1,6 @@
 package lujgame.core.file;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +23,7 @@ public class FileToolTest {
     String result = _fileTool.getName(PATH);
 
     //-- Assert --//
-    assertThat(result, equalTo("无连接"));
+    assertThat(result).isEqualTo("无连接");
   }
 
   @Test
@@ -36,6 +35,6 @@ public class FileToolTest {
     String result = _fileTool.getName(PATH);
 
     //-- Assert --//
-    assertThat(result, equalTo("无连接"));
+    assertThat(result).isEqualTo("无连接");
   }
 }

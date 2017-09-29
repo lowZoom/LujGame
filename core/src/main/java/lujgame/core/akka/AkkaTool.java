@@ -1,5 +1,6 @@
 package lujgame.core.akka;
 
+import akka.actor.ActorRef;
 import akka.cluster.Cluster;
 import akka.cluster.ClusterEvent;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +28,14 @@ public class AkkaTool {
 
     cluster.subscribe(subscriber.getSelf(),
         ClusterEvent.initialStateAsEvents(), ClusterEvent.MemberUp.class);
+  }
+
+  public void tell(Object msg, ActorRef from, ActorRef to) {
+    to.tell(msg, from);
+  }
+
+  public void tellSelf(Object msg, ActorRef ref) {
+    tell(msg, ref, ref);
   }
 
   public void schedule(CaseActor actor, long len, TimeUnit unit,

@@ -1,7 +1,6 @@
 package lujgame.core.akka;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -35,7 +34,7 @@ public class CaseActorImplTest {
     boolean result = invokeHandleMessage(pipeline);
 
     //-- Assert --//
-    assertThat(result, equalTo(false));
+    assertThat(result).isFalse();
   }
 
   @Test
@@ -51,7 +50,7 @@ public class CaseActorImplTest {
     boolean result = invokeHandleMessage(pipeline);
 
     //-- Assert --//
-    assertThat(result, equalTo(true));
+    assertThat(result).isTrue();
   }
 
   boolean invokeHandleMessage(LinkedList<ActorMessageHandler> msgPipeline) {
