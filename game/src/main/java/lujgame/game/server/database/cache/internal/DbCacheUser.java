@@ -1,38 +1,82 @@
 package lujgame.game.server.database.cache.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import akka.actor.ActorRef;
+import com.google.common.cache.Cache;
 import com.google.common.cache.LoadingCache;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import lujgame.game.server.database.cache.DbCacheActorState;
+import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.database.cache.message.DbCacheUseReq;
+import lujgame.game.server.database.type.DbId;
+import lujgame.game.server.database.type.IdSet;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DbCacheUser {
 
-  public CacheItem getCacheItem(LoadingCache<String, CacheItem> cache, String key) {
-    try {
-      return cache.get(key);
-    } catch (ExecutionException e) {
-      throw new RuntimeException(e);
+  public void finishLoadItem(Cache<String, CacheItem> cache, String cacheKey, Object resultValue) {
+    CacheItem item = checkNotNull(cache.getIfPresent(cacheKey), cacheKey);
+
+    checkState(item.getValue() == null, cacheKey);
+    checkState(!item.isLoadOk(), cacheKey);
+    checkState(!item.isLock());
+
+    item.setValue(checkNotNull(resultValue, cacheKey));
+    item.setLoadOk(true);
+  }
+
+  public boolean useCacheSet(LoadingCache<String, CacheItem> cache,
+      String cacheKey) throws ExecutionException {
+    //TODO: 先判断idSet在缓存没有，没有发起读取，有就拿出来遍历，发起所有对象的读取
+
+    CacheItem cacheItem = cache.get(cacheKey);
+
+    if (!isAvailable(cacheItem)) {
+      return false;
     }
+
+    //TODO: 要先转换成set
+
+    IdSet idSet = (IdSet) cacheItem.getValue();
+    boolean ok = true;
+
+    // 要让每一个id都跑到，确定会发起必要的读取
+    for (DbId dbId : idSet.iter()) {
+      ok = useCacheObj(cache, dbId) && ok;
+    }
+
+    return ok;
+  }
+
+  public boolean useCacheObj(LoadingCache<String, CacheItem> cache,
+      DbId dbId) throws ExecutionException {
+    String cacheKey = null;
+    CacheItem cacheItem = cache.get(cacheKey);
+
+    if (!isAvailable(cacheItem)) {
+      return false;
+    }
+
+    //TODO: 转换成对象进行处理
+
+    return true;
+  }
+
+  public void lockAndCallback() {
+  }
+
+  public boolean isSetRelated(DbCacheUseItem useItem) {
+    Class<?> dbType = useItem.getDbType();
+    return Objects.equals(dbType, useItem.getDbType());
   }
 
   public boolean isAvailable(CacheItem cacheItem) {
     return cacheItem.isLoadOk() && !cacheItem.isLock();
-  }
-
-  public void waitCache(DbCacheActorState state, DbCacheUseReq msg) {
-    LinkedList<DbCacheUseReq> waitQueue = state.getWaitQueue();
-    waitQueue.addLast(msg);
-  }
-
-  public void lockCache(CacheItem item) {
-    item.setLock(true);
-  }
-
-  public void callCmd(ActorRef entityRef) {
-// entityRef.tell();
   }
 }

@@ -1,6 +1,7 @@
 package lujgame.game.server.database.cache;
 
 import akka.actor.ActorRef;
+import com.google.common.cache.Cache;
 import com.google.common.cache.LoadingCache;
 import com.typesafe.config.Config;
 import java.util.LinkedList;
@@ -16,11 +17,11 @@ public class DbCacheActorState {
     _waitQueue = new LinkedList<>();
   }
 
-  public LoadingCache<String, CacheItem> getCache() {
+  public Cache<String, CacheItem> getCache() {
     return _cache;
   }
 
-  public void setCache(LoadingCache<String, CacheItem> cache) {
+  public void setCache(Cache<String, CacheItem> cache) {
     _cache = cache;
   }
 
@@ -40,7 +41,7 @@ public class DbCacheActorState {
     return _databaseConfig;
   }
 
-  private LoadingCache<String, CacheItem> _cache;
+  private Cache<String, CacheItem> _cache;
 
   //TODO: 保存正在锁定使用的缓存项，先到这里查询是否被锁，找不到再到cache里找
   private Map<String, CacheItem> _lockMap;

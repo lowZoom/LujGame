@@ -3,9 +3,8 @@ package lujgame.game.server.net;
 import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.google.common.collect.ImmutableList;
-import java.util.function.BiConsumer;
 import lujgame.game.server.command.CacheOkCommand;
-import lujgame.game.server.database.DbOperateContext;
+import lujgame.game.server.database.cache.internal.CacheKeyMaker;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.database.cache.message.DbCacheUseReq;
 import lujgame.game.server.type.JLong;
@@ -20,14 +19,17 @@ public class GameNetHandleContext {
       ActorRef dbCacheRef,
       ActorRef entityRef,
       LoggingAdapter log,
-      Z1 typeI) {
+      Z1 typeI,
+      CacheKeyMaker cacheKeyMaker) {
     _proto = proto;
 
     _dbCacheRef = dbCacheRef;
     _entityRef = entityRef;
 
     _log = log;
+
     _typeI = typeI;
+    _cacheKeyMaker = cacheKeyMaker;
 
     _useList = ImmutableList.builder();
   }
@@ -45,7 +47,8 @@ public class GameNetHandleContext {
   }
 
   public void dbLoadSet(Class<?> dbType, JStr dbKey, String resultKey) {
-    String cacheKey = makeCacheKey(dbType, dbKey.toString());
+    //TODO: 改成带在meta里
+    String cacheKey = _cacheKeyMaker.makeSetKey(dbType, dbKey.toString());
     _useList.add(new DbCacheUseItem(cacheKey, dbType, dbKey.toString(), resultKey));
   }
 
@@ -57,11 +60,9 @@ public class GameNetHandleContext {
     return _log;
   }
 
-  private String makeCacheKey(Class<?> dbType, String dbKey) {
-    return dbType.getSimpleName() + ".Set#" + dbKey;
-  }
-
   private final Object _proto;
+
+  //  private final Builder<DbCacheUseObjItem> _objUseList;
   private final ImmutableList.Builder<DbCacheUseItem> _useList;
 
   private final ActorRef _dbCacheRef;
@@ -70,5 +71,5 @@ public class GameNetHandleContext {
   private final LoggingAdapter _log;
 
   private final Z1 _typeI;
-
+  private final CacheKeyMaker _cacheKeyMaker;
 }

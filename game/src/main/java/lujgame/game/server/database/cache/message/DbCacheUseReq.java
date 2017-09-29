@@ -2,25 +2,26 @@ package lujgame.game.server.database.cache.message;
 
 import akka.actor.ActorRef;
 import com.google.common.collect.ImmutableList;
-import java.util.function.BiConsumer;
-import lujgame.game.server.database.DbOperateContext;
 
 public class DbCacheUseReq {
 
   public DbCacheUseReq(
-      ImmutableList<DbCacheUseItem> useList,
+//      ImmutableList<DbCacheUseItem> objUseList,
+      ImmutableList<DbCacheUseItem> setUseList,
       Class<?> cmdType,
       ActorRef requestRef,
       int requestTime) {
-    _useList = useList;
+//    _objUseList = objUseList;
+    _setUseList = setUseList;
+
     _cmdType = cmdType;
 
     _requestRef = requestRef;
     _requestTime = requestTime;
   }
 
-  public ImmutableList<DbCacheUseItem> getUseList() {
-    return _useList;
+  public ImmutableList<DbCacheUseItem> getSetUseList() {
+    return _setUseList;
   }
 
   public Class<?> getCmdType() {
@@ -35,7 +36,9 @@ public class DbCacheUseReq {
     return _requestTime;
   }
 
-  private final ImmutableList<DbCacheUseItem> _useList;
+  //  private final ImmutableList<DbCacheUseItem> _objUseList;
+  private final ImmutableList<DbCacheUseItem> _setUseList;
+
   private final Class<?> _cmdType;
 
   private final ActorRef _requestRef;

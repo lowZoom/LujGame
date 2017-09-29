@@ -3,6 +3,7 @@ package lujgame.game.server.entity.logic;
 import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.google.common.collect.ImmutableMap;
+import lujgame.game.server.database.cache.internal.CacheKeyMaker;
 import lujgame.game.server.entity.GameEntityActorState;
 import lujgame.game.server.net.GameNetHandleContext;
 import lujgame.game.server.net.GameNetHandler;
@@ -17,8 +18,9 @@ import org.springframework.stereotype.Component;
 public class NetPacketConsumer {
 
   @Autowired
-  public NetPacketConsumer(Z1 typeI) {
+  public NetPacketConsumer(Z1 typeI, CacheKeyMaker cacheKeyMaker) {
     _typeI = typeI;
+    _cacheKeyMaker = cacheKeyMaker;
   }
 
   public void consumePacket(GameEntityActorState state, ActorRef entityRef,
@@ -34,11 +36,12 @@ public class NetPacketConsumer {
 
     Object proto = codec.decode(typeI, packet.getData());
     GameNetHandleContext ctx = new GameNetHandleContext(proto,
-        state.getDbCacheRef(), entityRef, log, typeI);
+        state.getDbCacheRef(), entityRef, log, typeI, _cacheKeyMaker);
 
     GameNetHandler<?> handler = suite.getHandleMeta().handler();
     handler.onHandle(ctx);
   }
 
   private final Z1 _typeI;
+  private final CacheKeyMaker _cacheKeyMaker;
 }
