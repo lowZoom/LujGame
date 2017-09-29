@@ -76,8 +76,8 @@ public class CacheUseStarterTest {
     addEmptySetItem(KEY_B);
 
     DbCacheUseReq msg = makeUseReq(ImmutableList.of(
-        new DbCacheUseItem(KEY_A, null, null, "1"),
-        new DbCacheUseItem(KEY_B, null, null, "2")));
+        makeUseItem(KEY_A, "1"),
+        makeUseItem(KEY_B, "2")));
 
     //-- Act --//
     startUseObject(msg);
@@ -102,19 +102,13 @@ public class CacheUseStarterTest {
     setItem.setLoadOk(true);
     setItem.setValue(ImmutableSet.of(1L));
 
-    // 干扰项
-    final String KEY_2 = u.makeObjectKey(2L);
-
-    DbCacheUseReq msg = makeUseReq(ImmutableList.of(
-        new DbCacheUseItem(SET_KEY, null, null, "1")));
+    DbCacheUseReq msg = makeUseReq(ImmutableList.of(makeUseItem(SET_KEY, "1")));
 
     //-- Act --//
     startUseObject(msg);
 
     //-- Assert --//
     assertThat(_cache.size()).isEqualTo(2);
-    assertThat(_cache.getIfPresent(KEY_2)).isNotNull();
-
     assertThat(_waitQueue).hasSize(1);
 
     verify(_akkaTool).tell(isA(DbLoadObjReq.class), eq(_cacheRef), eq(_loaderRef));
@@ -132,7 +126,7 @@ public class CacheUseStarterTest {
     final String KEY_2 = u.makeObjectKey(2L);
     u.addCacheItem(_cache, KEY_2).setLoadOk(true);
 
-    DbCacheUseReq msg = makeUseReq(ImmutableList.of(new DbCacheUseItem(SET_KEY, null, null, "1")));
+    DbCacheUseReq msg = makeUseReq(ImmutableList.of(makeUseItem(SET_KEY, "1")));
 
     //-- Act --//
     startUseObject(msg);
@@ -159,5 +153,9 @@ public class CacheUseStarterTest {
     CacheItem setItem = _cacheUtil.addCacheItem(_cache, setKey);
     setItem.setLoadOk(true);
     setItem.setValue(ImmutableSet.of());
+  }
+
+  DbCacheUseItem makeUseItem(String cacheKey, String resultKey) {
+    return _cacheUtil.makeUseItem(cacheKey, resultKey);
   }
 }

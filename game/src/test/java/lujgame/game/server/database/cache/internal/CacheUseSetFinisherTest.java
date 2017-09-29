@@ -67,7 +67,7 @@ public class CacheUseSetFinisherTest {
     CacheItem setItem = u.addCacheItem(_cache, SET_KEY);
 
     _waitQueue.add(new DbCacheUseReq(ImmutableList.of(
-        new DbCacheUseItem(SET_KEY, null, null, "1")
+        u.makeUseItem(SET_KEY, "1")
     ), null, _requestRef, 0));
 
     DbLoadSetRsp msg = new DbLoadSetRsp(SET_KEY, ImmutableSet.of());
@@ -93,7 +93,7 @@ public class CacheUseSetFinisherTest {
     CacheItem setItem = u.addCacheItem(_cache, SET_KEY);
 
     _waitQueue.add(new DbCacheUseReq(ImmutableList.of(
-        new DbCacheUseItem(SET_KEY, ZTestDb.class, null, "1")
+        u.makeUseItem(SET_KEY, "1")
     ), null, _requestRef, 0));
 
     DbLoadSetRsp msg = new DbLoadSetRsp(SET_KEY, ImmutableSet.of(1L));

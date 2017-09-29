@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import lujgame.game.server.database.cache.DbCacheActorState;
+import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +32,10 @@ class ZCacheUtil {
 
   String makeObjectKey(long dbId) {
     return _cacheKeyMaker.makeObjectKey(ZTestDb.class, dbId);
+  }
+
+  DbCacheUseItem makeUseItem(String cacheKey, String resultKey) {
+    return new DbCacheUseItem(cacheKey, ZTestDb.class, cacheKey.split("#")[1], resultKey);
   }
 
   CacheItem addCacheItem(Cache<String, CacheItem> cache, String key) {
