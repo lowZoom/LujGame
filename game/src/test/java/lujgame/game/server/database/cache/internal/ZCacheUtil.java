@@ -39,9 +39,7 @@ class ZCacheUtil {
   }
 
   CacheItem addCacheItem(Cache<String, CacheItem> cache, String key) {
-    CacheItem item = new CacheItem();
-//    item.setValue(mock(TestDb.class));
-
+    CacheItem item = new CacheItem(ZTestDb.class);
     cache.put(key, item);
     return item;
   }

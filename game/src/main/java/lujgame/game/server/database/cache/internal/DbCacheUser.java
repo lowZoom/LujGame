@@ -6,21 +6,22 @@ import static com.google.common.base.Preconditions.checkState;
 import akka.actor.ActorRef;
 import com.google.common.cache.Cache;
 import com.google.common.cache.LoadingCache;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import lujgame.game.server.database.cache.DbCacheActorState;
+import lujgame.core.akka.AkkaTool;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
-import lujgame.game.server.database.cache.message.DbCacheUseReq;
+import lujgame.game.server.database.load.message.DbLoadObjReq;
 import lujgame.game.server.database.type.DbId;
 import lujgame.game.server.database.type.IdSet;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DbCacheUser {
 
-  public void finishLoadItem(Cache<String, CacheItem> cache, String cacheKey, Object resultValue) {
+  public CacheItem finishLoadItem(Cache<String, CacheItem> cache, String cacheKey,
+      Object resultValue) {
     CacheItem item = checkNotNull(cache.getIfPresent(cacheKey), cacheKey);
 
     checkState(item.getValue() == null, cacheKey);
@@ -29,6 +30,8 @@ public class DbCacheUser {
 
     item.setValue(checkNotNull(resultValue, cacheKey));
     item.setLoadOk(true);
+
+    return item;
   }
 
   public boolean useCacheSet(LoadingCache<String, CacheItem> cache,
@@ -71,12 +74,47 @@ public class DbCacheUser {
   public void lockAndCallback() {
   }
 
-  public boolean isSetRelated(DbCacheUseItem useItem) {
-    Class<?> dbType = useItem.getDbType();
-    return Objects.equals(dbType, useItem.getDbType());
+  public boolean prepareSet(Cache<String, CacheItem> cache,
+      CacheItem cacheItem, ActorRef cacheRef, ActorRef loaderRef) {
+    if (!isAvailable(cacheItem)) {
+      return false;
+    }
+
+    Set<Long> idSet = (Set<Long>) cacheItem.getValue();
+    Class<?> dbType = cacheItem.getDbType();
+
+    for (Long id : idSet) {
+      String cacheKey = _cacheKeyMaker.makeObjectKey(dbType, id);
+      CacheItem elemItem = cache.getIfPresent(cacheKey);
+
+      if (elemItem == null) {
+        elemItem = requestLoadObj(cache, cacheKey, dbType, cacheRef, loaderRef);
+      }
+
+      if (!isAvailable(elemItem)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   public boolean isAvailable(CacheItem cacheItem) {
     return cacheItem.isLoadOk() && !cacheItem.isLock();
   }
+
+  private CacheItem requestLoadObj(Cache<String, CacheItem> cache,
+      String cacheKey, Class<?> dbType, ActorRef cacheRef, ActorRef loaderRef) {
+    CacheItem item = new CacheItem(dbType);
+    cache.put(cacheKey, item);
+
+    _akkaTool.tell(new DbLoadObjReq(cacheKey), cacheRef, loaderRef);
+    return item;
+  }
+
+  @Autowired
+  private AkkaTool _akkaTool;
+
+  @Autowired
+  private CacheKeyMaker _cacheKeyMaker;
 }

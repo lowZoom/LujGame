@@ -24,18 +24,19 @@ import lujgame.game.server.database.load.message.DbLoadSetReq;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = ZInjectConfig.class)
-public class CacheUseStarterTest {
+public class CacheUseStarterTest extends ZBaseTest {
 
   @Autowired
   CacheUseStarter _starter;
 
   @Autowired
+  @Mock
   AkkaTool _akkaTool;
 
   @Autowired

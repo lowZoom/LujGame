@@ -16,7 +16,6 @@ import com.google.common.collect.ImmutableSet;
 import java.util.LinkedList;
 import lujgame.core.akka.AkkaTool;
 import lujgame.game.server.database.cache.DbCacheActorState;
-import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.database.cache.message.DbCacheUseReq;
 import lujgame.game.server.database.load.message.DbLoadSetRsp;
 import org.junit.Before;
@@ -27,9 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = ZInjectConfig.class)
-public class CacheUseSetFinisherTest {
+public class CacheUseSetFinisherTest extends ZBaseTest {
 
   @Autowired
   CacheUseSetFinisher _finisher;
@@ -59,7 +56,7 @@ public class CacheUseSetFinisherTest {
   }
 
   @Test
-  public void finishUseSet_全部就绪应清楚等待并回调() throws Exception {
+  public void finishUseSet_全部就绪应清除等待并回调() throws Exception {
     //-- Arrange --//
     ZCacheUtil u = _cacheUtil;
 
@@ -111,6 +108,6 @@ public class CacheUseSetFinisherTest {
   }
 
   void finishUseSet(DbLoadSetRsp msg) {
-    _finisher.finishUseSet(_state, msg, mock(LoggingAdapter.class));
+    _finisher.finishUseSet(_state, msg, null, mock(LoggingAdapter.class));
   }
 }

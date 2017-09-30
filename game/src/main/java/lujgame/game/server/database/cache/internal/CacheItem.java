@@ -2,6 +2,14 @@ package lujgame.game.server.database.cache.internal;
 
 public class CacheItem {
 
+  public CacheItem(Class<?> dbType) {
+    _dbType = dbType;
+  }
+
+  public Class<?> getDbType() {
+    return _dbType;
+  }
+
   public boolean isLoadOk() {
     return _loadOk;
   }
@@ -33,6 +41,8 @@ public class CacheItem {
   public void setValue(Object value) {
     _value = value;
   }
+
+  private final Class<?> _dbType;
 
   private boolean _loadOk;
   private boolean _present;

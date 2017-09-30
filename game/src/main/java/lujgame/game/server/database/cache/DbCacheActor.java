@@ -89,7 +89,7 @@ public class DbCacheActor extends CaseActor {
   }
 
   private void onLoadSetRsp(DbLoadSetRsp msg) {
-    _cacheUseSetFinisher.finishUseSet(_state, msg, log());
+    _cacheUseSetFinisher.finishUseSet(_state, msg, getSelf(), log());
   }
 
   private void onLoadObjRsp(DbLoadObjRsp msg) {

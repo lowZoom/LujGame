@@ -27,15 +27,21 @@ import org.springframework.stereotype.Component;
 @Component
 public class CacheUseSetFinisher {
 
-  public void finishUseSet(DbCacheActorState state, DbLoadSetRsp msg, LoggingAdapter log) {
+  public void finishUseSet(DbCacheActorState state,
+      DbLoadSetRsp msg, ActorRef cacheRef, LoggingAdapter log) {
     String cacheKey = msg.getCacheKey();
     log.debug("数据库读取完成：{}", cacheKey);
 
     Cache<String, CacheItem> cache = state.getCache();
     ImmutableSet<Long> resultSet = msg.getResultSet();
-    _dbCacheUser.finishLoadItem(cache, msg.getCacheKey(), resultSet);
+
+    DbCacheUser u = _dbCacheUser;
+    CacheItem cacheItem = u.finishLoadItem(cache, msg.getCacheKey(), resultSet);
 
     //TODO: 要先预读集合里的元素
+    if (!u.prepareSet(cache, cacheItem, cacheRef, state.getLoaderRef())) {
+      return ;
+    }
 
     //TODO: 唤醒等待队列
     //TODO: 按顺序遍历队列，等第一个使用者，超时丢弃
@@ -72,7 +78,7 @@ public class CacheUseSetFinisher {
         .collect(Collectors.toList());
 
     // 如果还有没就绪的缓存，则无法完成此请求
-    if (setUseList.stream().anyMatch(i -> isSetAvailable(cache, i))) {
+    if (setUseList.stream().anyMatch(i -> !isSetAvailable(cache, i))) {
       return false;
     }
 
@@ -106,7 +112,7 @@ public class CacheUseSetFinisher {
     checkState(!cacheItem.isLock() || cacheItem.isLock() == cacheItem.isLoadOk(),
         "没读取完成居然就被锁住了，cacheKey: %s", cacheKey);
 
-    return new UsingItem(cacheKey, useItem, cacheItem);
+    return new UsingItem(useItem, cacheItem);
   }
 
   private boolean isSetAvailable(Cache<String, CacheItem> cache, UsingItem item) {
@@ -122,7 +128,7 @@ public class CacheUseSetFinisher {
 
     for (Long id : idSet) {
       String cacheKey = _cacheKeyMaker.makeObjectKey(dbType, id);
-      CacheItem elemItem = cache.getIfPresent(cacheKey);
+      CacheItem elemItem = checkNotNull(cache.getIfPresent(cacheKey), cacheKey);
 
       if (!u.isAvailable(elemItem)) {
         return false;

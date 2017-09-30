@@ -43,7 +43,7 @@ public class CacheUseStarter {
         .collect(Collectors.toList());
 
     long waitCount = setUsingList.stream()
-        .filter(i -> !prepareSet(cache, i, cacheRef, loaderRef))
+        .filter(i -> !_dbCacheUser.prepareSet(cache, i.getCacheItem(), cacheRef, loaderRef))
         .count();
 
     //TODO: 还要考虑集合内元素的情况
@@ -66,7 +66,7 @@ public class CacheUseStarter {
 
     CacheItem cacheItem = cache.getIfPresent(cacheKey);
     if (cacheItem == null) {
-      cacheItem = requestLoadSet(cache, cacheKey, cacheRef, loaderRef);
+      cacheItem = requestLoadSet(cache, cacheKey, useItem.getDbType(), cacheRef, loaderRef);
     }
 
     checkState(!cacheItem.isLock() || cacheItem.isLock() == cacheItem.isLoadOk(),
@@ -75,52 +75,15 @@ public class CacheUseStarter {
     checkState(!cacheItem.isLoadOk() || cacheItem.getValue() != null,
         "读取完成但居然没读取结果，cacheKey: %s", cacheKey);
 
-    return new UsingItem(cacheKey, useItem, cacheItem);
+    return new UsingItem(useItem, cacheItem);
   }
 
   private CacheItem requestLoadSet(Cache<String, CacheItem> cache,
-      String cacheKey, ActorRef cacheRef, ActorRef loaderRef) {
-    CacheItem item = new CacheItem();
+      String cacheKey, Class<?> dbType, ActorRef cacheRef, ActorRef loaderRef) {
+    CacheItem item = new CacheItem(dbType);
     cache.put(cacheKey, item);
 
     _akkaTool.tell(new DbLoadSetReq(cacheKey), cacheRef, loaderRef);
-    return item;
-  }
-
-  private boolean prepareSet(Cache<String, CacheItem> cache,
-      UsingItem item, ActorRef cacheRef, ActorRef loaderRef) {
-    DbCacheUser u = _dbCacheUser;
-
-    CacheItem cacheItem = item.getCacheItem();
-    if (!u.isAvailable(cacheItem)) {
-      return false;
-    }
-
-    Set<Long> idSet = (Set<Long>) cacheItem.getValue();
-    Class<?> dbType = item.getUseItem().getDbType();
-
-    for (Long id : idSet) {
-      String cacheKey = _cacheKeyMaker.makeObjectKey(dbType, id);
-      CacheItem elemItem = cache.getIfPresent(cacheKey);
-
-      if (elemItem == null) {
-        elemItem = requestLoadObj(cache, cacheKey, cacheRef, loaderRef);
-      }
-
-      if (!u.isAvailable(elemItem)) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  private CacheItem requestLoadObj(Cache<String, CacheItem> cache,
-      String cacheKey, ActorRef cacheRef, ActorRef loaderRef) {
-    CacheItem item = new CacheItem();
-    cache.put(cacheKey, item);
-
-    _akkaTool.tell(new DbLoadObjReq(cacheKey), cacheRef, loaderRef);
     return item;
   }
 
@@ -138,7 +101,4 @@ public class CacheUseStarter {
 
   @Autowired
   private DbCacheUser _dbCacheUser;
-
-  @Autowired
-  private CacheKeyMaker _cacheKeyMaker;
 }
