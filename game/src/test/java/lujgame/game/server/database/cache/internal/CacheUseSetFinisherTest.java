@@ -3,7 +3,6 @@ package lujgame.game.server.database.cache.internal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -12,19 +11,21 @@ import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.google.common.cache.Cache;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.LinkedList;
 import lujgame.core.akka.AkkaTool;
+import lujgame.game.server.database.DbOperateContext;
 import lujgame.game.server.database.cache.DbCacheActorState;
 import lujgame.game.server.database.cache.message.DbCacheUseReq;
+import lujgame.game.server.database.cache.message.DbCacheUseRsp;
 import lujgame.game.server.database.load.message.DbLoadSetRsp;
+import lujgame.game.server.type.JSet;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 public class CacheUseSetFinisherTest extends ZBaseTest {
 
@@ -56,7 +57,7 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
   }
 
   @Test
-  public void finishUseSet_全部就绪应清除等待并回调() throws Exception {
+  public void finishUseSet_全部就绪_空集合() throws Exception {
     //-- Arrange --//
     ZCacheUtil u = _cacheUtil;
 
@@ -65,7 +66,7 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
 
     _waitQueue.add(new DbCacheUseReq(ImmutableList.of(
         u.makeUseItem(SET_KEY, "1")
-    ), null, _requestRef, 0));
+    ), null, _requestRef, 123));
 
     DbLoadSetRsp msg = new DbLoadSetRsp(SET_KEY, ImmutableSet.of());
 
@@ -78,7 +79,50 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
     assertThat(setItem.isLoadOk()).isTrue();
     assertThat(setItem.isLock()).isTrue();
 
-    verify(_akkaTool).tellSelf(isNotNull(), eq(_requestRef));
+    ArgumentCaptor<DbCacheUseRsp> rsp = ArgumentCaptor.forClass(DbCacheUseRsp.class);
+    verify(_akkaTool).tellSelf(rsp.capture(), eq(_requestRef));
+
+    ImmutableMap<String, Object> resultMap = rsp.getValue().getResultMap();
+    assertThat(resultMap).hasSize(1);
+
+    DbOperateContext ctx = u.makeOperateContext(resultMap);
+    JSet<ZTestDb> resultSet = ctx.getDbSet(ZTestDb.class, "1");
+    assertThat(ctx.isEmpty(resultSet)).isTrue();
+  }
+
+  @Test
+  public void finishUseSet_全部就绪_有元素() throws Exception {
+    //-- Arrange --//
+    ZCacheUtil u = _cacheUtil;
+
+    final String SET_KEY = u.makeSetKey("a");
+    u.addCacheItem(_cache, SET_KEY);
+
+    _waitQueue.add(new DbCacheUseReq(ImmutableList.of(
+        u.makeUseItem(SET_KEY, "1")
+    ), null, _requestRef, 123));
+
+    CacheItem objItem = u.addCacheItem(_cache, u.makeObjectKey(1L));
+    objItem.setLoadOk(true);
+    objItem.setValue(mock(ZTestDb.class));
+
+    DbLoadSetRsp msg = new DbLoadSetRsp(SET_KEY, ImmutableSet.of(1L));
+
+    //-- Act --//
+    finishUseSet(msg);
+
+    //-- Assert --//
+    ArgumentCaptor<DbCacheUseRsp> rsp = ArgumentCaptor.forClass(DbCacheUseRsp.class);
+    verify(_akkaTool).tellSelf(rsp.capture(), eq(_requestRef));
+
+    ImmutableMap<String, Object> resultMap = rsp.getValue().getResultMap();
+    DbOperateContext ctx = u.makeOperateContext(resultMap);
+
+    JSet<ZTestDb> resultSet = ctx.getDbSet(ZTestDb.class, "1");
+    assertThat(ctx.isEmpty(resultSet)).isFalse();
+
+    ZTestDb resultDb = ctx.getDb(resultSet);
+    assertThat(resultDb).isSameAs(objItem.getValue());
   }
 
   @Test

@@ -20,8 +20,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class DbCacheUser {
 
-  public CacheItem finishLoadItem(Cache<String, CacheItem> cache, String cacheKey,
-      Object resultValue) {
+  public CacheItem finishLoadItem(Cache<String, CacheItem> cache,
+      String cacheKey, Object resultValue) {
     CacheItem item = checkNotNull(cache.getIfPresent(cacheKey), cacheKey);
 
     checkState(item.getValue() == null, cacheKey);

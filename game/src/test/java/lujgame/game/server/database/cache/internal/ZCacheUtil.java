@@ -4,6 +4,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.ImmutableMap;
+import lujgame.game.server.database.DbOperateContext;
+import lujgame.game.server.database.DbOperateContextFactory;
 import lujgame.game.server.database.cache.DbCacheActorState;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +14,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 class ZCacheUtil {
-
-  @Autowired
-  ZCacheUtil(CacheKeyMaker cacheKeyMaker) {
-    _cacheKeyMaker = cacheKeyMaker;
-  }
 
   DbCacheActorState createCacheState() {
     DbCacheActorState state = new DbCacheActorState(null);
@@ -48,5 +46,13 @@ class ZCacheUtil {
     return checkNotNull(cache.getIfPresent(key), key);
   }
 
-  private final CacheKeyMaker _cacheKeyMaker;
+  DbOperateContext makeOperateContext(ImmutableMap<String, Object> resultMap) {
+    return _operateContextFactory.createContext(resultMap);
+  }
+
+  @Autowired
+  private CacheKeyMaker _cacheKeyMaker;
+
+  @Autowired
+  private DbOperateContextFactory _operateContextFactory;
 }

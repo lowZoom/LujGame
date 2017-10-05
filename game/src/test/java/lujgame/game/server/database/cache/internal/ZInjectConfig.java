@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan(
-    value = "lujgame.game.server.database.cache",
+    value = "lujgame.game.server",
     lazyInit = true
 )
 class ZInjectConfig {

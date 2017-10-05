@@ -2,7 +2,7 @@ package lujgame.game.server.database;
 
 import com.google.common.collect.ImmutableMap;
 import javax.annotation.Nullable;
-import lujgame.game.server.database.cache.internal.CacheItem;
+import lujgame.game.server.database.type.DbSetTool;
 import lujgame.game.server.type.JSet;
 import lujgame.game.server.type.JStr;
 import lujgame.game.server.type.JTime;
@@ -11,27 +11,28 @@ import org.omg.CORBA.NO_IMPLEMENT;
 public class DbOperateContext {
 
   public DbOperateContext(
-      ImmutableMap<String, CacheItem> resultMap) {
+      ImmutableMap<String, Object> resultMap,
+      DbSetTool dbSetTool) {
     _resultMap = resultMap;
+
+    _dbSetTool = dbSetTool;
   }
 
   @Nullable
   public <T> T getDb(Class<T> dbType, String key) {
-    CacheItem cacheItem = _resultMap.get(key);
-    return (T) cacheItem.getValue();
-  }
-
-  public <T> T getDb(JSet<T> set) {
     throw new NO_IMPLEMENT("getDb尚未实现");
   }
 
+  public <T> T getDb(JSet<T> set) {
+    return _dbSetTool.getOnlyElem(set);
+  }
+
   public <T> JSet<T> getDbSet(Class<T> dbType, String key) {
-    CacheItem cacheItem = _resultMap.get(key);
-    return (JSet<T>) cacheItem.getValue();
+    return (JSet<T>) _resultMap.get(key);
   }
 
   public boolean isEmpty(JSet<?> set) {
-    throw new NO_IMPLEMENT("isEmpty尚未实现");
+    return _dbSetTool.isEmpty(set);
   }
 
   public <T> T createProto(Class<T> protoType) {
@@ -62,5 +63,7 @@ public class DbOperateContext {
     throw new NO_IMPLEMENT("now尚未实现");
   }
 
-  private final ImmutableMap<String, CacheItem> _resultMap;
+  private final ImmutableMap<String, Object> _resultMap;
+
+  private final DbSetTool _dbSetTool;
 }

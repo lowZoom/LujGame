@@ -3,7 +3,7 @@ package lujgame.game.server.entity;
 import java.util.Map;
 import lujgame.core.akka.common.CaseActor;
 import lujgame.game.server.command.CacheOkCommand;
-import lujgame.game.server.database.DbOperateContext;
+import lujgame.game.server.database.DbOperateContextFactory;
 import lujgame.game.server.database.cache.message.DbCacheUseRsp;
 import lujgame.game.server.entity.logic.NetPacketConsumer;
 import lujgame.gateway.network.akka.connection.logic.packet.GateNetPacket;
@@ -15,9 +15,12 @@ public class GameEntityActor extends CaseActor {
 
   public GameEntityActor(
       GameEntityActorState state,
-      NetPacketConsumer netPacketConsumer) {
+      NetPacketConsumer netPacketConsumer,
+      DbOperateContextFactory dbOperateContextFactory) {
     _state = state;
+    
     _netPacketConsumer = netPacketConsumer;
+    _dbOperateContextFactory = dbOperateContextFactory;
 
     addCase(GateNetPacket.class, this::onNetPacket);
     addCase(DbCacheUseRsp.class, this::onDbCacheUseRsp);
@@ -35,10 +38,11 @@ public class GameEntityActor extends CaseActor {
     Class<?> cmdType = msg.getCmdType();
 
     CacheOkCommand cmd = cmdMap.get(cmdType);
-    cmd.execute(new DbOperateContext(msg.getResultMap()));
+    cmd.execute(_dbOperateContextFactory.createContext(msg.getResultMap()));
   }
 
   private final GameEntityActorState _state;
 
   private final NetPacketConsumer _netPacketConsumer;
+  private final DbOperateContextFactory _dbOperateContextFactory;
 }

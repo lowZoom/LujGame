@@ -6,8 +6,8 @@ import static com.google.common.base.Preconditions.checkState;
 import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.google.common.cache.Cache;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -21,6 +21,8 @@ import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.database.cache.message.DbCacheUseReq;
 import lujgame.game.server.database.cache.message.DbCacheUseRsp;
 import lujgame.game.server.database.load.message.DbLoadSetRsp;
+import lujgame.game.server.database.type.DbSetTool;
+import lujgame.game.server.type.JSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,9 +40,9 @@ public class CacheUseSetFinisher {
     DbCacheUser u = _dbCacheUser;
     CacheItem cacheItem = u.finishLoadItem(cache, msg.getCacheKey(), resultSet);
 
-    //TODO: 要先预读集合里的元素
+    // 发起必要的读取请求
     if (!u.prepareSet(cache, cacheItem, cacheRef, state.getLoaderRef())) {
-      return ;
+      return;
     }
 
     //TODO: 唤醒等待队列
@@ -50,16 +52,17 @@ public class CacheUseSetFinisher {
 
     while (iter.hasNext()) {
       DbCacheUseReq req = iter.next();
-
-      if (isRelated(req, cacheKey)) {
-        if (tryFinishCacheReq(state, req)) {
-          log.debug("触发数据库CMD：{}", req.getCmdType());
-          iter.remove();
-        }
-
-        // 这个用了就锁住了，后面的就不用再看了，应该有个锁定超时
-        break;
+      if (!isRelated(req, cacheKey)) {
+        continue;
       }
+
+      if (tryFinishCacheReq(state, req)) {
+        log.debug("触发数据库CMD：{}", req.getCmdType());
+        iter.remove();
+      }
+
+      // 这个用了就锁住了，后面的就不用再看了，应该有个锁定超时
+      break;
     }
   }
 
@@ -77,14 +80,12 @@ public class CacheUseSetFinisher {
         .map(i -> makeUsingItem(i, cache)) // 每次都要重新取，缓存都会有
         .collect(Collectors.toList());
 
-    // 如果还有没就绪的缓存，则无法完成此请求
-    if (setUseList.stream().anyMatch(i -> !isSetAvailable(cache, i))) {
+    // 如果还有未就绪的缓存，则无法完成此请求
+    if (setUseList.stream().anyMatch(i -> !isSetAvailable(cache, i.getCacheItem()))) {
       return false;
     }
 
-    //TODO: 要判断set里的对象是不是已经都就绪
-
-    Builder<String, CacheItem> builder = ImmutableMap.builder();
+    ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
 
     // 锁住对应缓存项
     for (UsingItem item : setUseList) {
@@ -92,7 +93,9 @@ public class CacheUseSetFinisher {
       ci.setLock(true);
 
       String resultKey = item.getUseItem().getResultKey();
-      builder.put(resultKey, ci);
+      JSet<?> resultSet = new JSet<>(_dbSetTool.createImpl(ci, useElem(cache, ci)));
+
+      builder.put(resultKey, resultSet);
 
       //TODO: 处理缓存被锁定后刚好过期的情况，可以把锁住的缓存另用一个map存住，用完再设回cache
     }
@@ -105,6 +108,27 @@ public class CacheUseSetFinisher {
     return true;
   }
 
+  private ImmutableList<CacheItem> useElem(Cache<String, CacheItem> cache, CacheItem setItem) {
+    //TODO: 读取元素对应缓存，并进行锁定
+    ImmutableList.Builder<CacheItem> result = ImmutableList.builder();
+
+    Set<Long> idSet = _dbSetTool.getIdSet(setItem);
+    Class<?> dbType = setItem.getDbType();
+
+    for (Long dbId : idSet) {
+      String key = _cacheKeyMaker.makeObjectKey(dbType, dbId);
+      CacheItem elemItem = checkAndGet(cache, key);
+
+      result.add(elemItem);
+    }
+
+    return result.build();
+  }
+
+  private static CacheItem checkAndGet(Cache<String, CacheItem> cache, String key) {
+    return checkNotNull(cache.getIfPresent(key), key);
+  }
+
   private UsingItem makeUsingItem(DbCacheUseItem useItem, Cache<String, CacheItem> cache) {
     String cacheKey = useItem.getCacheKey();
     CacheItem cacheItem = checkNotNull(cache.getIfPresent(cacheKey), cacheKey);
@@ -115,20 +139,18 @@ public class CacheUseSetFinisher {
     return new UsingItem(useItem, cacheItem);
   }
 
-  private boolean isSetAvailable(Cache<String, CacheItem> cache, UsingItem item) {
+  private boolean isSetAvailable(Cache<String, CacheItem> cache, CacheItem item) {
     DbCacheUser u = _dbCacheUser;
-    CacheItem cacheItem = item.getCacheItem();
-
-    if (!u.isAvailable(cacheItem)) {
+    if (!u.isAvailable(item)) {
       return false;
     }
 
-    Set<Long> idSet = (Set<Long>) cacheItem.getValue();
-    Class<?> dbType = item.getUseItem().getDbType();
+    Set<Long> idSet = _dbSetTool.getIdSet(item);
+    Class<?> dbType = item.getDbType();
 
     for (Long id : idSet) {
       String cacheKey = _cacheKeyMaker.makeObjectKey(dbType, id);
-      CacheItem elemItem = checkNotNull(cache.getIfPresent(cacheKey), cacheKey);
+      CacheItem elemItem = checkAndGet(cache, cacheKey);
 
       if (!u.isAvailable(elemItem)) {
         return false;
@@ -146,4 +168,7 @@ public class CacheUseSetFinisher {
 
   @Autowired
   private CacheKeyMaker _cacheKeyMaker;
+
+  @Autowired
+  private DbSetTool _dbSetTool;
 }

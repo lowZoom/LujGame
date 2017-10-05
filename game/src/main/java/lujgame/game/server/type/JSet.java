@@ -2,7 +2,13 @@ package lujgame.game.server.type;
 
 public class JSet<T> {
 
-  class Impl {
+  public interface Impl {
 
   }
+
+  public JSet(Impl impl) {
+    _impl = impl;
+  }
+
+  final Impl _impl;
 }

@@ -1,8 +1,8 @@
 package lujgame.game.server.type;
 
-import org.springframework.stereotype.Component;
+import lujgame.game.server.core.LujInternal;
 
-@Component("internal.type")
+@LujInternal
 public class Z1 {
 
   public JInt newInt(int val) {
@@ -15,5 +15,9 @@ public class Z1 {
 
   public JStr.Impl getImpl(JStr str) {
     return str._impl;
+  }
+
+  public JSet.Impl getImpl(JSet<?> set) {
+    return set._impl;
   }
 }

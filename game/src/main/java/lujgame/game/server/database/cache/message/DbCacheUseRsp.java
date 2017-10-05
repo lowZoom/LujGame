@@ -1,12 +1,11 @@
 package lujgame.game.server.database.cache.message;
 
 import com.google.common.collect.ImmutableMap;
-import lujgame.game.server.database.cache.internal.CacheItem;
 
 public class DbCacheUseRsp {
 
   public DbCacheUseRsp(
-      ImmutableMap<String, CacheItem> resultMap,
+      ImmutableMap<String, Object> resultMap,
       Class<?> cmdType,
       int requestTime) {
     _cmdType = cmdType;
@@ -19,12 +18,16 @@ public class DbCacheUseRsp {
     return _cmdType;
   }
 
-  public ImmutableMap<String, CacheItem> getResultMap() {
+  public ImmutableMap<String, Object> getResultMap() {
     return _resultMap;
   }
 
+  public int getRequestTime() {
+    return _requestTime;
+  }
+
   private final Class<?> _cmdType;
-  private final ImmutableMap<String, CacheItem> _resultMap;
+  private final ImmutableMap<String, Object> _resultMap;
 
   private final int _requestTime;
 }

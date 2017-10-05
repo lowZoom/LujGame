@@ -17,6 +17,8 @@ public abstract class ZBaseTest {
 
   @After
   public void tearDown() throws IllegalAccessException {
+    //FIXME: 还是不能放在after，因为有些不会用到mock的测试，不会声明对应字段，所以不会被重置
+
     Class<? extends ZBaseTest> clazz = getClass();
 
     List<Field> mockList = Arrays.stream(clazz.getDeclaredFields())
