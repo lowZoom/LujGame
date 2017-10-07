@@ -1,4 +1,4 @@
-package lujgame.game.server.database.cache.internal;
+package lujgame.test;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -27,6 +27,7 @@ public abstract class ZBaseTest {
         .collect(Collectors.toList());
 
     for (Field f : mockList) {
+      f.setAccessible(true);
       Mockito.reset(f.get(this));
     }
   }

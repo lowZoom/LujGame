@@ -1,4 +1,4 @@
-package lujgame.game.server.database.cache.internal;
+package lujgame.test;
 
 import static org.mockito.Mockito.mock;
 
@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(
     basePackages = {
         "lujgame.core",
+        "lujgame.anno",
         "lujgame.game.server"},
     lazyInit = true)
 class ZInjectConfig {

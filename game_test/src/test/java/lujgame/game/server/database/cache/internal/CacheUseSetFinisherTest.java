@@ -21,6 +21,7 @@ import lujgame.game.server.database.cache.message.DbCacheUseReq;
 import lujgame.game.server.database.cache.message.DbCacheUseRsp;
 import lujgame.game.server.database.load.message.DbLoadSetRsp;
 import lujgame.game.server.type.JSet;
+import lujgame.test.ZBaseTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;

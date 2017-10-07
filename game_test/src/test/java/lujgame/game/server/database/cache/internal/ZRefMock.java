@@ -16,6 +16,7 @@ public class ZRefMock extends ActorRef {
     return _path;
   }
 
+  @Deprecated
   @Override
   public boolean isTerminated() {
     return false;

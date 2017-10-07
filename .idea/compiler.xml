@@ -12,6 +12,7 @@
         <module name="ex_proto" />
         <module name="example_game" />
         <module name="example_proto" />
+        <module name="game_test" />
         <module name="gateway" />
         <module name="robot" />
       </profile>
@@ -24,6 +25,7 @@
       <module name="ex_proto" target="1.8" />
       <module name="ex_root" target="1.8" />
       <module name="game" target="1.8" />
+      <module name="game_test" target="1.8" />
       <module name="gateway" target="1.8" />
       <module name="lujgame" target="1.8" />
       <module name="robot" target="1.8" />

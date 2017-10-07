@@ -15,6 +15,7 @@ import lujgame.game.server.database.cache.message.DbCacheUseReq;
 import lujgame.game.server.database.load.message.DbLoadObjRsp;
 import lujgame.game.server.database.type.DbId;
 import lujgame.game.server.database.type.IdSet;
+import lujgame.test.ZBaseTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

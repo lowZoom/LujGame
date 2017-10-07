@@ -21,14 +21,11 @@ import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.database.cache.message.DbCacheUseReq;
 import lujgame.game.server.database.load.message.DbLoadObjReq;
 import lujgame.game.server.database.load.message.DbLoadSetReq;
+import lujgame.test.ZBaseTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 public class CacheUseStarterTest extends ZBaseTest {
 

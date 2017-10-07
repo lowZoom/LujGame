@@ -9,6 +9,7 @@
       <module fileurl="file://$PROJECT_DIR$/example/ex_proto/ex_proto.iml" filepath="$PROJECT_DIR$/example/ex_proto/ex_proto.iml" group="example" />
       <module fileurl="file://$PROJECT_DIR$/example/maven/ex_root/ex_root.iml" filepath="$PROJECT_DIR$/example/maven/ex_root/ex_root.iml" group="example" />
       <module fileurl="file://$PROJECT_DIR$/game/game.iml" filepath="$PROJECT_DIR$/game/game.iml" />
+      <module fileurl="file://$PROJECT_DIR$/game_test/game_test.iml" filepath="$PROJECT_DIR$/game_test/game_test.iml" />
       <module fileurl="file://$PROJECT_DIR$/gateway/gateway.iml" filepath="$PROJECT_DIR$/gateway/gateway.iml" />
       <module fileurl="file://$PROJECT_DIR$/robot/robot.iml" filepath="$PROJECT_DIR$/robot/robot.iml" />
       <module fileurl="file://$PROJECT_DIR$/maven/root/root.iml" filepath="$PROJECT_DIR$/maven/root/root.iml" />

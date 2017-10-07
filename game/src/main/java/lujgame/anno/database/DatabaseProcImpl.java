@@ -24,6 +24,7 @@ import lujgame.anno.core.generate.GenerateTool;
 import lujgame.anno.net.packet.input.FieldItem;
 import lujgame.anno.net.packet.output.FieldType;
 import lujgame.game.server.database.bean.DatabaseMeta;
+import lujgame.game.server.database.bean.DbObjImpl;
 import lujgame.game.server.type.JStr;
 import lujgame.game.server.type.JTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,9 +84,9 @@ public class DatabaseProcImpl {
         .classBuilder(item.getClassName() + "Meta")
         .addAnnotation(Component.class)
         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-//        .addSuperinterface(DatabaseMeta.class)
-//        .addMethod(buildDbType(item.getDbType()))
-        //TODO: 增加对象创建方法
+        .addSuperinterface(DatabaseMeta.class)
+        .addMethod(buildDbType(item.getDbType()))
+        .addMethod(buildCreateObj())
         .build()).build(), filer);
   }
 
@@ -100,6 +101,15 @@ public class DatabaseProcImpl {
         .addModifiers(Modifier.PUBLIC)
         .returns(ParameterizedTypeName.get(ClassName.get(Class.class), TypeName.get(dbType)))
         .addStatement("return $L.class", dbType)
+        .build();
+  }
+
+  private MethodSpec buildCreateObj() {
+    return MethodSpec.methodBuilder("createObject")
+        .addAnnotation(Override.class)
+        .addModifiers(Modifier.PUBLIC)
+        .returns(TypeName.get(DbObjImpl.class))
+        .addStatement("return null")
         .build();
   }
 
