@@ -32,11 +32,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class DatabaseProcImpl {
 
-  @Autowired
-  public DatabaseProcImpl(GenerateTool generateTool) {
-    _generateTool = generateTool;
-  }
-
   public void process(TypeElement elem, Elements elemUtil,
       Filer filer, Messager msg) throws IOException {
     DatabaseItem item = createDbItem(elem, elemUtil);
@@ -44,6 +39,7 @@ public class DatabaseProcImpl {
       return;
     }
 
+    generateBeanImpl(item, filer);
     generateMeta(item, filer);
   }
 
@@ -69,21 +65,33 @@ public class DatabaseProcImpl {
     return invalidList.isEmpty();
   }
 
-  private FieldItem toDbField(ExecutableElement elem) {
-    return new FieldItem(elem, FieldSpec.builder(TypeName.get(elem.getReturnType()),
-        elem.getSimpleName().toString()).build());
+  private void generateBeanImpl(DatabaseItem item, Filer filer) throws IOException {
+    _generateTool.writeTo(JavaFile.builder(item.getPackageName(), TypeSpec
+        .classBuilder(getImplName(item))
+        .addModifiers(Modifier.FINAL)
+//        .addSuperinterface(TypeName.get(item.getDbType()))
+        .build()).build(), filer);
+  }
+
+  private String getImplName(DatabaseItem item) {
+    return item.getClassName() + "Impl";
   }
 
   private void generateMeta(DatabaseItem item, Filer filer) throws IOException {
-
     // 构建元信息类
     _generateTool.writeTo(JavaFile.builder(item.getPackageName(), TypeSpec
         .classBuilder(item.getClassName() + "Meta")
         .addAnnotation(Component.class)
         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
-        .addSuperinterface(DatabaseMeta.class)
-        .addMethod(buildDbType(item.getDbType()))
+//        .addSuperinterface(DatabaseMeta.class)
+//        .addMethod(buildDbType(item.getDbType()))
+        //TODO: 增加对象创建方法
         .build()).build(), filer);
+  }
+
+  private FieldItem toDbField(ExecutableElement elem) {
+    return new FieldItem(elem, FieldSpec.builder(TypeName.get(elem.getReturnType()),
+        elem.getSimpleName().toString()).build());
   }
 
   private MethodSpec buildDbType(TypeMirror dbType) {
@@ -100,5 +108,6 @@ public class DatabaseProcImpl {
       .put(TypeName.get(JTime.class), FieldType.of(String.class, "newTime"))
       .build();
 
-  private final GenerateTool _generateTool;
+  @Autowired
+  private GenerateTool _generateTool;
 }

@@ -85,7 +85,7 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
     ImmutableMap<String, Object> resultMap = rsp.getValue().getResultMap();
     assertThat(resultMap).hasSize(1);
 
-    DbOperateContext ctx = u.makeOperateContext(resultMap);
+    DbOperateContext ctx = makeOperateContext(resultMap);
     JSet<ZTestDb> resultSet = ctx.getDbSet(ZTestDb.class, "1");
     assertThat(ctx.isEmpty(resultSet)).isTrue();
   }
@@ -116,7 +116,7 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
     verify(_akkaTool).tellSelf(rsp.capture(), eq(_requestRef));
 
     ImmutableMap<String, Object> resultMap = rsp.getValue().getResultMap();
-    DbOperateContext ctx = u.makeOperateContext(resultMap);
+    DbOperateContext ctx = makeOperateContext(resultMap);
 
     JSet<ZTestDb> resultSet = ctx.getDbSet(ZTestDb.class, "1");
     assertThat(ctx.isEmpty(resultSet)).isFalse();
@@ -153,5 +153,9 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
 
   void finishUseSet(DbLoadSetRsp msg) {
     _finisher.finishUseSet(_state, msg, null, mock(LoggingAdapter.class));
+  }
+
+  DbOperateContext makeOperateContext(ImmutableMap<String, Object> resultMap) {
+    return _cacheUtil.makeOperateContext(resultMap, null);
   }
 }

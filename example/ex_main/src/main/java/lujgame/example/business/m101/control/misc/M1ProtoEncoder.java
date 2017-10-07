@@ -1,15 +1,15 @@
 package lujgame.example.business.m101.control.misc;
 
 import lujgame.example.business.m101.database.M1PlayerDb;
-import lujgame.example.business.m101.net.Net1010001Rsp;
+import lujgame.example.business.m101.net.Net10001Rsp;
 import lujgame.game.server.database.DbOperateContext;
 import org.springframework.stereotype.Component;
 
 @Component
 public class M1ProtoEncoder {
 
-  public Net1010001Rsp encode1010001(DbOperateContext ctx, M1PlayerDb playerDb) {
-    Net1010001Rsp proto = ctx.createProto(Net1010001Rsp.class);
+  public Net10001Rsp encode1010001(DbOperateContext ctx, M1PlayerDb playerDb) {
+    Net10001Rsp proto = ctx.createProto(Net10001Rsp.class);
     ctx.jSet(proto.name(), playerDb.name());
 
     return proto;

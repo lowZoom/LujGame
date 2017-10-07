@@ -18,7 +18,7 @@ public class GameEntityActor extends CaseActor {
       NetPacketConsumer netPacketConsumer,
       DbOperateContextFactory dbOperateContextFactory) {
     _state = state;
-    
+
     _netPacketConsumer = netPacketConsumer;
     _dbOperateContextFactory = dbOperateContextFactory;
 
@@ -38,7 +38,8 @@ public class GameEntityActor extends CaseActor {
     Class<?> cmdType = msg.getCmdType();
 
     CacheOkCommand cmd = cmdMap.get(cmdType);
-    cmd.execute(_dbOperateContextFactory.createContext(msg.getResultMap()));
+    cmd.execute(_dbOperateContextFactory.createContext(msg.getResultMap(),
+        _state.getDatabaseMetaMap(), _state.getConnRef()));
   }
 
   private final GameEntityActorState _state;

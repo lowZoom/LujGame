@@ -1,7 +1,10 @@
 package lujgame.game.server.database;
 
+import akka.actor.ActorRef;
 import com.google.common.collect.ImmutableMap;
 import javax.annotation.Nullable;
+import lujgame.game.server.database.bean.DatabaseMeta;
+import lujgame.game.server.database.type.DbObjTool;
 import lujgame.game.server.database.type.DbSetTool;
 import lujgame.game.server.type.JSet;
 import lujgame.game.server.type.JStr;
@@ -12,10 +15,21 @@ public class DbOperateContext {
 
   public DbOperateContext(
       ImmutableMap<String, Object> resultMap,
-      DbSetTool dbSetTool) {
+      ImmutableMap<Class<?>, DatabaseMeta> databaseMetaMap,
+      ActorRef connRef,
+      DbSetTool dbSetTool,
+      DbObjTool dbObjTool) {
     _resultMap = resultMap;
 
+    _databaseMetaMap = databaseMetaMap;
+    _connRef = connRef;
+
     _dbSetTool = dbSetTool;
+    _dbObjTool = dbObjTool;
+  }
+
+  public <T> T getPacket(Class<T> packetType) {
+    throw new NO_IMPLEMENT("getPacket尚未实现");
   }
 
   @Nullable
@@ -35,6 +49,10 @@ public class DbOperateContext {
     return _dbSetTool.isEmpty(set);
   }
 
+  public <T> T createDb(Class<T> dbType, JSet<T> dbSet) {
+    return _dbObjTool.createObj(dbType, _databaseMetaMap, now());
+  }
+
   public <T> T createProto(Class<T> protoType) {
     throw new NO_IMPLEMENT("createProto尚未实现");
   }
@@ -52,6 +70,7 @@ public class DbOperateContext {
   }
 
   public void sendError2C() {
+    //TODO: 走单独的包，可能直接在业务层实现会比较好
     throw new NO_IMPLEMENT("sendError2C尚未实现");
   }
 
@@ -65,5 +84,9 @@ public class DbOperateContext {
 
   private final ImmutableMap<String, Object> _resultMap;
 
+  private final ImmutableMap<Class<?>, DatabaseMeta> _databaseMetaMap;
+  private final ActorRef _connRef;
+
   private final DbSetTool _dbSetTool;
+  private final DbObjTool _dbObjTool;
 }

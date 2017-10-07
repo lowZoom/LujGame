@@ -2,6 +2,7 @@ package lujgame.game.server.database.cache.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import akka.actor.ActorRef;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
@@ -46,8 +47,8 @@ class ZCacheUtil {
     return checkNotNull(cache.getIfPresent(key), key);
   }
 
-  DbOperateContext makeOperateContext(ImmutableMap<String, Object> resultMap) {
-    return _operateContextFactory.createContext(resultMap);
+  DbOperateContext makeOperateContext(ImmutableMap<String, Object> resultMap, ActorRef connRef) {
+    return _operateContextFactory.createContext(resultMap, null, connRef);
   }
 
   @Autowired

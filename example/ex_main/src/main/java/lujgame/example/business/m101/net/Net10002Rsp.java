@@ -4,7 +4,7 @@ import lujgame.game.server.net.NetPacket;
 import lujgame.game.server.type.JStr;
 
 @NetPacket
-public interface Net1010001Req {
+public interface Net10002Rsp {
 
-  JStr loginName();
+  JStr name();
 }

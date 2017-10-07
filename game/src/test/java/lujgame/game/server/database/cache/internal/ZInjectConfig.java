@@ -7,9 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan(
-    value = "lujgame.game.server",
-    lazyInit = true
-)
+    basePackages = {
+        "lujgame.core",
+        "lujgame.game.server"},
+    lazyInit = true)
 class ZInjectConfig {
 
   @Bean

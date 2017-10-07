@@ -7,12 +7,12 @@ import lujgame.game.server.net.GameNetHandler;
 import lujgame.game.server.net.GameNetHandler.Register;
 import lujgame.game.server.type.JStr;
 
-@Register(desc = "处理玩家登录")
-public class Net1010001 extends GameNetHandler<Net1010001Req> {
+@Register(desc = "玩家登录")
+public class Net10001 extends GameNetHandler<Net10001Req> {
 
   @Override
   public void onHandle(GameNetHandleContext ctx) {
-    Net1010001Req packet = ctx.getPacket(this);
+    Net10001Req packet = ctx.getPacket(this);
 
     JStr name = packet.loginName();
     ctx.log().debug("玩家请求登录：{}", name);

@@ -29,8 +29,8 @@ public class EntityBinder {
     }
 
     // 绑定时，创建对应处理实体
-    ActorRef entityRef = ctx.actorOf(_entityActorFactory
-        .props(state.getHandleSuiteMap(), state.getCmdMap(), state.getDbCacheRef()));
+    ActorRef entityRef = ctx.actorOf(_entityActorFactory.props(state.getHandleSuiteMap(),
+        state.getCmdMap(), state.getDatabaseMetaMap(), state.getDbCacheRef(), connRef));
     entityMap.put(connId, entityRef);
 
     // 回复网关

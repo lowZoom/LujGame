@@ -2,7 +2,7 @@ package lujgame.example.business.m101.control;
 
 import lujgame.example.business.m101.control.misc.M1ProtoEncoder;
 import lujgame.example.business.m101.database.M1PlayerDb;
-import lujgame.example.business.m101.net.Net1010001Rsp;
+import lujgame.example.business.m101.net.Net10001Rsp;
 import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.DbOperateContext;
 import lujgame.game.server.type.JSet;
@@ -12,11 +12,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class M1LoginCmd extends CacheOkCommand {
-
-  @Autowired
-  public M1LoginCmd(M1ProtoEncoder protoEncoder) {
-    _protoEncoder = protoEncoder;
-  }
 
   @Override
   public void execute(DbOperateContext ctx) {
@@ -31,9 +26,10 @@ public class M1LoginCmd extends CacheOkCommand {
     JTime now = ctx.now();
     ctx.jSet(playerDb.loginTime(), now);
 
-    Net1010001Rsp rsp = _protoEncoder.encode1010001(ctx, playerDb);
+    Net10001Rsp rsp = _protoEncoder.encode1010001(ctx, playerDb);
     ctx.sendResponse2C(rsp);
   }
 
-  private final M1ProtoEncoder _protoEncoder;
+  @Autowired
+  private M1ProtoEncoder _protoEncoder;
 }

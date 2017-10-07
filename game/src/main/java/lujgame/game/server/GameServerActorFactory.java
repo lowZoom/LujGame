@@ -13,6 +13,7 @@ import lujgame.core.spring.BeanCollector;
 import lujgame.game.boot.GameBootConfigLoader;
 import lujgame.game.master.cluster.GameNodeRegistrar;
 import lujgame.game.server.command.CacheOkCommand;
+import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.database.cache.DbCacheActorFactory;
 import lujgame.game.server.entity.logic.EntityBinder;
 import lujgame.game.server.net.NetHandleMeta;
@@ -44,11 +45,12 @@ public class GameServerActorFactory {
 
   public Props props(Config gameCfg, Cluster cluster,
       ImmutableMap<Integer, NetHandleSuite> handleSuiteMap,
-      ImmutableMap<Class<?>, CacheOkCommand> cmdMap) {
+      ImmutableMap<Class<?>, CacheOkCommand> cmdMap,
+      ImmutableMap<Class<?>, DatabaseMeta> databaseMetaMap) {
     String serverId = _bootConfigLoader.getServerId(gameCfg);
 
     GameServerActorState state = new GameServerActorState(serverId,
-        gameCfg, cluster, handleSuiteMap, cmdMap);
+        gameCfg, cluster, handleSuiteMap, cmdMap, databaseMetaMap);
 
     Creator<GameServerActor> c = () -> new GameServerActor(state,
         _akkaTool, _gameNodeRegistrar, _entityBinder, _dbCacheActorFactory);
@@ -73,6 +75,10 @@ public class GameServerActorFactory {
 
   public ImmutableMap<Class<?>, CacheOkCommand> makeCmdMap() {
     return _beanCollector.collectBeanMap(CacheOkCommand.class, Object::getClass);
+  }
+
+  public ImmutableMap<Class<?>, DatabaseMeta> makeDatabaseMetaMap() {
+    return _beanCollector.collectBeanMap(DatabaseMeta.class, DatabaseMeta::databaseType);
   }
 
   private NetHandleSuite makeSuite(NetHandleMeta meta, Map<Class<?>, NetPacketCodec> codecMap) {

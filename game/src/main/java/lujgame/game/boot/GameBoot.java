@@ -10,6 +10,7 @@ import lujgame.game.master.cluster.ClusterBossActorFactory;
 import lujgame.game.master.gate.CommGateActorFactory;
 import lujgame.game.server.GameServerActorFactory;
 import lujgame.game.server.command.CacheOkCommand;
+import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.net.NetHandleSuite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,10 +52,6 @@ public class GameBoot {
     startGame(gameCfg, akkaCfg, log);
   }
 
-  private ActorSystem createActorSystem(Config akkaCfg) {
-    return ActorSystem.create("Game", akkaCfg);
-  }
-
   private void startSeed(Config akkaCfg) {
     ActorSystem system = createActorSystem(akkaCfg);
     Cluster cluster = Cluster.get(system);
@@ -68,17 +65,24 @@ public class GameBoot {
 
     GameServerActorFactory f = _gameServerActorFactory;
     ImmutableMap<Integer, NetHandleSuite> handleSuiteMap = f.makeHandleSuiteMap();
-    log.debug("扫描网络处理器完成，数量：{}", handleSuiteMap.size());
+    log.debug("扫描网络元信息完成，数量：{}", handleSuiteMap.size());
 
     ImmutableMap<Class<?>, CacheOkCommand> cmdMap = f.makeCmdMap();
-    log.debug("扫描数据处理器，数量：{}", cmdMap.size());
+    log.debug("扫描逻辑处理器，数量：{}", cmdMap.size());
+
+    ImmutableMap<Class<?>, DatabaseMeta> dbMetaMap = f.makeDatabaseMetaMap();
+    log.debug("扫描数据库元信息完成，数量：{}", dbMetaMap.size());
 
     log.debug("启动Akka系统...");
     ActorSystem system = createActorSystem(akkaCfg);
     Cluster cluster = Cluster.get(system);
 
-    Props props = f.props(gameCfg, cluster, handleSuiteMap, cmdMap);
+    Props props = f.props(gameCfg, cluster, handleSuiteMap, cmdMap, dbMetaMap);
     ActorRef serverRef = system.actorOf(props, "Slave");
+  }
+
+  private ActorSystem createActorSystem(Config akkaCfg) {
+    return ActorSystem.create("Game", akkaCfg);
   }
 
   private final GameBootConfigLoader _bootConfigLoader;

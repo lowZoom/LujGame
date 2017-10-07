@@ -5,4 +5,6 @@ public interface DatabaseMeta {
   Class<?> databaseType();
 
 //  DbMetaField[] fields();
+
+  DbObjImpl createObject();
 }
