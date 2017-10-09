@@ -1,6 +1,8 @@
 package lujgame.anno.core.generate;
 
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -9,11 +11,25 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.Modifier;
 import javax.tools.JavaFileObject;
 import org.springframework.stereotype.Component;
 
 @Component
 public class GenerateTool {
+
+  public FieldSpec makeBeanField(FieldSpec spec) {
+    return FieldSpec.builder(spec.type, '_' + spec.name, Modifier.FINAL).build();
+  }
+
+  public MethodSpec makeBeanProperty(FieldSpec beanField) {
+    return MethodSpec.methodBuilder(beanField.name.substring(1))
+        .addAnnotation(Override.class)
+        .addModifiers(Modifier.PUBLIC)
+        .returns(beanField.type)
+        .addStatement("return $L", beanField.name)
+        .build();
+  }
 
   /**
    * 将生成文件的编码统一成UTF-8

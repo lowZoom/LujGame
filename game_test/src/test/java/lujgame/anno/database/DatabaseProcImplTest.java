@@ -7,6 +7,7 @@ import java.util.Map;
 import lujgame.core.spring.BeanCollector;
 import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.database.bean.DbObjImpl;
+import lujgame.game.server.database.type.DbTypeInternal;
 import lujgame.test.ZBaseTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +17,9 @@ public class DatabaseProcImplTest extends ZBaseTest {
 
   @Autowired
   BeanCollector _beanCollector;
+
+  @Autowired
+  DbTypeInternal _dbTypeInternal;
 
   @Before
   public void setUp() throws Exception {
@@ -34,8 +38,12 @@ public class DatabaseProcImplTest extends ZBaseTest {
 
     DatabaseMeta meta = metaMap.get(Z.class);
     assertThat(meta).isNotNull();
+    assertThat(meta.databaseType()).isSameAs(Z.class);
 
-    DbObjImpl obj = meta.createObject();
+    DbObjImpl obj = meta.createObject(_dbTypeInternal);
     assertThat(obj).isInstanceOf(Z.class);
+
+    Z db = (Z) obj;
+    assertThat(db.str()).isNotNull();
   }
 }

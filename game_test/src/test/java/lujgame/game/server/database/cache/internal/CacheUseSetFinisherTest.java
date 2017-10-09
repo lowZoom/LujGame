@@ -33,8 +33,8 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
   @Autowired
   CacheUseSetFinisher _finisher;
 
-  @Autowired
   @Mock
+  @Autowired
   AkkaTool _akkaTool;
 
   @Autowired

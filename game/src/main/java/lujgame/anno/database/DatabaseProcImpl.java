@@ -25,6 +25,7 @@ import lujgame.anno.net.packet.input.FieldItem;
 import lujgame.anno.net.packet.output.FieldType;
 import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.database.bean.DbObjImpl;
+import lujgame.game.server.database.type.DbTypeInternal;
 import lujgame.game.server.type.JStr;
 import lujgame.game.server.type.JTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,11 +68,41 @@ public class DatabaseProcImpl {
   }
 
   private void generateBeanImpl(DatabaseItem item, Filer filer) throws IOException {
-    _generateTool.writeTo(JavaFile.builder(item.getPackageName(), TypeSpec
+    GenerateTool t = _generateTool;
+    List<FieldSpec> fieldList = item.getFieldList().stream()
+        .map(f -> t.makeBeanField(f.getSpec()))
+        .collect(Collectors.toList());
+
+    List<MethodSpec> propertyList = fieldList.stream()
+        .map(t::makeBeanProperty)
+        .collect(Collectors.toList());
+
+    String internalParam = "i";
+    MethodSpec construct = fillConstruct(MethodSpec
+        .constructorBuilder(), fieldList, internalParam)
+        .addParameter(TypeName.get(DbTypeInternal.class), internalParam)
+        .build();
+
+    t.writeTo(JavaFile.builder(item.getPackageName(), TypeSpec
         .classBuilder(getImplName(item))
         .addModifiers(Modifier.FINAL)
-//        .addSuperinterface(TypeName.get(item.getDbType()))
+        .superclass(DbObjImpl.class)
+        .addSuperinterface(TypeName.get(item.getDbType()))
+        .addMethod(construct)
+        .addMethods(propertyList)
+        .addFields(fieldList)
         .build()).build(), filer);
+  }
+
+  private MethodSpec.Builder fillConstruct(MethodSpec.Builder builder,
+      List<FieldSpec> fieldList, String internalName) {
+
+    for (FieldSpec f : fieldList) {
+      FieldType fieldType = FIELD_MAP.get(f.type);
+      builder.addStatement("$L = $L.$L()", f.name, internalName, fieldType.getMaker());
+    }
+
+    return builder;
   }
 
   private String getImplName(DatabaseItem item) {
@@ -86,7 +117,7 @@ public class DatabaseProcImpl {
         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
         .addSuperinterface(DatabaseMeta.class)
         .addMethod(buildDbType(item.getDbType()))
-        .addMethod(buildCreateObj())
+        .addMethod(buildCreateObj(item))
         .build()).build(), filer);
   }
 
@@ -104,18 +135,20 @@ public class DatabaseProcImpl {
         .build();
   }
 
-  private MethodSpec buildCreateObj() {
+  private MethodSpec buildCreateObj(DatabaseItem item) {
+    String internalName = "i";
     return MethodSpec.methodBuilder("createObject")
         .addAnnotation(Override.class)
         .addModifiers(Modifier.PUBLIC)
+        .addParameter(DbTypeInternal.class, internalName)
         .returns(TypeName.get(DbObjImpl.class))
-        .addStatement("return null")
+        .addStatement("return new $L($L)", getImplName(item), internalName)
         .build();
   }
 
   private static final Map<TypeName, FieldType> FIELD_MAP = ImmutableMap.<TypeName, FieldType>builder()
       .put(TypeName.get(JStr.class), FieldType.of(String.class, "newStr"))
-      .put(TypeName.get(JTime.class), FieldType.of(String.class, "newTime"))
+      .put(TypeName.get(JTime.class), FieldType.of(long.class, "newTime"))
       .build();
 
   @Autowired

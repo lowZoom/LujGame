@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.ExecutableElement;
@@ -34,11 +33,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class NetPacketProcImpl {
-
-  @Autowired
-  public NetPacketProcImpl(GenerateTool generateTool) {
-    _generateTool = generateTool;
-  }
 
   public void process(TypeElement elem, Elements elemUtil,
       Filer filer, Messager msg) throws IOException {
@@ -113,23 +107,25 @@ public class NetPacketProcImpl {
    */
   private void generatePacketImpl(PacketItem item,
       Filer filer, TypeSpec jsonType) throws IOException {
+    GenerateTool t = _generateTool;
     List<FieldSpec> fieldList = item.getFieldList().stream()
-        .map(this::toImplField)
+        .map(f -> t.makeBeanField(f.getSpec()))
         .collect(Collectors.toList());
 
     String internalParam = "i";
     String jsonParam = "json";
 
-    MethodSpec construct = fillConstruct(MethodSpec.constructorBuilder()
-            .addParameter(TypeName.get(Z1.class), internalParam)
-            .addParameter(ClassName.bestGuess(jsonType.name), jsonParam)
-        , fieldList, internalParam, jsonParam).build();
+    MethodSpec construct = fillConstruct(MethodSpec
+        .constructorBuilder(), fieldList, internalParam, jsonParam)
+        .addParameter(TypeName.get(Z1.class), internalParam)
+        .addParameter(ClassName.bestGuess(jsonType.name), jsonParam)
+        .build();
 
     List<MethodSpec> propertyList = fieldList.stream()
-        .map(this::toImplProperty)
+        .map(t::makeBeanProperty)
         .collect(Collectors.toList());
 
-    _generateTool.writeTo(JavaFile.builder(item.getPackageName(), TypeSpec
+    t.writeTo(JavaFile.builder(item.getPackageName(), TypeSpec
         .classBuilder(getImplName(item))
         .addModifiers(Modifier.FINAL)
         .addSuperinterface(TypeName.get(item.getPacketType()))
@@ -141,20 +137,6 @@ public class NetPacketProcImpl {
 
   private String getImplName(PacketItem item) {
     return item.getClassName() + "Impl";
-  }
-
-  private FieldSpec toImplField(FieldItem packetField) {
-    FieldSpec spec = packetField.getSpec();
-    return FieldSpec.builder(spec.type, '_' + spec.name, Modifier.FINAL).build();
-  }
-
-  private MethodSpec toImplProperty(FieldSpec field) {
-    return MethodSpec.methodBuilder(field.name.substring(1))
-        .addAnnotation(Override.class)
-        .addModifiers(Modifier.PUBLIC)
-        .returns(field.type)
-        .addStatement("return $L", field.name)
-        .build();
   }
 
   private MethodSpec.Builder fillConstruct(MethodSpec.Builder builder,
@@ -208,5 +190,6 @@ public class NetPacketProcImpl {
       .put(TypeName.get(JStr.class), FieldType.of(String.class, "newStr"))
       .build();
 
-  private final GenerateTool _generateTool;
+  @Autowired
+  private GenerateTool _generateTool;
 }

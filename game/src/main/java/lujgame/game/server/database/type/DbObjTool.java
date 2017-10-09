@@ -19,7 +19,7 @@ public class DbObjTool {
     Dbobjimpl0 oi = _dbObjInternal;
 
     DatabaseMeta meta = metaMap.get(dbType);
-    DbObjImpl obj = meta.createObject();
+    DbObjImpl obj = meta.createObject(_dbTypeInternal);
 
     String dbId = _uuidTool.newUuidStr();
     oi.setDbId(obj, dbId);
@@ -38,4 +38,7 @@ public class DbObjTool {
 
   @Autowired
   private Jtime0 _timeInternal;
+
+  @Autowired
+  private DbTypeInternal _dbTypeInternal;
 }

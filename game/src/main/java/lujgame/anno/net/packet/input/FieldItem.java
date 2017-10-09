@@ -18,7 +18,7 @@ public class FieldItem {
     return _spec;
   }
 
-  private final ExecutableElement  _elem;
+  private final ExecutableElement _elem;
 
   private final FieldSpec _spec;
 }
