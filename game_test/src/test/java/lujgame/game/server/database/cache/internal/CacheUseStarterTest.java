@@ -13,6 +13,7 @@ import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.google.common.cache.Cache;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.LinkedList;
 import lujgame.core.akka.AkkaTool;
@@ -144,7 +145,7 @@ public class CacheUseStarterTest extends ZBaseTest {
   }
 
   DbCacheUseReq makeUseReq(ImmutableList<DbCacheUseItem> setList) {
-    return new DbCacheUseReq(setList, null, null, 1);
+    return new DbCacheUseReq(setList, null, ImmutableMap.of(), null, 1);
   }
 
   void addEmptySetItem(String setKey) {

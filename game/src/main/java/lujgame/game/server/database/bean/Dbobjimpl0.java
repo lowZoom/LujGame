@@ -13,8 +13,8 @@ public class Dbobjimpl0 {
     obj._dbId = dbId;
   }
 
-  public long getCreateTime(DbObjImpl obj) {
-    return obj._createTime;
+  public long getCreateTime(Object obj) {
+    return ((DbObjImpl)obj)._createTime;
   }
 
   public void setCreateTime(DbObjImpl obj, long createTime) {

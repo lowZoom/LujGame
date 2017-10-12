@@ -6,6 +6,7 @@ import static org.mockito.Mockito.mock;
 import akka.actor.ActorRef;
 import com.google.common.cache.Cache;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.LinkedList;
 import lujgame.core.akka.AkkaTool;
@@ -65,10 +66,10 @@ public class CacheUseObjFinisherTest extends ZBaseTest {
     setItem.setValue(new IdSet(ImmutableSet.of(new DbId(1))));
 
     //TODO: 填充一个set req
-    _waitQueue.add(new DbCacheUseReq(ImmutableList.of(
+    addToWaitQueue(ImmutableList.of(
         new DbCacheUseItem(SET_KEY, ZTestDb.class, "a", "1")//,
 //        new DbCacheUseItem("干扰项", CacheUseFinisherTest.class, "干扰项", "干扰项")
-    ), ZTestDb.class, null, 0));
+    ));
 
     /*
 
@@ -102,10 +103,10 @@ public class CacheUseObjFinisherTest extends ZBaseTest {
     setItem.setValue(new IdSet(ImmutableSet.of(new DbId(1), new DbId(2))));
 
     //TODO: 填充一个set req
-    _waitQueue.add(new DbCacheUseReq(ImmutableList.of(
+    addToWaitQueue(ImmutableList.of(
         new DbCacheUseItem(SET_KEY, ZTestDb.class, "a", "1")//,
 //        new DbCacheUseItem("干扰项", CacheUseFinisherTest.class, "干扰项", "干扰项")
-    ), ZTestDb.class, null, 0));
+    ));
 
     //-- Act --//
     finishUseObject(OBJ_KEY);
@@ -117,5 +118,9 @@ public class CacheUseObjFinisherTest extends ZBaseTest {
   void finishUseObject(String cacheKey) {
     _finisher.finishUseObject(_state,
         new DbLoadObjRsp(cacheKey, ZTestDb.class, mock(ZTestDb.class)));
+  }
+
+  void addToWaitQueue(ImmutableList<DbCacheUseItem> reqList) {
+    _waitQueue.add(new DbCacheUseReq(reqList, ZTestDb.class, ImmutableMap.of(), null, 0));
   }
 }

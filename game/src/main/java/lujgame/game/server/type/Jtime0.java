@@ -5,6 +5,10 @@ import lujgame.game.server.core.LujInternal;
 @LujInternal
 public class Jtime0 {
 
+  public JTime newDb() {
+    return new JTime();
+  }
+
   public long getTime(JTime time) {
     return time._time;
   }

@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import lujgame.core.akka.AkkaTool;
 import lujgame.game.server.database.DbOperateContext;
 import lujgame.game.server.database.cache.DbCacheActorState;
+import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.database.cache.message.DbCacheUseReq;
 import lujgame.game.server.database.cache.message.DbCacheUseRsp;
 import lujgame.game.server.database.load.message.DbLoadSetRsp;
@@ -65,9 +66,9 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
     final String SET_KEY = u.makeSetKey("a");
     CacheItem setItem = u.addCacheItem(_cache, SET_KEY);
 
-    _waitQueue.add(new DbCacheUseReq(ImmutableList.of(
+    addToWaitQueue(ImmutableList.of(
         u.makeUseItem(SET_KEY, "1")
-    ), null, _requestRef, 123));
+    ));
 
     DbLoadSetRsp msg = new DbLoadSetRsp(SET_KEY, ImmutableSet.of());
 
@@ -88,6 +89,7 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
 
     DbOperateContext ctx = makeOperateContext(resultMap);
     JSet<ZTestDb> resultSet = ctx.getDbSet(ZTestDb.class, "1");
+    assertThat(resultSet).isNotNull();
     assertThat(ctx.isEmpty(resultSet)).isTrue();
   }
 
@@ -99,9 +101,9 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
     final String SET_KEY = u.makeSetKey("a");
     u.addCacheItem(_cache, SET_KEY);
 
-    _waitQueue.add(new DbCacheUseReq(ImmutableList.of(
+    addToWaitQueue(ImmutableList.of(
         u.makeUseItem(SET_KEY, "1")
-    ), null, _requestRef, 123));
+    ));
 
     CacheItem objItem = u.addCacheItem(_cache, u.makeObjectKey(1L));
     objItem.setLoadOk(true);
@@ -120,6 +122,7 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
     DbOperateContext ctx = makeOperateContext(resultMap);
 
     JSet<ZTestDb> resultSet = ctx.getDbSet(ZTestDb.class, "1");
+    assertThat(resultSet).isNotNull();
     assertThat(ctx.isEmpty(resultSet)).isFalse();
 
     ZTestDb resultDb = ctx.getDb(resultSet);
@@ -134,9 +137,9 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
     final String SET_KEY = u.makeSetKey("a");
     CacheItem setItem = u.addCacheItem(_cache, SET_KEY);
 
-    _waitQueue.add(new DbCacheUseReq(ImmutableList.of(
+    addToWaitQueue(ImmutableList.of(
         u.makeUseItem(SET_KEY, "1")
-    ), null, _requestRef, 0));
+    ));
 
     DbLoadSetRsp msg = new DbLoadSetRsp(SET_KEY, ImmutableSet.of(1L));
 
@@ -158,5 +161,9 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
 
   DbOperateContext makeOperateContext(ImmutableMap<String, Object> resultMap) {
     return _cacheUtil.makeOperateContext(resultMap, null);
+  }
+
+  void addToWaitQueue(ImmutableList<DbCacheUseItem> reqList) {
+    _waitQueue.add(new DbCacheUseReq(reqList, ZTestDb.class, ImmutableMap.of(), _requestRef, 0));
   }
 }

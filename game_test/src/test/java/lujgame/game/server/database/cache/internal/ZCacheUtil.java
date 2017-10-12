@@ -48,7 +48,7 @@ class ZCacheUtil {
   }
 
   DbOperateContext makeOperateContext(ImmutableMap<String, Object> resultMap, ActorRef connRef) {
-    return _operateContextFactory.createContext(resultMap, null, connRef);
+    return _operateContextFactory.createContext(0, ImmutableMap.of(), resultMap, null, connRef);
   }
 
   @Autowired

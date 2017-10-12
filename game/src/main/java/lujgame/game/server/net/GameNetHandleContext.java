@@ -3,6 +3,9 @@ package lujgame.game.server.net;
 import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.sun.xml.internal.bind.v2.runtime.reflect.Lister.Pack;
+import com.sun.xml.internal.ws.api.message.Packet;
 import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.cache.internal.CacheKeyMaker;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
@@ -53,7 +56,16 @@ public class GameNetHandleContext {
   }
 
   public <T extends CacheOkCommand> void invoke(Class<T> cmdType) {
-    _dbCacheRef.tell(new DbCacheUseReq(_useList.build(), cmdType, _entityRef, 0), _entityRef);
+    invoke(cmdType, null);
+  }
+
+  public <T extends CacheOkCommand> void invoke(Class<T> cmdType, Object packet) {
+    ImmutableMap.Builder<String, Object> param = ImmutableMap.builder();
+    if (packet != null) {
+      param.put("packet", packet);
+    }
+
+    _dbCacheRef.tell(new DbCacheUseReq(_useList.build(), cmdType, param.build(), _entityRef, 0), _entityRef);
   }
 
   public LoggingAdapter log() {

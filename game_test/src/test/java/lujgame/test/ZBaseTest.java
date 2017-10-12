@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -15,10 +16,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(classes = ZInjectConfig.class)
 public abstract class ZBaseTest {
 
-  @After
-  public void tearDown() throws IllegalAccessException {
-    //FIXME: 还是不能放在after，因为有些不会用到mock的测试，不会声明对应字段，所以不会被重置
-
+  @Before
+  public void setupMock() throws IllegalAccessException {
     Class<? extends ZBaseTest> clazz = getClass();
 
     List<Field> mockList = Arrays.stream(clazz.getDeclaredFields())
