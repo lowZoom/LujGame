@@ -6,6 +6,8 @@ public class JStr {
 
   public interface Impl {
 
+    void setValue(String val);
+
     String getValue();
   }
 

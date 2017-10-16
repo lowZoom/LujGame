@@ -8,7 +8,9 @@ public abstract class NetPacketCodec {
 
   public abstract Class<?> packetType();
 
-  public abstract Object decode(Z1 i, byte[] data);
+  public abstract Object createPacket(Z1 i);
+
+  public abstract Object decodePacket(Z1 i, byte[] data);
 
   //FIXME: TEMP
   protected static <T> T readJson(byte[] data, Class<T> type) {

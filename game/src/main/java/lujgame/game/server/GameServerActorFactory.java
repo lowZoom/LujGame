@@ -46,11 +46,12 @@ public class GameServerActorFactory {
   public Props props(Config gameCfg, Cluster cluster,
       ImmutableMap<Integer, NetHandleSuite> handleSuiteMap,
       ImmutableMap<Class<?>, CacheOkCommand> cmdMap,
-      ImmutableMap<Class<?>, DatabaseMeta> databaseMetaMap) {
+      ImmutableMap<Class<?>, DatabaseMeta> databaseMetaMap,
+      ImmutableMap<Class<?>, NetPacketCodec> netPacketCodecMap) {
     String serverId = _bootConfigLoader.getServerId(gameCfg);
 
     GameServerActorState state = new GameServerActorState(serverId,
-        gameCfg, cluster, handleSuiteMap, cmdMap, databaseMetaMap);
+        gameCfg, cluster, handleSuiteMap, cmdMap, databaseMetaMap, netPacketCodecMap);
 
     Creator<GameServerActor> c = () -> new GameServerActor(state,
         _akkaTool, _gameNodeRegistrar, _entityBinder, _dbCacheActorFactory);
@@ -58,14 +59,14 @@ public class GameServerActorFactory {
     return Props.create(GameServerActor.class, c);
   }
 
-  public ImmutableMap<Integer, NetHandleSuite> makeHandleSuiteMap() {
-    BeanCollector c = _beanCollector;
+  public ImmutableMap<Class<?>, NetPacketCodec> makePacketCodecMap() {
+    return _beanCollector.collectBeanMap(NetPacketCodec.class, NetPacketCodec::packetType);
+  }
 
-    Map<Class<?>, NetPacketCodec> codecMap = c.collectBeanMap(
-        NetPacketCodec.class, NetPacketCodec::packetType);
-
-    Map<Integer, NetHandleMeta> handleMap = c.collectBeanMap(
-        NetHandleMeta.class, NetHandleMeta::opcode);
+  public ImmutableMap<Integer, NetHandleSuite> makeHandleSuiteMap(
+      Map<Class<?>, NetPacketCodec> codecMap) {
+    Map<Integer, NetHandleMeta> handleMap = _beanCollector
+        .collectBeanMap(NetHandleMeta.class, NetHandleMeta::opcode);
 
     ImmutableMap.Builder<Integer, NetHandleSuite> builder = ImmutableMap.builder();
     handleMap.forEach((k, v) -> builder.put(k, makeSuite(v, codecMap)));

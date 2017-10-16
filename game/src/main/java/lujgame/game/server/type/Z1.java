@@ -1,6 +1,9 @@
 package lujgame.game.server.type;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import lujgame.game.server.core.LujInternal;
+import lujgame.game.server.net.type.PkStrImpl;
 
 @LujInternal
 public class Z1 {
@@ -9,12 +12,8 @@ public class Z1 {
     return new JInt(() -> val);
   }
 
-  public JStr newStr(String val) {
-    return new JStr(() -> val);
-  }
-
-  public JStr.Impl getImpl(JStr str) {
-    return str._impl;
+  public JStr newStr(Supplier<String> getter, Consumer<String> setter) {
+    return new JStr(new PkStrImpl(getter, setter));
   }
 
   public JSet.Impl getImpl(JSet<?> set) {

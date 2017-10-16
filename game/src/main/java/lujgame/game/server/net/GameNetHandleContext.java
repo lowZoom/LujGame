@@ -3,16 +3,13 @@ package lujgame.game.server.net;
 import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.sun.xml.internal.bind.v2.runtime.reflect.Lister.Pack;
-import com.sun.xml.internal.ws.api.message.Packet;
 import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.cache.internal.CacheKeyMaker;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
-import lujgame.game.server.database.cache.message.DbCacheUseReq;
+import lujgame.game.server.net.internal.DbCmdInvoker;
 import lujgame.game.server.type.JLong;
 import lujgame.game.server.type.JStr;
-import lujgame.game.server.type.Z1;
+import lujgame.game.server.type.Jstr0;
 import org.omg.CORBA.NO_IMPLEMENT;
 
 public class GameNetHandleContext {
@@ -22,8 +19,9 @@ public class GameNetHandleContext {
       ActorRef dbCacheRef,
       ActorRef entityRef,
       LoggingAdapter log,
-      Z1 typeI,
-      CacheKeyMaker cacheKeyMaker) {
+      Jstr0 strInternal,
+      CacheKeyMaker cacheKeyMaker,
+      DbCmdInvoker dbCmdInvoker) {
     _proto = proto;
 
     _dbCacheRef = dbCacheRef;
@@ -31,8 +29,10 @@ public class GameNetHandleContext {
 
     _log = log;
 
-    _typeI = typeI;
+    _strInternal = strInternal;
     _cacheKeyMaker = cacheKeyMaker;
+
+    _dbCmdInvoker = dbCmdInvoker;
 
     _useList = ImmutableList.builder();
   }
@@ -46,7 +46,7 @@ public class GameNetHandleContext {
   }
 
   public String get(JStr val) {
-    return _typeI.getImpl(val).getValue();
+    return _strInternal.getImpl(val).getValue();
   }
 
   public void dbLoadSet(Class<?> dbType, JStr dbKey, String resultKey) {
@@ -60,12 +60,7 @@ public class GameNetHandleContext {
   }
 
   public <T extends CacheOkCommand> void invoke(Class<T> cmdType, Object packet) {
-    ImmutableMap.Builder<String, Object> param = ImmutableMap.builder();
-    if (packet != null) {
-      param.put("packet", packet);
-    }
-
-    _dbCacheRef.tell(new DbCacheUseReq(_useList.build(), cmdType, param.build(), _entityRef, 0), _entityRef);
+    _dbCmdInvoker.invoke(cmdType, packet, _useList.build(), _dbCacheRef, _entityRef);
   }
 
   public LoggingAdapter log() {
@@ -82,6 +77,8 @@ public class GameNetHandleContext {
 
   private final LoggingAdapter _log;
 
-  private final Z1 _typeI;
+  private final Jstr0 _strInternal;
   private final CacheKeyMaker _cacheKeyMaker;
+
+  private final DbCmdInvoker _dbCmdInvoker;
 }

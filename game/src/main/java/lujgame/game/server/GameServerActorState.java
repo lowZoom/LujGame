@@ -9,13 +9,15 @@ import java.util.Map;
 import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.net.NetHandleSuite;
+import lujgame.game.server.net.NetPacketCodec;
 
 public class GameServerActorState {
 
   public GameServerActorState(String serverId, Config serverConfig, Cluster cluster,
       ImmutableMap<Integer, NetHandleSuite> handleSuiteMap,
       ImmutableMap<Class<?>, CacheOkCommand> cmdMap,
-      ImmutableMap<Class<?>, DatabaseMeta> databaseMetaMap) {
+      ImmutableMap<Class<?>, DatabaseMeta> databaseMetaMap,
+      ImmutableMap<Class<?>, NetPacketCodec> netPacketCodecMap) {
     _serverId = serverId;
     _serverConfig = serverConfig;
 
@@ -25,6 +27,7 @@ public class GameServerActorState {
     _cmdMap = cmdMap;
 
     _databaseMetaMap = databaseMetaMap;
+    _netPacketCodecMap = netPacketCodecMap;
 
     _entityMap = new HashMap<>(1024);
   }
@@ -65,6 +68,10 @@ public class GameServerActorState {
     return _databaseMetaMap;
   }
 
+  public ImmutableMap<Class<?>, NetPacketCodec> getNetPacketCodecMap() {
+    return _netPacketCodecMap;
+  }
+
   private ActorRef _dbCacheRef;
 
   private final Map<String, ActorRef> _entityMap;
@@ -78,4 +85,5 @@ public class GameServerActorState {
   private final ImmutableMap<Class<?>, CacheOkCommand> _cmdMap;
 
   private final ImmutableMap<Class<?>, DatabaseMeta> _databaseMetaMap;
+  private final ImmutableMap<Class<?>, NetPacketCodec> _netPacketCodecMap;
 }

@@ -12,6 +12,7 @@ import lujgame.game.server.GameServerActorFactory;
 import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.net.NetHandleSuite;
+import lujgame.game.server.net.NetPacketCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +65,10 @@ public class GameBoot {
     log.debug("启动模式：服务节点");
 
     GameServerActorFactory f = _gameServerActorFactory;
-    ImmutableMap<Integer, NetHandleSuite> handleSuiteMap = f.makeHandleSuiteMap();
+    ImmutableMap<Class<?>, NetPacketCodec> packetCodecMap = f.makePacketCodecMap();
+    log.debug("扫描网络包编解码器完成，数量：{}", packetCodecMap.size());
+
+    ImmutableMap<Integer, NetHandleSuite> handleSuiteMap = f.makeHandleSuiteMap(packetCodecMap);
     log.debug("扫描网络元信息完成，数量：{}", handleSuiteMap.size());
 
     ImmutableMap<Class<?>, CacheOkCommand> cmdMap = f.makeCmdMap();
@@ -77,7 +81,7 @@ public class GameBoot {
     ActorSystem system = createActorSystem(akkaCfg);
     Cluster cluster = Cluster.get(system);
 
-    Props props = f.props(gameCfg, cluster, handleSuiteMap, cmdMap, dbMetaMap);
+    Props props = f.props(gameCfg, cluster, handleSuiteMap, cmdMap, dbMetaMap, packetCodecMap);
     ActorRef serverRef = system.actorOf(props, "Slave");
   }
 

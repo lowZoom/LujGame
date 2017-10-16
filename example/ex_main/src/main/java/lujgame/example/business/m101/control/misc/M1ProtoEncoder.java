@@ -2,7 +2,7 @@ package lujgame.example.business.m101.control.misc;
 
 import lujgame.example.business.m101.database.M1PlayerDb;
 import lujgame.example.business.m101.net.Net10001Rsp;
-import lujgame.game.server.database.DbOperateContext;
+import lujgame.game.server.database.operate.DbOperateContext;
 import org.springframework.stereotype.Component;
 
 @Component

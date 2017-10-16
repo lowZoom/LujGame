@@ -6,8 +6,8 @@ import akka.actor.ActorRef;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
-import lujgame.game.server.database.DbOperateContext;
-import lujgame.game.server.database.DbOperateContextFactory;
+import lujgame.game.server.database.operate.DbOperateContext;
+import lujgame.game.server.database.operate.DbOperateContextFactory;
 import lujgame.game.server.database.cache.DbCacheActorState;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,8 @@ class ZCacheUtil {
   }
 
   DbOperateContext makeOperateContext(ImmutableMap<String, Object> resultMap, ActorRef connRef) {
-    return _operateContextFactory.createContext(0, ImmutableMap.of(), resultMap, null, connRef);
+    return _operateContextFactory.createContext(0, ImmutableMap.of(), resultMap,
+        ImmutableMap.of(), ImmutableMap.of(), connRef);
   }
 
   @Autowired

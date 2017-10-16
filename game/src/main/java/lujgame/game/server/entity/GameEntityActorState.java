@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.net.NetHandleSuite;
+import lujgame.game.server.net.NetPacketCodec;
 
 public class GameEntityActorState {
 
@@ -12,14 +13,16 @@ public class GameEntityActorState {
       ImmutableMap<Integer, NetHandleSuite> handleSuiteMap,
       ImmutableMap<Class<?>, CacheOkCommand> cmdMap,
       ImmutableMap<Class<?>, DatabaseMeta> databaseMetaMap,
+      ImmutableMap<Class<?>, NetPacketCodec> netPacketCodecMap,
       ActorRef dbCacheRef,
       ActorRef connRef) {
     _handleSuiteMap = handleSuiteMap;
     _cmdMap = cmdMap;
 
     _databaseMetaMap = databaseMetaMap;
-    _dbCacheRef = dbCacheRef;
+    _netPacketCodecMap = netPacketCodecMap;
 
+    _dbCacheRef = dbCacheRef;
     _connRef = connRef;
   }
 
@@ -39,6 +42,10 @@ public class GameEntityActorState {
     return _dbCacheRef;
   }
 
+  public ImmutableMap<Class<?>, NetPacketCodec> getNetPacketCodecMap() {
+    return _netPacketCodecMap;
+  }
+
   public ActorRef getConnRef() {
     return _connRef;
   }
@@ -47,7 +54,8 @@ public class GameEntityActorState {
   private final ImmutableMap<Class<?>, CacheOkCommand> _cmdMap;
 
   private final ImmutableMap<Class<?>, DatabaseMeta> _databaseMetaMap;
-  private final ActorRef _dbCacheRef;
+  private final ImmutableMap<Class<?>, NetPacketCodec> _netPacketCodecMap;
 
+  private final ActorRef _dbCacheRef;
   private final ActorRef _connRef;
 }

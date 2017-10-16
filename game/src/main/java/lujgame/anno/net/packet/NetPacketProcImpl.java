@@ -79,11 +79,19 @@ public class NetPacketProcImpl {
    * 生成包json类
    */
   private JavaFile makeJsonFile(PacketItem item) {
+    List<FieldSpec> fieldList = item.getFieldList().stream()
+        .map(this::toJsonField)
+        .collect(Collectors.toList());
+
     return JavaFile.builder(item.getPackageName(), TypeSpec
         .classBuilder(getJsonName(item))
         .addModifiers(Modifier.FINAL)
-        .addFields(item.getFieldList().stream()
-            .map(this::toJsonField)
+        .addFields(fieldList)
+        .addMethods(fieldList.stream()
+            .map(this::jsFieldToGetter)
+            .collect(Collectors.toList()))
+        .addMethods(fieldList.stream()
+            .map(this::jsFieldToSetter)
             .collect(Collectors.toList()))
         .build()).build();
   }
@@ -99,7 +107,24 @@ public class NetPacketProcImpl {
     if (newType == null) {
       return spec;
     }
-    return FieldSpec.builder(newType.getValueType(), spec.name, Modifier.PUBLIC).build();
+    return FieldSpec.builder(newType.getValueType(), '_' + spec.name).build();
+  }
+
+  private MethodSpec jsFieldToGetter(FieldSpec field) {
+    return MethodSpec.methodBuilder(_generateTool.nameOfProperty("get", field.name))
+        .addModifiers(Modifier.PUBLIC)
+        .returns(field.type)
+        .addStatement("return $L", field.name)
+        .build();
+  }
+
+  private MethodSpec jsFieldToSetter(FieldSpec field) {
+    String paramName = field.name.substring(1, 2);
+    return MethodSpec.methodBuilder(_generateTool.nameOfProperty("set", field.name))
+        .addModifiers(Modifier.PUBLIC)
+        .addParameter(field.type, paramName)
+        .addStatement("$L = $L", field.name, paramName)
+        .build();
   }
 
   /**
@@ -113,7 +138,7 @@ public class NetPacketProcImpl {
         .collect(Collectors.toList());
 
     String internalParam = "i";
-    String jsonParam = "json";
+    String jsonParam = "j";
 
     MethodSpec construct = fillConstruct(MethodSpec
         .constructorBuilder(), fieldList, internalParam, jsonParam)
@@ -141,10 +166,13 @@ public class NetPacketProcImpl {
 
   private MethodSpec.Builder fillConstruct(MethodSpec.Builder builder,
       List<FieldSpec> fieldList, String internalName, String jsonName) {
+    GenerateTool t = _generateTool;
+
     for (FieldSpec f : fieldList) {
       FieldType fieldType = FIELD_MAP.get(f.type);
-      builder.addStatement("$L = $L.$L($L.$L)", f.name, internalName,
-          fieldType.getMaker(), jsonName, f.name.substring(1));
+      builder.addStatement("$1L = $2L.$3L($4L::$5L, $4L::$6L)", f.name,
+          internalName, fieldType.getMaker(), jsonName,
+          t.nameOfProperty("get", f.name), t.nameOfProperty("set", f.name));
     }
     return builder;
   }
@@ -154,14 +182,24 @@ public class NetPacketProcImpl {
    */
   private void generateCodec(PacketItem item, Filer filer) throws IOException {
     String internalName = "i";
-    String dataName = "data";
+    TypeMirror packetType = item.getPacketType();
 
-    MethodSpec decode = MethodSpec.methodBuilder("decode")
+    MethodSpec create = MethodSpec.methodBuilder("createPacket")
+        .addAnnotation(Override.class)
+        .addModifiers(Modifier.PUBLIC)
+        .addParameter(TypeName.get(Z1.class), internalName)
+        .returns(TypeName.get(packetType))
+        .addStatement("return new $L($L, new $L())",
+            getImplName(item), internalName, getJsonName(item))
+        .build();
+
+    String dataName = "data";
+    MethodSpec decode = MethodSpec.methodBuilder("decodePacket")
         .addAnnotation(Override.class)
         .addModifiers(Modifier.PUBLIC)
         .addParameter(TypeName.get(Z1.class), internalName)
         .addParameter(byte[].class, dataName)
-        .returns(TypeName.get(item.getPacketType()))
+        .returns(TypeName.get(packetType))
         .addStatement("return new $L($L, readJson($L, $L.class))",
             getImplName(item), internalName, dataName, getJsonName(item))
         .build();
@@ -171,7 +209,8 @@ public class NetPacketProcImpl {
         .addAnnotation(Component.class)
         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
         .superclass(NetPacketCodec.class)
-        .addMethod(buildPacketType(item.getPacketType()))
+        .addMethod(buildPacketType(packetType))
+        .addMethod(create)
         .addMethod(decode)
         .build()).build(), filer);
   }

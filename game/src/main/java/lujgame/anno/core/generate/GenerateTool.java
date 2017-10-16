@@ -14,6 +14,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.tools.JavaFileObject;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 public class GenerateTool {
@@ -23,12 +24,17 @@ public class GenerateTool {
   }
 
   public MethodSpec makeBeanProperty(FieldSpec beanField) {
-    return MethodSpec.methodBuilder(beanField.name.substring(1))
+    return MethodSpec.methodBuilder(nameOfProperty("", beanField.name))
         .addAnnotation(Override.class)
         .addModifiers(Modifier.PUBLIC)
         .returns(beanField.type)
         .addStatement("return $L", beanField.name)
         .build();
+  }
+
+  public String nameOfProperty(String prefix, String fieldName) {
+    String result = prefix + StringUtils.capitalize(fieldName.substring(1));
+    return StringUtils.uncapitalize(result);
   }
 
   /**

@@ -1,14 +1,17 @@
-package lujgame.game.server.database;
+package lujgame.game.server.database.operate;
 
 import akka.actor.ActorRef;
 import com.google.common.collect.ImmutableMap;
 import javax.annotation.Nullable;
 import lujgame.game.server.database.bean.DatabaseMeta;
+import lujgame.game.server.database.operate.internal.DbopNetTool;
 import lujgame.game.server.database.type.DbObjTool;
 import lujgame.game.server.database.type.DbSetTool;
+import lujgame.game.server.net.NetPacketCodec;
 import lujgame.game.server.type.JSet;
 import lujgame.game.server.type.JStr;
 import lujgame.game.server.type.JTime;
+import lujgame.game.server.type.Jstr0;
 import lujgame.game.server.type.Jtime0;
 import org.omg.CORBA.NO_IMPLEMENT;
 
@@ -19,9 +22,12 @@ public class DbOperateContext {
       ImmutableMap<String, Object> paramMap,
       ImmutableMap<String, Object> resultMap,
       ImmutableMap<Class<?>, DatabaseMeta> databaseMetaMap,
+      ImmutableMap<Class<?>, NetPacketCodec> netPacketCodecMap,
       ActorRef connRef,
       DbSetTool dbSetTool,
       DbObjTool dbObjTool,
+      DbopNetTool dbopNetTool,
+      Jstr0 strInternal,
       Jtime0 timeInternal) {
     _now = now;
 
@@ -29,16 +35,21 @@ public class DbOperateContext {
     _resultMap = resultMap;
 
     _databaseMetaMap = databaseMetaMap;
+    _netPacketCodecMap = netPacketCodecMap;
+
     _connRef = connRef;
 
     _dbSetTool = dbSetTool;
     _dbObjTool = dbObjTool;
 
+    _dbopNetTool = dbopNetTool;
+
+    _strInternal = strInternal;
     _timeInternal = timeInternal;
   }
 
   public <T> T getPacket(Class<T> packetType) {
-    throw new NO_IMPLEMENT("getPacket尚未实现");
+    return (T) _paramMap.get("packet");
   }
 
   @Nullable
@@ -63,15 +74,15 @@ public class DbOperateContext {
   }
 
   public <T> T createProto(Class<T> protoType) {
-    throw new NO_IMPLEMENT("createProto尚未实现");
+    return (T) _dbopNetTool.createProto(_netPacketCodecMap, protoType);
   }
 
   public void jSet(JStr field, String value) {
-    throw new NO_IMPLEMENT("dbSet尚未实现");
+    _strInternal.getImpl(field).setValue(value);
   }
 
   public void jSet(JStr from, JStr to) {
-    throw new NO_IMPLEMENT("copy尚未实现");
+    jSet(from, _strInternal.getImpl(to).getValue());
   }
 
   public void jSet(JTime field, JTime value) {
@@ -102,10 +113,15 @@ public class DbOperateContext {
   private final ImmutableMap<String, Object> _resultMap;
 
   private final ImmutableMap<Class<?>, DatabaseMeta> _databaseMetaMap;
+  private final ImmutableMap<Class<?>, NetPacketCodec> _netPacketCodecMap;
+
   private final ActorRef _connRef;
 
   private final DbSetTool _dbSetTool;
   private final DbObjTool _dbObjTool;
 
+  private final DbopNetTool _dbopNetTool;
+
+  private final Jstr0 _strInternal;
   private final Jtime0 _timeInternal;
 }

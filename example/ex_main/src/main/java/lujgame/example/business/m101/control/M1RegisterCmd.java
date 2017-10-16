@@ -4,7 +4,7 @@ import lujgame.example.business.m101.database.M1PlayerDb;
 import lujgame.example.business.m101.net.Net10002Req;
 import lujgame.example.business.m101.net.Net10002Rsp;
 import lujgame.game.server.command.CacheOkCommand;
-import lujgame.game.server.database.DbOperateContext;
+import lujgame.game.server.database.operate.DbOperateContext;
 import lujgame.game.server.type.JSet;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +24,7 @@ public class M1RegisterCmd extends CacheOkCommand {
     ctx.jSet(playerDb.name(), packet.loginName());
 
     Net10002Rsp rsp = ctx.createProto(Net10002Rsp.class);
+    ctx.jSet(rsp.name(), packet.loginName());
     ctx.sendResponse2C(rsp);
   }
 }

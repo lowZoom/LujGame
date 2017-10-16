@@ -1,6 +1,6 @@
 package lujgame.game.server.command;
 
-import lujgame.game.server.database.DbOperateContext;
+import lujgame.game.server.database.operate.DbOperateContext;
 
 public abstract class CacheOkCommand {
 

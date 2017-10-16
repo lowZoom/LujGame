@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -17,7 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public abstract class ZBaseTest {
 
   @Before
-  public void setupMock() throws IllegalAccessException {
+  public void setUp0() throws IllegalAccessException {
     Class<? extends ZBaseTest> clazz = getClass();
 
     List<Field> mockList = Arrays.stream(clazz.getDeclaredFields())

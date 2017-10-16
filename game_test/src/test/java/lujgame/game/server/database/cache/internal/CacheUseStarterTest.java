@@ -33,8 +33,8 @@ public class CacheUseStarterTest extends ZBaseTest {
   @Autowired
   CacheUseStarter _starter;
 
-  @Autowired
   @Mock
+  @Autowired
   AkkaTool _akkaTool;
 
   @Autowired
