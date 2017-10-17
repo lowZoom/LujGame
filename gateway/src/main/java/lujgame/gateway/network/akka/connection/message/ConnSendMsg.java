@@ -1,11 +1,8 @@
 package lujgame.gateway.network.akka.connection.message;
 
-/**
- * 网络数据从netty投递到akka时所用消息
- */
-public class ConnDataMsg {
+public class ConnSendMsg {
 
-  public ConnDataMsg(byte[] data) {
+  public ConnSendMsg(byte[] data) {
     _data = data;
   }
 

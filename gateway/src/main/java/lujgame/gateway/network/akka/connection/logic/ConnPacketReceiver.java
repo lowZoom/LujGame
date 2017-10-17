@@ -67,7 +67,7 @@ public class ConnPacketReceiver {
     // 取消空连接判断
   }
 
-  void forwordPacket(ConnActorState state,
+  private void forwordPacket(ConnActorState state,
       GateNetPacket packet, ActorRef connRef, LoggingAdapter log) {
     log.debug("收到完整包 -> {}：{}", packet.getOpcode(),
         new String(packet.getData(), StandardCharsets.UTF_8));
@@ -92,7 +92,7 @@ public class ConnPacketReceiver {
     forwardRef.tell(packet, connRef);
   }
 
-  void bindForward(ConnActorState state, GateNetPacket packet, ActorRef connRef) {
+  private void bindForward(ConnActorState state, GateNetPacket packet, ActorRef connRef) {
     byte[] data = packet.getData();
     String forwardId = new String(data, StandardCharsets.UTF_8);
 

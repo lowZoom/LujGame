@@ -1,4 +1,4 @@
-package lujgame.game.server.net;
+package lujgame.game.server.net.packet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -11,6 +11,8 @@ public abstract class NetPacketCodec {
   public abstract Object createPacket(Z1 i);
 
   public abstract Object decodePacket(Z1 i, byte[] data);
+
+  public abstract byte[] encodePacket(Object packet);
 
   //FIXME: TEMP
   protected static <T> T readJson(byte[] data, Class<T> type) {

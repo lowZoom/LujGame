@@ -1,5 +1,7 @@
 package lujgame.game.server.net;
 
+import lujgame.game.server.net.packet.NetPacketCodec;
+
 public class NetHandleSuite {
 
   public NetHandleSuite(NetHandleMeta handleMeta, NetPacketCodec packetCodec) {

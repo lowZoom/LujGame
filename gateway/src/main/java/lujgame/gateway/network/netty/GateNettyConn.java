@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import java.util.LinkedList;
 import java.util.List;
 import lujgame.gateway.network.akka.accept.message.NewConnMsg;
-import lujgame.gateway.network.akka.connection.message.ConnDataMsg;
+import lujgame.gateway.network.akka.connection.message.ConnRecvMsg;
 
 
 public class GateNettyConn extends GateNettyData {
@@ -26,7 +26,7 @@ public class GateNettyConn extends GateNettyData {
   }
 
   @Override
-  public void onDataMsg(ConnDataMsg msg) {
+  public void onDataMsg(ConnRecvMsg msg) {
 //    System.out.println("conn accept ---> 有数据");
     _messageBuffer.add(msg);
   }
@@ -52,7 +52,7 @@ public class GateNettyConn extends GateNettyData {
     ActorRef connRef = event.getConnRef();
     ActorRef sender = ActorRef.noSender();
 
-    for (ConnDataMsg msg : _messageBuffer) {
+    for (ConnRecvMsg msg : _messageBuffer) {
       connRef.tell(msg, sender);
     }
 
@@ -64,7 +64,7 @@ public class GateNettyConn extends GateNettyData {
         .addLast(new GateNettyPacket(connRef));
   }
 
-  private List<ConnDataMsg> _messageBuffer;
+  private List<ConnRecvMsg> _messageBuffer;
 
   private final ActorRef _acceptRef;
 }

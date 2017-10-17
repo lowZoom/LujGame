@@ -7,7 +7,7 @@ import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.database.operate.internal.DbopNetTool;
 import lujgame.game.server.database.type.DbObjTool;
 import lujgame.game.server.database.type.DbSetTool;
-import lujgame.game.server.net.NetPacketCodec;
+import lujgame.game.server.net.packet.NetPacketCodec;
 import lujgame.game.server.type.Jstr0;
 import lujgame.game.server.type.Jtime0;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +21,10 @@ public class DbOperateContextFactory {
       ImmutableMap<String, Object> resultMap,
       ImmutableMap<Class<?>, DatabaseMeta> databaseMetaMap,
       ImmutableMap<Class<?>, NetPacketCodec> netPacketCodecMap,
-      ActorRef connRef) {
+      ActorRef connRef,
+      ActorRef entityRef) {
     return new DbOperateContext(now, paramMap, resultMap, databaseMetaMap, netPacketCodecMap,
-        connRef, _dbSetTool, _dbObjTool, _dbopNetTool, _strInternal, _timeInternal);
+        connRef, entityRef, _dbSetTool, _dbObjTool, _dbopNetTool, _strInternal, _timeInternal);
   }
 
   @Autowired

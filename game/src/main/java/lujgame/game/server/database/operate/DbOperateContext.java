@@ -7,7 +7,8 @@ import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.database.operate.internal.DbopNetTool;
 import lujgame.game.server.database.type.DbObjTool;
 import lujgame.game.server.database.type.DbSetTool;
-import lujgame.game.server.net.NetPacketCodec;
+import lujgame.game.server.net.packet.NetPacketCodec;
+import lujgame.game.server.net.packet.PacketImpl;
 import lujgame.game.server.type.JSet;
 import lujgame.game.server.type.JStr;
 import lujgame.game.server.type.JTime;
@@ -24,6 +25,7 @@ public class DbOperateContext {
       ImmutableMap<Class<?>, DatabaseMeta> databaseMetaMap,
       ImmutableMap<Class<?>, NetPacketCodec> netPacketCodecMap,
       ActorRef connRef,
+      ActorRef entityRef,
       DbSetTool dbSetTool,
       DbObjTool dbObjTool,
       DbopNetTool dbopNetTool,
@@ -38,6 +40,7 @@ public class DbOperateContext {
     _netPacketCodecMap = netPacketCodecMap;
 
     _connRef = connRef;
+    _entityRef = entityRef;
 
     _dbSetTool = dbSetTool;
     _dbObjTool = dbObjTool;
@@ -95,7 +98,7 @@ public class DbOperateContext {
   }
 
   public void sendResponse2C(Object proto) {
-    throw new NO_IMPLEMENT("sendToClient尚未实现");
+    _dbopNetTool.sendToClient(_connRef, (PacketImpl) proto, _entityRef);
   }
 
   public JTime now() {
@@ -115,7 +118,10 @@ public class DbOperateContext {
   private final ImmutableMap<Class<?>, DatabaseMeta> _databaseMetaMap;
   private final ImmutableMap<Class<?>, NetPacketCodec> _netPacketCodecMap;
 
+  // 在网关服上
   private final ActorRef _connRef;
+
+  private final ActorRef _entityRef;
 
   private final DbSetTool _dbSetTool;
   private final DbObjTool _dbObjTool;

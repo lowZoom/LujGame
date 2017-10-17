@@ -6,6 +6,8 @@ public class JInt {
 
   public interface Impl {
 
+    void setValue(int val);
+
     int getValue();
   }
 

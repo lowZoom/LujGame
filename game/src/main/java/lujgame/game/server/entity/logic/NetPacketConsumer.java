@@ -8,7 +8,7 @@ import lujgame.game.server.entity.GameEntityActorState;
 import lujgame.game.server.net.GameNetHandleContext;
 import lujgame.game.server.net.GameNetHandler;
 import lujgame.game.server.net.NetHandleSuite;
-import lujgame.game.server.net.NetPacketCodec;
+import lujgame.game.server.net.packet.NetPacketCodec;
 import lujgame.game.server.net.internal.DbCmdInvoker;
 import lujgame.game.server.type.Jstr0;
 import lujgame.game.server.type.Z1;

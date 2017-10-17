@@ -9,7 +9,7 @@ import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.database.operate.DbOperateContextFactory;
 import lujgame.game.server.entity.logic.NetPacketConsumer;
 import lujgame.game.server.net.NetHandleSuite;
-import lujgame.game.server.net.NetPacketCodec;
+import lujgame.game.server.net.packet.NetPacketCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

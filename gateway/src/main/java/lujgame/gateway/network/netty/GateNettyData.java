@@ -4,11 +4,11 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
-import lujgame.gateway.network.akka.connection.message.ConnDataMsg;
+import lujgame.gateway.network.akka.connection.message.ConnRecvMsg;
 
 public abstract class GateNettyData extends ChannelInboundHandlerAdapter {
 
-  public abstract void onDataMsg(ConnDataMsg msg);
+  public abstract void onDataMsg(ConnRecvMsg msg);
 
   @Override
   public final void channelRead(ChannelHandlerContext ctx, Object bufObj) throws Exception {
@@ -17,7 +17,7 @@ public abstract class GateNettyData extends ChannelInboundHandlerAdapter {
       byte[] data = new byte[buf.readableBytes()];
       buf.readBytes(data);
 
-      ConnDataMsg msg = new ConnDataMsg(data);
+      ConnRecvMsg msg = new ConnRecvMsg(data);
       onDataMsg(msg);
     } finally {
       ReferenceCountUtil.release(bufObj);

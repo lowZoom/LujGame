@@ -8,7 +8,7 @@ import lujgame.core.akka.AkkaTool;
 import lujgame.core.akka.common.CaseActor;
 import lujgame.gateway.network.akka.connection.GateConnActor;
 import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
-import lujgame.gateway.network.akka.connection.message.ConnDataMsg;
+import lujgame.gateway.network.akka.connection.message.ConnRecvMsg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +24,7 @@ public class DumbDetector {
 
   public void startDetect(CaseActor actor) {
     _akkaTool.schedule(actor, 3, TimeUnit.SECONDS,
-        ScheduleId.DUMB, GateConnActor.Dumb.MSG, ConnDataMsg.class);
+        ScheduleId.DUMB, GateConnActor.Dumb.MSG, ConnRecvMsg.class);
   }
 
   public void destroyDumb(ConnActorState state, ActorRef connRef, LoggingAdapter log) {

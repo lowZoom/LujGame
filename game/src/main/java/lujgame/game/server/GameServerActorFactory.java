@@ -18,7 +18,7 @@ import lujgame.game.server.database.cache.DbCacheActorFactory;
 import lujgame.game.server.entity.logic.EntityBinder;
 import lujgame.game.server.net.NetHandleMeta;
 import lujgame.game.server.net.NetHandleSuite;
-import lujgame.game.server.net.NetPacketCodec;
+import lujgame.game.server.net.packet.NetPacketCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

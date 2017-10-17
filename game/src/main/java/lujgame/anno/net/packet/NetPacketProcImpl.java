@@ -24,7 +24,7 @@ import lujgame.anno.core.generate.GenerateTool;
 import lujgame.anno.net.packet.input.FieldItem;
 import lujgame.anno.net.packet.input.PacketItem;
 import lujgame.anno.net.packet.output.FieldType;
-import lujgame.game.server.net.NetPacketCodec;
+import lujgame.game.server.net.packet.NetPacketCodec;
 import lujgame.game.server.type.JInt;
 import lujgame.game.server.type.JStr;
 import lujgame.game.server.type.Z1;
@@ -181,11 +181,11 @@ public class NetPacketProcImpl {
    * 生成编解码器类
    */
   private void generateCodec(PacketItem item, Filer filer) throws IOException {
+    GenerateTool t = _generateTool;
     String internalName = "i";
     TypeMirror packetType = item.getPacketType();
 
-    MethodSpec create = MethodSpec.methodBuilder("createPacket")
-        .addAnnotation(Override.class)
+    MethodSpec create = t.overrideBuilder("createPacket")
         .addModifiers(Modifier.PUBLIC)
         .addParameter(TypeName.get(Z1.class), internalName)
         .returns(TypeName.get(packetType))
@@ -194,8 +194,7 @@ public class NetPacketProcImpl {
         .build();
 
     String dataName = "data";
-    MethodSpec decode = MethodSpec.methodBuilder("decodePacket")
-        .addAnnotation(Override.class)
+    MethodSpec decode = t.overrideBuilder("decodePacket")
         .addModifiers(Modifier.PUBLIC)
         .addParameter(TypeName.get(Z1.class), internalName)
         .addParameter(byte[].class, dataName)
@@ -204,7 +203,14 @@ public class NetPacketProcImpl {
             getImplName(item), internalName, dataName, getJsonName(item))
         .build();
 
-    _generateTool.writeTo(JavaFile.builder(item.getPackageName(), TypeSpec
+    MethodSpec encode = t.overrideBuilder("encodePacket")
+        .addModifiers(Modifier.PUBLIC)
+        .addParameter(TypeName.get(Object.class), "packet")
+        .returns(byte[].class)
+        .addStatement("return null")
+        .build();
+
+    t.writeTo(JavaFile.builder(item.getPackageName(), TypeSpec
         .classBuilder(item.getClassName() + "Codec")
         .addAnnotation(Component.class)
         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
@@ -212,6 +218,7 @@ public class NetPacketProcImpl {
         .addMethod(buildPacketType(packetType))
         .addMethod(create)
         .addMethod(decode)
+        .addMethod(encode)
         .build()).build(), filer);
   }
 

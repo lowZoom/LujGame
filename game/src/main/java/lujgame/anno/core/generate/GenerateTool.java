@@ -37,6 +37,11 @@ public class GenerateTool {
     return StringUtils.uncapitalize(result);
   }
 
+  public MethodSpec.Builder overrideBuilder(String name) {
+    return MethodSpec.methodBuilder(name)
+        .addAnnotation(Override.class);
+  }
+
   /**
    * 将生成文件的编码统一成UTF-8
    *

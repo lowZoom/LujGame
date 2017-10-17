@@ -41,7 +41,7 @@ public class GameEntityActor extends CaseActor {
     CacheOkCommand cmd = cmdMap.get(cmdType);
     cmd.execute(_dbOperateContextFactory.createContext(System.currentTimeMillis(),
         msg.getParamMap(), msg.getResultMap(), s.getDatabaseMetaMap(),
-        s.getNetPacketCodecMap(), s.getConnRef()));
+        s.getNetPacketCodecMap(), s.getConnRef(), getSelf()));
   }
 
   private final GameEntityActorState _state;

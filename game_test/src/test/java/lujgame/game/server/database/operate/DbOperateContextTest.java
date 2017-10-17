@@ -7,7 +7,8 @@ import lujgame.anno.database.Z;
 import lujgame.core.spring.BeanCollector;
 import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.database.bean.Dbobjimpl0;
-import lujgame.game.server.net.NetPacketCodec;
+import lujgame.game.server.net.packet.NetPacketCodec;
+import lujgame.game.server.net.packet.PacketImpl;
 import lujgame.test.ZBaseTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,22 +41,6 @@ public class DbOperateContextTest extends ZBaseTest {
   }
 
   @Test
-  public void createDb() throws Exception {
-    //-- Arrange --//
-    _now = 123;
-    DbOperateContext ctx = makeContext();
-
-    //-- Act --//
-    Z db = ctx.createDb(Z.class, null);
-
-    //-- Assert --//
-    assertThat(db).isNotNull();
-
-    long createTime = _dbInternal.getCreateTime(db);
-    assertThat(createTime).isEqualTo(123);
-  }
-
-  @Test
   public void getPacket() throws Exception {
     //-- Arrange --//
     DbOperateContext ctx = makeContext();
@@ -72,7 +57,36 @@ public class DbOperateContextTest extends ZBaseTest {
   }
 
   @Test
-  public void jSet_字符串() throws Exception {
+  public void createDb() throws Exception {
+    //-- Arrange --//
+    _now = 123;
+    DbOperateContext ctx = makeContext();
+
+    //-- Act --//
+    Z db = ctx.createDb(Z.class, null);
+
+    //-- Assert --//
+    assertThat(db).isNotNull();
+
+    long createTime = _dbInternal.getCreateTime(db);
+    assertThat(createTime).isEqualTo(123);
+  }
+
+  @Test
+  public void createProto() throws Exception {
+    //-- Arrange --//
+    DbOperateContext ctx = makeContext();
+
+    //-- Act --//
+    ZTestPacket proto = ctx.createProto(ZTestPacket.class);
+
+    //-- Assert --//
+    assertThat(proto).isInstanceOf(ZTestPacket.class);
+    assertThat(proto).isInstanceOf(PacketImpl.class);
+  }
+
+  @Test
+  public void jSet_Str_数据库() throws Exception {
     //-- Arrange --//
     DbOperateContext ctx = makeContext();
     Z db = ctx.createDb(Z.class, null);
@@ -84,11 +98,24 @@ public class DbOperateContextTest extends ZBaseTest {
     assertThat(db.str().toString()).isEqualTo("测试");
   }
 
+  @Test
+  public void jSet_Str_网络包() throws Exception {
+    //-- Arrange --//
+    DbOperateContext ctx = makeContext();
+    ZTestPacket proto = ctx.createProto(ZTestPacket.class);
+
+    //-- Act --//
+    ctx.jSet(proto.str(), "测试");
+
+    //-- Assert --//
+    assertThat(proto.str().toString()).isEqualTo("测试");
+  }
+
   DbOperateContext makeContext() {
     ImmutableMap<Class<?>, DatabaseMeta> metaMap = _beanCollector
         .collectBeanMap(DatabaseMeta.class, DatabaseMeta::databaseType);
 
-    return _dbOperateContextFactory.createContext(
-        _now, _paramMap, _resultMap, metaMap, _codecMap, null);
+    return _dbOperateContextFactory.createContext(_now,
+        _paramMap, _resultMap, metaMap, _codecMap, null, null);
   }
 }

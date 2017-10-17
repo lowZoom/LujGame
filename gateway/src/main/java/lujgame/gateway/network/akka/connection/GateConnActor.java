@@ -10,7 +10,7 @@ import lujgame.gateway.network.akka.connection.logic.ConnInfoGetter;
 import lujgame.gateway.network.akka.connection.logic.ConnPacketReceiver;
 import lujgame.gateway.network.akka.connection.logic.DumbDetector;
 import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
-import lujgame.gateway.network.akka.connection.message.ConnDataMsg;
+import lujgame.gateway.network.akka.connection.message.ConnRecvMsg;
 
 /**
  * 处理一条连接相关逻辑
@@ -60,7 +60,7 @@ public class GateConnActor extends CaseActor {
   }
 
   private void registerMessage() {
-    addCase(ConnDataMsg.class, this::onConnData);
+    addCase(ConnRecvMsg.class, this::onConnData);
     addCase(BindForwardRsp.class, this::onBindForwardRsp);
 
     addCase(Destroy.class, this::onDestroy);
@@ -70,21 +70,21 @@ public class GateConnActor extends CaseActor {
 //    PauseMsgHdl.enable(this);
   }
 
-  private void onConnData(ConnDataMsg msg) {
+  private void onConnData(ConnRecvMsg msg) {
     _packetReceiver.receivePacket(_state, msg.getData(), getSelf(), log());
   }
+
+  //TODO: 回包给客户端
 
   private void onBindForwardRsp(BindForwardRsp msg) {
     _forwardBinder.finishBind(_state, msg.getForwardRef(), msg.getForwardId(), getSelf(), log());
   }
 
-  @SuppressWarnings("unused")
-  private void onDestroy(Destroy ignored) {
+  private void onDestroy(@SuppressWarnings("unused") Destroy ignored) {
     _connKiller.requestKill(_state, getSelf());
   }
 
-  @SuppressWarnings("unused")
-  private void onDumb(Dumb ignored) {
+  private void onDumb(@SuppressWarnings("unused") Dumb ignored) {
     _dumbDetector.destroyDumb(_state, getSelf(), log());
   }
 

@@ -4,7 +4,7 @@ import akka.actor.ActorRef;
 import io.netty.channel.ChannelHandlerContext;
 import java.io.IOException;
 import lujgame.gateway.network.akka.connection.GateConnActor;
-import lujgame.gateway.network.akka.connection.message.ConnDataMsg;
+import lujgame.gateway.network.akka.connection.message.ConnRecvMsg;
 
 public class GateNettyPacket extends GateNettyData {
 
@@ -13,7 +13,7 @@ public class GateNettyPacket extends GateNettyData {
   }
 
   @Override
-  public void onDataMsg(ConnDataMsg msg) {
+  public void onDataMsg(ConnRecvMsg msg) {
     _connRef.tell(msg, ActorRef.noSender());
   }
 
