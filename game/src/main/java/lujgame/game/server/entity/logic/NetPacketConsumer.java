@@ -12,7 +12,7 @@ import lujgame.game.server.net.packet.NetPacketCodec;
 import lujgame.game.server.net.internal.DbCmdInvoker;
 import lujgame.game.server.type.Jstr0;
 import lujgame.game.server.type.Z1;
-import lujgame.gateway.network.akka.connection.logic.packet.GateNetPacket;
+import lujgame.gateway.network.akka.connection.message.Gate2GameMsg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,7 +33,7 @@ public class NetPacketConsumer {
   }
 
   public void consumePacket(GameEntityActorState state, ActorRef entityRef,
-      GateNetPacket packet, LoggingAdapter log) {
+      Gate2GameMsg packet, LoggingAdapter log) {
     Integer opcode = packet.getOpcode();
     log.debug("游戏服收到网络包，等待处理 -> {}", opcode);
 

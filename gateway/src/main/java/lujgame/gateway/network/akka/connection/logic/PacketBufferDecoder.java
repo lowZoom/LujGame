@@ -1,6 +1,6 @@
 package lujgame.gateway.network.akka.connection.logic;
 
-import lujgame.gateway.network.akka.connection.logic.packet.GateNetPacket;
+import lujgame.gateway.network.akka.connection.message.Gate2GameMsg;
 import lujgame.gateway.network.akka.connection.logic.packet.ConnPacketBuffer;
 import lujgame.gateway.network.akka.connection.logic.packet.ConnPacketHeader;
 import lujgame.gateway.network.akka.connection.logic.packet.PacketBufferReader;
@@ -22,7 +22,7 @@ public class PacketBufferDecoder {
     }
 
     byte[] numBuf = new byte[3];
-    int opcode = r.readMedium(r.readBytes(packetBuf, numBuf));
+    Integer opcode = r.readMedium(r.readBytes(packetBuf, numBuf));
     int length = r.readMedium(r.readBytes(packetBuf, numBuf));
 
     ConnPacketHeader header = new ConnPacketHeader(opcode, length);
@@ -32,8 +32,8 @@ public class PacketBufferDecoder {
   public void decodeBody(ConnPacketBuffer packetBuf) {
     PacketBufferReader r = _bufferReader;
     ConnPacketHeader header = packetBuf.getPendingHeader();
-    int length = header.getLength();
 
+    int length = header.getLength();
     if (r.readableBytes(packetBuf) < length) {
       return;
     }
@@ -41,7 +41,7 @@ public class PacketBufferDecoder {
     byte[] data = new byte[length];
     r.readBytes(packetBuf, data);
 
-    GateNetPacket packet = new GateNetPacket(header.getOpcode(), data);
+    Gate2GameMsg packet = new Gate2GameMsg(header.getOpcode(), data);
     packetBuf.setPendingPacket(packet);
   }
 

@@ -1,4 +1,4 @@
-package lujgame.gateway.network.netty;
+package lujgame.gateway.network.netty.event;
 
 import akka.actor.ActorRef;
 

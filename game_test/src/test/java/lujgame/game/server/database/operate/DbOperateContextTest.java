@@ -9,6 +9,7 @@ import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.database.bean.Dbobjimpl0;
 import lujgame.game.server.net.packet.NetPacketCodec;
 import lujgame.game.server.net.packet.PacketImpl;
+import lujgame.game.server.net.packet.Packetimpl0;
 import lujgame.test.ZBaseTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,6 +25,9 @@ public class DbOperateContextTest extends ZBaseTest {
 
   @Autowired
   Dbobjimpl0 _dbInternal;
+
+  @Autowired
+  Packetimpl0 _packetInternal;
 
   long _now;
 
@@ -83,6 +87,9 @@ public class DbOperateContextTest extends ZBaseTest {
     //-- Assert --//
     assertThat(proto).isInstanceOf(ZTestPacket.class);
     assertThat(proto).isInstanceOf(PacketImpl.class);
+
+    NetPacketCodec codec = _packetInternal.getCodec((PacketImpl) proto);
+    assertThat(codec).isNotNull();
   }
 
   @Test

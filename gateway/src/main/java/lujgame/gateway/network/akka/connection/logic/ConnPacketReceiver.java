@@ -9,22 +9,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import lujgame.gateway.network.akka.accept.message.BindForwardReqLocal;
 import lujgame.gateway.network.akka.connection.logic.packet.ConnPacketBuffer;
-import lujgame.gateway.network.akka.connection.logic.packet.GateNetPacket;
 import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
-import lujgame.gateway.network.netty.NettyConnEvent;
+import lujgame.gateway.network.akka.connection.message.Gate2GameMsg;
+import lujgame.gateway.network.netty.event.NettyConnEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ConnPacketReceiver {
-
-  @Autowired
-  public ConnPacketReceiver(
-      PacketBufferDecoder packetBufferDecoder,
-      ConnInfoGetter connInfoGetter) {
-    _packetBufferDecoder = packetBufferDecoder;
-    _connInfoGetter = connInfoGetter;
-  }
 
   public void updateNettyHandler(ConnActorState state, ActorRef connRef) {
     ChannelHandlerContext nettyCtx = state.getNettyContext();
@@ -42,8 +34,10 @@ public class ConnPacketReceiver {
     List<byte[]> bufList = packetBuf.getBufferList();
     bufList.add(data);
 
+    // 解析包缓存中的数据
     PacketBufferDecoder d = _packetBufferDecoder;
     while (true) {
+      // 处理包头
       if (!d.isHeaderOk(packetBuf)) {
         d.decodeHeader(packetBuf);
         if (!d.isHeaderOk(packetBuf)) {
@@ -53,14 +47,17 @@ public class ConnPacketReceiver {
         //TODO: 校验包头信息，判断此包是否合法
       }
 
+      // 处理包体
       d.decodeBody(packetBuf);
       if (!d.isPacketOk(packetBuf)) {
         return;
       }
 
-      GateNetPacket packet = packetBuf.getPendingPacket();
+      // 将解析完成的包投递给游戏服
+      Gate2GameMsg packet = packetBuf.getPendingPacket();
       forwordPacket(state, packet, connRef, log);
 
+      // 清理工作
       d.finishDecode(packetBuf);
     }
 
@@ -68,7 +65,7 @@ public class ConnPacketReceiver {
   }
 
   private void forwordPacket(ConnActorState state,
-      GateNetPacket packet, ActorRef connRef, LoggingAdapter log) {
+      Gate2GameMsg packet, ActorRef connRef, LoggingAdapter log) {
     log.debug("收到完整包 -> {}：{}", packet.getOpcode(),
         new String(packet.getData(), StandardCharsets.UTF_8));
 
@@ -86,13 +83,14 @@ public class ConnPacketReceiver {
       log.warning("非法连接，未绑定发包 -> {}", addr);
 
       //TODO: 非法，销毁连接
+
       return;
     }
 
     forwardRef.tell(packet, connRef);
   }
 
-  private void bindForward(ConnActorState state, GateNetPacket packet, ActorRef connRef) {
+  private void bindForward(ConnActorState state, Gate2GameMsg packet, ActorRef connRef) {
     byte[] data = packet.getData();
     String forwardId = new String(data, StandardCharsets.UTF_8);
 
@@ -103,6 +101,9 @@ public class ConnPacketReceiver {
     acceptRef.tell(req, connRef);
   }
 
-  private final PacketBufferDecoder _packetBufferDecoder;
-  private final ConnInfoGetter _connInfoGetter;
+  @Autowired
+  private PacketBufferDecoder _packetBufferDecoder;
+
+  @Autowired
+  private ConnInfoGetter _connInfoGetter;
 }

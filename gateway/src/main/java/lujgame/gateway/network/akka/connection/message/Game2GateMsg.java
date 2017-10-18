@@ -1,8 +1,10 @@
 package lujgame.gateway.network.akka.connection.message;
 
-public class ConnSendMsg {
+import java.io.Serializable;
 
-  public ConnSendMsg(byte[] data) {
+public class Game2GateMsg implements Serializable {
+
+  public Game2GateMsg(byte[] data) {
     _data = data;
   }
 

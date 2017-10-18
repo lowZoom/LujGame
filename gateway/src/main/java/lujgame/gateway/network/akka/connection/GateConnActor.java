@@ -8,9 +8,11 @@ import lujgame.gateway.network.akka.accept.logic.ForwardBinder;
 import lujgame.gateway.network.akka.accept.message.BindForwardRsp;
 import lujgame.gateway.network.akka.connection.logic.ConnInfoGetter;
 import lujgame.gateway.network.akka.connection.logic.ConnPacketReceiver;
+import lujgame.gateway.network.akka.connection.logic.ConnPacketSender;
 import lujgame.gateway.network.akka.connection.logic.DumbDetector;
 import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
-import lujgame.gateway.network.akka.connection.message.ConnRecvMsg;
+import lujgame.gateway.network.akka.connection.message.Game2GateMsg;
+import lujgame.gateway.network.akka.connection.message.Netty2GateMsg;
 
 /**
  * 处理一条连接相关逻辑
@@ -24,12 +26,15 @@ public class GateConnActor extends CaseActor {
   public GateConnActor(
       ConnActorState state,
       ConnPacketReceiver packetReceiver,
+      ConnPacketSender packetSender,
       ForwardBinder forwardBinder,
       ConnKiller connKiller,
-      DumbDetector dumbDetector, ConnInfoGetter connInfoGetter) {
+      DumbDetector dumbDetector,
+      ConnInfoGetter connInfoGetter) {
     _state = state;
 
     _packetReceiver = packetReceiver;
+    _packetSender = packetSender;
 
     _forwardBinder = forwardBinder;
     _connKiller = connKiller;
@@ -43,6 +48,7 @@ public class GateConnActor extends CaseActor {
   @Override
   public void preStart() throws Exception {
     ConnActorState state = _state;
+
     InetSocketAddress remoteAddr = _connInfoGetter.getRemoteAddress(state);
     log().info("新连接 -> {}", remoteAddr);
 
@@ -60,8 +66,10 @@ public class GateConnActor extends CaseActor {
   }
 
   private void registerMessage() {
-    addCase(ConnRecvMsg.class, this::onConnData);
+    addCase(Netty2GateMsg.class, this::onNettyData);
+
     addCase(BindForwardRsp.class, this::onBindForwardRsp);
+    addCase(Game2GateMsg.class, this::onGameData);
 
     addCase(Destroy.class, this::onDestroy);
     addCase(Dumb.class, this::onDumb);
@@ -70,14 +78,16 @@ public class GateConnActor extends CaseActor {
 //    PauseMsgHdl.enable(this);
   }
 
-  private void onConnData(ConnRecvMsg msg) {
+  private void onNettyData(Netty2GateMsg msg) {
     _packetReceiver.receivePacket(_state, msg.getData(), getSelf(), log());
   }
 
-  //TODO: 回包给客户端
-
   private void onBindForwardRsp(BindForwardRsp msg) {
     _forwardBinder.finishBind(_state, msg.getForwardRef(), msg.getForwardId(), getSelf(), log());
+  }
+
+  private void onGameData(Game2GateMsg msg) {
+    _packetSender.sendPacket(_state.getNettyContext(), 233, msg.getData());
   }
 
   private void onDestroy(@SuppressWarnings("unused") Destroy ignored) {
@@ -91,6 +101,7 @@ public class GateConnActor extends CaseActor {
   private final ConnActorState _state;
 
   private final ConnPacketReceiver _packetReceiver;
+  private final ConnPacketSender _packetSender;
 
   private final ForwardBinder _forwardBinder;
   private final ConnKiller _connKiller;

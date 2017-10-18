@@ -8,4 +8,8 @@ public class Packetimpl0 {
   public NetPacketCodec getCodec(PacketImpl packet) {
     return packet._codec;
   }
+
+  public void setCodec(PacketImpl packet, NetPacketCodec codec) {
+    packet._codec = codec;
+  }
 }

@@ -8,7 +8,7 @@ public abstract class NetPacketCodec {
 
   public abstract Class<?> packetType();
 
-  public abstract Object createPacket(Z1 i);
+  public abstract PacketImpl createPacket(Z1 i);
 
   public abstract Object decodePacket(Z1 i, byte[] data);
 

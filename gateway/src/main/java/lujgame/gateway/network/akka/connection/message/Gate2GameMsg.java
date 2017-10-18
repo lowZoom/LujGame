@@ -1,13 +1,13 @@
-package lujgame.gateway.network.akka.connection.logic.packet;
+package lujgame.gateway.network.akka.connection.message;
 
 import java.io.Serializable;
 
 /**
  * 网关服投递出去的包裹
  */
-public class GateNetPacket implements Serializable {
+public class Gate2GameMsg implements Serializable {
 
-  public GateNetPacket(int opcode, byte[] data) {
+  public Gate2GameMsg(Integer opcode, byte[] data) {
     _opcode = opcode;
     _data = data;
   }
@@ -20,7 +20,7 @@ public class GateNetPacket implements Serializable {
     return _data;
   }
 
-  private final int _opcode;
+  private final Integer _opcode;
 
   private final byte[] _data;
 }

@@ -5,9 +5,12 @@ import io.netty.channel.ChannelHandlerContext;
 import java.util.LinkedList;
 import java.util.List;
 import lujgame.gateway.network.akka.accept.message.NewConnMsg;
-import lujgame.gateway.network.akka.connection.message.ConnRecvMsg;
+import lujgame.gateway.network.akka.connection.message.Netty2GateMsg;
+import lujgame.gateway.network.netty.event.NettyConnEvent;
 
-
+/**
+ * 用于接受新的网络连接，并触发新建对应的处理actor
+ */
 public class GateNettyConn extends GateNettyData {
 
   public GateNettyConn(ActorRef acceptRef) {
@@ -26,7 +29,7 @@ public class GateNettyConn extends GateNettyData {
   }
 
   @Override
-  public void onDataMsg(ConnRecvMsg msg) {
+  public void onDataMsg(Netty2GateMsg msg) {
 //    System.out.println("conn accept ---> 有数据");
     _messageBuffer.add(msg);
   }
@@ -52,19 +55,20 @@ public class GateNettyConn extends GateNettyData {
     ActorRef connRef = event.getConnRef();
     ActorRef sender = ActorRef.noSender();
 
-    for (ConnRecvMsg msg : _messageBuffer) {
+    for (Netty2GateMsg msg : _messageBuffer) {
       connRef.tell(msg, sender);
     }
 
     _messageBuffer.clear();
     _messageBuffer = null;
 
-    ctx.pipeline()
-        .remove(this)
+    ctx.pipeline().remove(this)
+        .addLast(new GateNettyEncoder())
         .addLast(new GateNettyPacket(connRef));
   }
 
-  private List<ConnRecvMsg> _messageBuffer;
+  // 一次性，用于暂存连接建立过程中收到的数据
+  private List<Netty2GateMsg> _messageBuffer;
 
   private final ActorRef _acceptRef;
 }

@@ -2,6 +2,7 @@ package lujgame.gateway.network.akka.connection.logic.packet;
 
 import java.util.ArrayList;
 import java.util.List;
+import lujgame.gateway.network.akka.connection.message.Gate2GameMsg;
 
 public class ConnPacketBuffer {
 
@@ -26,11 +27,11 @@ public class ConnPacketBuffer {
     _pendingHeader = pendingHeader;
   }
 
-  public GateNetPacket getPendingPacket() {
+  public Gate2GameMsg getPendingPacket() {
     return _pendingPacket;
   }
 
-  public void setPendingPacket(GateNetPacket pendingPacket) {
+  public void setPendingPacket(Gate2GameMsg pendingPacket) {
     _pendingPacket = pendingPacket;
   }
 
@@ -41,7 +42,7 @@ public class ConnPacketBuffer {
   private int _readIndex;
 
   private ConnPacketHeader _pendingHeader;
-  private GateNetPacket _pendingPacket;
+  private Gate2GameMsg _pendingPacket;
 
   private final List<byte[]> _bufferList;
 }

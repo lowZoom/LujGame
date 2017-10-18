@@ -25,6 +25,7 @@ import lujgame.anno.net.packet.input.FieldItem;
 import lujgame.anno.net.packet.input.PacketItem;
 import lujgame.anno.net.packet.output.FieldType;
 import lujgame.game.server.net.packet.NetPacketCodec;
+import lujgame.game.server.net.packet.PacketImpl;
 import lujgame.game.server.type.JInt;
 import lujgame.game.server.type.JStr;
 import lujgame.game.server.type.Z1;
@@ -153,6 +154,7 @@ public class NetPacketProcImpl {
     t.writeTo(JavaFile.builder(item.getPackageName(), TypeSpec
         .classBuilder(getImplName(item))
         .addModifiers(Modifier.FINAL)
+        .superclass(PacketImpl.class)
         .addSuperinterface(TypeName.get(item.getPacketType()))
         .addMethod(construct)
         .addMethods(propertyList)
@@ -188,7 +190,7 @@ public class NetPacketProcImpl {
     MethodSpec create = t.overrideBuilder("createPacket")
         .addModifiers(Modifier.PUBLIC)
         .addParameter(TypeName.get(Z1.class), internalName)
-        .returns(TypeName.get(packetType))
+        .returns(PacketImpl.class)
         .addStatement("return new $L($L, new $L())",
             getImplName(item), internalName, getJsonName(item))
         .build();
