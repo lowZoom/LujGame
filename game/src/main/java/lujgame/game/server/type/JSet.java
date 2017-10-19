@@ -6,7 +6,7 @@ public class JSet<T> {
 
   }
 
-  public JSet(Impl impl) {
+  JSet(Impl impl) {
     _impl = impl;
   }
 

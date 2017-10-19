@@ -73,7 +73,7 @@ public class DbOperateContext {
   }
 
   public <T> T createDb(Class<T> dbType, JSet<T> dbSet) {
-    return _dbObjTool.createObj(dbType, _databaseMetaMap, now());
+    return _dbSetTool.createObjAndAdd(dbType, _databaseMetaMap, now(), dbSet);
   }
 
   public <T> T createProto(Class<T> protoType) {

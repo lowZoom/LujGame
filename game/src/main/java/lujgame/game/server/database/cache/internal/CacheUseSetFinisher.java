@@ -93,7 +93,7 @@ public class CacheUseSetFinisher {
       ci.setLock(true);
 
       String resultKey = item.getUseItem().getResultKey();
-      JSet<?> resultSet = new JSet<>(_dbSetTool.createImpl(ci, useElem(cache, ci)));
+      JSet<?> resultSet = _dbSetTool.newDbSet(ci, useElem(cache, ci));
 
       builder.put(resultKey, resultSet);
 

@@ -2,14 +2,20 @@ package lujgame.game.server.database.operate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import lujgame.anno.database.Z;
 import lujgame.core.spring.BeanCollector;
 import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.database.bean.Dbobjimpl0;
+import lujgame.game.server.database.cache.internal.CacheItem;
+import lujgame.game.server.database.type.DbSetImpl;
+import lujgame.game.server.database.type.DbSetTool;
 import lujgame.game.server.net.packet.NetPacketCodec;
 import lujgame.game.server.net.packet.PacketImpl;
 import lujgame.game.server.net.packet.Packetimpl0;
+import lujgame.game.server.type.JSet;
 import lujgame.test.ZBaseTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +34,9 @@ public class DbOperateContextTest extends ZBaseTest {
 
   @Autowired
   Packetimpl0 _packetInternal;
+
+  @Autowired
+  DbSetTool _dbSetTool;
 
   long _now;
 
@@ -61,22 +70,6 @@ public class DbOperateContextTest extends ZBaseTest {
   }
 
   @Test
-  public void createDb() throws Exception {
-    //-- Arrange --//
-    _now = 123;
-    DbOperateContext ctx = makeContext();
-
-    //-- Act --//
-    Z db = ctx.createDb(Z.class, null);
-
-    //-- Assert --//
-    assertThat(db).isNotNull();
-
-    long createTime = _dbInternal.getCreateTime(db);
-    assertThat(createTime).isEqualTo(123);
-  }
-
-  @Test
   public void createProto() throws Exception {
     //-- Arrange --//
     DbOperateContext ctx = makeContext();
@@ -93,16 +86,40 @@ public class DbOperateContextTest extends ZBaseTest {
   }
 
   @Test
+  public void createDb() throws Exception {
+    //-- Arrange --//
+    _now = 123;
+    DbOperateContext ctx = makeContext();
+
+    JSet<Z> set = makeEmptyDbSet();
+
+    //-- Act --//
+    Z db = ctx.createDb(Z.class, set);
+
+    //-- Assert --//
+    assertThat(db).isNotNull();
+
+    long createTime = _dbInternal.getCreateTime(db);
+    assertThat(createTime).isEqualTo(_now);
+
+    DbSetImpl impl = _dbSetTool.getImpl(set);
+    assertThat(impl.getAddHistory()).hasSize(1);
+  }
+
+  @Test
   public void jSet_Str_数据库() throws Exception {
     //-- Arrange --//
     DbOperateContext ctx = makeContext();
-    Z db = ctx.createDb(Z.class, null);
+    JSet<Z> dbSet = makeEmptyDbSet();
+    Z db = ctx.createDb(Z.class, dbSet);
 
     //-- Act --//
     ctx.jSet(db.str(), "测试");
 
     //-- Assert --//
     assertThat(db.str().toString()).isEqualTo("测试");
+
+    //TODO: 在什么地方应该有个脏标记
   }
 
   @Test
@@ -124,5 +141,11 @@ public class DbOperateContextTest extends ZBaseTest {
 
     return _dbOperateContextFactory.createContext(_now,
         _paramMap, _resultMap, metaMap, _codecMap, null, null);
+  }
+
+  JSet<Z> makeEmptyDbSet() {
+    CacheItem item = new CacheItem(Z.class);
+    item.setValue(ImmutableSet.of());
+    return _dbSetTool.newDbSet(item, ImmutableList.of());
   }
 }

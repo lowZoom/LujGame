@@ -1,7 +1,5 @@
 package lujgame.game.server.database.type;
 
-import java.util.LongSummaryStatistics;
-
 public class DbId {
 
   public DbId(long val) {

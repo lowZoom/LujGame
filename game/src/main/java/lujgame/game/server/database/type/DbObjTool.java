@@ -5,7 +5,10 @@ import lujgame.core.id.UuidTool;
 import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.database.bean.DbObjImpl;
 import lujgame.game.server.database.bean.Dbobjimpl0;
+import lujgame.game.server.type.JSet;
+import lujgame.game.server.type.JSet.Impl;
 import lujgame.game.server.type.JTime;
+import lujgame.game.server.type.Jset0;
 import lujgame.game.server.type.Jtime0;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,8 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DbObjTool {
 
-  public <T> T createObj(Class<T> dbType,
-      ImmutableMap<Class<?>, DatabaseMeta> metaMap, JTime now) {
+  public <T> T createObj(Class<T> dbType, ImmutableMap<Class<?>, DatabaseMeta> metaMap, JTime now) {
     //TODO: 先拿到对应数据库类型的元信息
     Dbobjimpl0 oi = _dbObjInternal;
 

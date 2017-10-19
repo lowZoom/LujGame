@@ -5,24 +5,47 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import lujgame.game.server.core.LujInternal;
+import lujgame.game.server.database.bean.DatabaseMeta;
+import lujgame.game.server.database.bean.DbObjImpl;
+import lujgame.game.server.database.bean.Dbobjimpl0;
 import lujgame.game.server.database.cache.internal.CacheItem;
 import lujgame.game.server.type.JSet;
-import lujgame.game.server.type.Z1;
+import lujgame.game.server.type.JTime;
+import lujgame.game.server.type.Jset0;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @LujInternal
 public class DbSetTool {
 
-  public DbSetImpl createImpl(CacheItem setItem, ImmutableList<CacheItem> elemList) {
+  public <T> JSet<T> newDbSet(CacheItem setItem, ImmutableList<CacheItem> elemList) {
     checkNotNull(elemList);
 
     Set<Long> idSet = getIdSet(setItem);
     checkState(idSet.size() == elemList.size());
 
-    return new DbSetImpl(setItem, elemList);
+    DbSetImpl impl = new DbSetImpl(setItem, elemList);
+    return _setInternal.newSet(impl);
+  }
+
+  public <T> T createObjAndAdd(Class<T> dbType, ImmutableMap<Class<?>, DatabaseMeta> metaMap,
+      JTime now, JSet<T> dbSet) {
+    T obj = _dbObjTool.createObj(dbType, metaMap, now);
+    DbObjImpl objImpl = (DbObjImpl) obj;
+
+    DbSetImpl impl = getImpl(dbSet);
+    String dbId = _dbObjInternal.getDbId(objImpl);
+
+    Set<String> addHistory = getOrNewHistory(impl::getAddHistory, impl::setAddHistory);
+    addHistory.add(dbId);
+
+    return obj;
   }
 
   public Set<Long> getIdSet(CacheItem setItem) {
@@ -43,10 +66,25 @@ public class DbSetTool {
     return getImpl(set).getElemList().isEmpty();
   }
 
-  private DbSetImpl getImpl(JSet<?> set) {
-    return (DbSetImpl) _typeInternal.getImpl(set);
+  public DbSetImpl getImpl(JSet<?> set) {
+    return (DbSetImpl) _setInternal.getImpl(set);
+  }
+
+  private Set<String> getOrNewHistory(Supplier<Set<String>> getter, Consumer<Set<String>> setter) {
+    Set<String> history = getter.get();
+    if (history == null) {
+      history = new HashSet<>(8);
+      setter.accept(history);
+    }
+    return history;
   }
 
   @Autowired
-  private Z1 _typeInternal;
+  private Jset0 _setInternal;
+
+  @Autowired
+  private DbObjTool _dbObjTool;
+
+  @Autowired
+  private Dbobjimpl0 _dbObjInternal;
 }

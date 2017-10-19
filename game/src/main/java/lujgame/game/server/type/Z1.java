@@ -18,8 +18,4 @@ public class Z1 {
   public JStr newStr(Supplier<String> getter, Consumer<String> setter) {
     return new JStr(new PkStrImpl(getter, setter));
   }
-
-  public JSet.Impl getImpl(JSet<?> set) {
-    return set._impl;
-  }
 }

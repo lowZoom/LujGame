@@ -1,8 +1,7 @@
 package lujgame.game.server.database.type;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.collect.ImmutableList;
+import java.util.Set;
 import lujgame.game.server.database.cache.internal.CacheItem;
 import lujgame.game.server.type.JSet;
 
@@ -22,7 +21,25 @@ public class DbSetImpl implements JSet.Impl {
     return _elemList;
   }
 
-  private final CacheItem _setItem;
+  public Set<String> getAddHistory() {
+    return _addHistory;
+  }
 
+  public void setAddHistory(Set<String> addHistory) {
+    _addHistory = addHistory;
+  }
+
+  public Set<String> getRemoveHistory() {
+    return _removeHistory;
+  }
+
+  public void setRemoveHistory(Set<String> removeHistory) {
+    _removeHistory = removeHistory;
+  }
+
+  private final CacheItem _setItem;
   private final ImmutableList<CacheItem> _elemList;
+
+  private Set<String> _addHistory;
+  private Set<String> _removeHistory;
 }
