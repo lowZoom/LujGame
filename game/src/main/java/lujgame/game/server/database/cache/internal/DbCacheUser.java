@@ -6,15 +6,13 @@ import static com.google.common.base.Preconditions.checkState;
 import akka.actor.ActorRef;
 import com.google.common.cache.Cache;
 import com.google.common.cache.LoadingCache;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import javax.inject.Inject;
 import lujgame.core.akka.AkkaTool;
-import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.database.load.message.DbLoadObjReq;
 import lujgame.game.server.database.type.DbId;
 import lujgame.game.server.database.type.IdSet;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -105,16 +103,16 @@ public class DbCacheUser {
 
   private CacheItem requestLoadObj(Cache<String, CacheItem> cache,
       String cacheKey, Class<?> dbType, ActorRef cacheRef, ActorRef loaderRef) {
-    CacheItem item = new CacheItem(dbType);
+    CacheItem item = new CacheItem(cacheKey, dbType);
     cache.put(cacheKey, item);
 
     _akkaTool.tell(new DbLoadObjReq(cacheKey), cacheRef, loaderRef);
     return item;
   }
 
-  @Autowired
+  @Inject
   private AkkaTool _akkaTool;
 
-  @Autowired
+  @Inject
   private CacheKeyMaker _cacheKeyMaker;
 }

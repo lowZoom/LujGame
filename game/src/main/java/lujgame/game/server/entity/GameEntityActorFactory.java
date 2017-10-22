@@ -7,7 +7,8 @@ import com.google.common.collect.ImmutableMap;
 import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.database.operate.DbOperateContextFactory;
-import lujgame.game.server.entity.logic.NetPacketConsumer;
+import lujgame.game.server.entity.internal.DbCmdExecutor;
+import lujgame.game.server.entity.internal.NetPacketConsumer;
 import lujgame.game.server.net.NetHandleSuite;
 import lujgame.game.server.net.packet.NetPacketCodec;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class GameEntityActorFactory {
         databaseMetaMap, netPacketCodecMap, dbCacheRef, connRef);
 
     Creator<GameEntityActor> c = () -> {
-      return new GameEntityActor(state, _netPacketConsumer, _dbOperateContextFactory);
+      return new GameEntityActor(state, _netPacketConsumer, _dbCmdExecutor);
     };
     return Props.create(GameEntityActor.class, c);
   }
@@ -34,5 +35,5 @@ public class GameEntityActorFactory {
   private NetPacketConsumer _netPacketConsumer;
 
   @Autowired
-  private DbOperateContextFactory _dbOperateContextFactory;
+  private DbCmdExecutor _dbCmdExecutor;
 }

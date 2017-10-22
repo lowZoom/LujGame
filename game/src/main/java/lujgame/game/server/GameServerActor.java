@@ -12,7 +12,7 @@ import lujgame.core.akka.common.CaseActor;
 import lujgame.game.boot.message.BootFailMsg;
 import lujgame.game.master.cluster.GameNodeRegistrar;
 import lujgame.game.server.database.cache.DbCacheActorFactory;
-import lujgame.game.server.entity.logic.EntityBinder;
+import lujgame.game.server.entity.internal.EntityBinder;
 import lujgame.gateway.network.akka.accept.message.BindForwardReqRemote;
 
 public class GameServerActor extends CaseActor {

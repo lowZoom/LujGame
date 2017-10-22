@@ -7,15 +7,13 @@ import akka.event.LoggingAdapter;
 import com.google.common.cache.Cache;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
 import lujgame.core.akka.AkkaTool;
 import lujgame.game.server.database.cache.DbCacheActorState;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.database.cache.message.DbCacheUseReq;
-import lujgame.game.server.database.load.message.DbLoadObjReq;
 import lujgame.game.server.database.load.message.DbLoadSetReq;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -80,7 +78,7 @@ public class CacheUseStarter {
 
   private CacheItem requestLoadSet(Cache<String, CacheItem> cache,
       String cacheKey, Class<?> dbType, ActorRef cacheRef, ActorRef loaderRef) {
-    CacheItem item = new CacheItem(dbType);
+    CacheItem item = new CacheItem(cacheKey, dbType);
     cache.put(cacheKey, item);
 
     _akkaTool.tell(new DbLoadSetReq(cacheKey), cacheRef, loaderRef);
@@ -96,9 +94,9 @@ public class CacheUseStarter {
     item.getCacheItem().setLock(true);
   }
 
-  @Autowired
+  @Inject
   private AkkaTool _akkaTool;
 
-  @Autowired
+  @Inject
   private DbCacheUser _dbCacheUser;
 }

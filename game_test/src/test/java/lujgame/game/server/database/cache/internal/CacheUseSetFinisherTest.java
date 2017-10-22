@@ -14,35 +14,38 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.LinkedList;
+import java.util.Map;
+import javax.inject.Inject;
 import lujgame.core.akka.AkkaTool;
-import lujgame.game.server.database.operate.DbOperateContext;
 import lujgame.game.server.database.cache.DbCacheActorState;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.database.cache.message.DbCacheUseReq;
 import lujgame.game.server.database.cache.message.DbCacheUseRsp;
 import lujgame.game.server.database.load.message.DbLoadSetRsp;
+import lujgame.game.server.database.operate.DbOperateContext;
 import lujgame.game.server.type.JSet;
 import lujgame.test.ZBaseTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class CacheUseSetFinisherTest extends ZBaseTest {
 
-  @Autowired
+  @Inject
   CacheUseSetFinisher _finisher;
 
   @Mock
-  @Autowired
+  @Inject
   AkkaTool _akkaTool;
 
-  @Autowired
+  @Inject
   ZCacheUtil _cacheUtil;
 
   DbCacheActorState _state;
+
   Cache<String, CacheItem> _cache;
+  Map<String, CacheItem> _lockMap;
 
   LinkedList<DbCacheUseReq> _waitQueue;
   ActorRef _requestRef;
@@ -50,9 +53,10 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
   @Before
   public void setUp() throws Exception {
     ZCacheUtil u = _cacheUtil;
-
     _state = u.createCacheState();
+
     _cache = _state.getCache();
+    _lockMap = _state.getLockMap();
 
     _waitQueue = _state.getWaitQueue();
     _requestRef = new ZRefMock();
@@ -77,20 +81,18 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
 
     //-- Assert --//
     assertThat(_waitQueue).isEmpty();
+    assertItemIsUsed(setItem);
 
-    assertThat(setItem.isLoadOk()).isTrue();
-    assertThat(setItem.isLock()).isTrue();
-
-    ArgumentCaptor<DbCacheUseRsp> rsp = ArgumentCaptor.forClass(DbCacheUseRsp.class);
-    verify(_akkaTool).tellSelf(rsp.capture(), eq(_requestRef));
-
-    ImmutableMap<String, Object> resultMap = rsp.getValue().getResultMap();
+    ImmutableMap<String, Object> resultMap = getUseRsp().getResultMap();
     assertThat(resultMap).hasSize(1);
 
     DbOperateContext ctx = makeOperateContext(resultMap);
     JSet<ZTestDb> resultSet = ctx.getDbSet(ZTestDb.class, "1");
     assertThat(resultSet).isNotNull();
     assertThat(ctx.isEmpty(resultSet)).isTrue();
+
+    assertThat(_lockMap).hasSize(1);
+    assertThat(_lockMap.values()).contains(setItem);
   }
 
   @Test
@@ -99,7 +101,7 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
     ZCacheUtil u = _cacheUtil;
 
     final String SET_KEY = u.makeSetKey("a");
-    u.addCacheItem(_cache, SET_KEY);
+    CacheItem setItem = u.addCacheItem(_cache, SET_KEY);
 
     addToWaitQueue(ImmutableList.of(
         u.makeUseItem(SET_KEY, "1")
@@ -115,11 +117,11 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
     finishUseSet(msg);
 
     //-- Assert --//
-    ArgumentCaptor<DbCacheUseRsp> rsp = ArgumentCaptor.forClass(DbCacheUseRsp.class);
-    verify(_akkaTool).tellSelf(rsp.capture(), eq(_requestRef));
+    assertItemIsUsed(setItem);
+    assertItemIsUsed(objItem);
 
-    ImmutableMap<String, Object> resultMap = rsp.getValue().getResultMap();
-    DbOperateContext ctx = makeOperateContext(resultMap);
+    DbCacheUseRsp rsp = getUseRsp();
+    DbOperateContext ctx = makeOperateContext(rsp.getResultMap());
 
     JSet<ZTestDb> resultSet = ctx.getDbSet(ZTestDb.class, "1");
     assertThat(resultSet).isNotNull();
@@ -127,6 +129,8 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
 
     ZTestDb resultDb = ctx.getDb(resultSet);
     assertThat(resultDb).isSameAs(objItem.getValue());
+
+    assertThat(rsp.getBorrowItems()).containsExactlyInAnyOrder(setItem, objItem);
   }
 
   @Test
@@ -165,5 +169,16 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
 
   void addToWaitQueue(ImmutableList<DbCacheUseItem> reqList) {
     _waitQueue.add(new DbCacheUseReq(reqList, ZTestDb.class, ImmutableMap.of(), _requestRef, 0));
+  }
+
+  DbCacheUseRsp getUseRsp() {
+    ArgumentCaptor<DbCacheUseRsp> rsp = ArgumentCaptor.forClass(DbCacheUseRsp.class);
+    verify(_akkaTool).tellSelf(rsp.capture(), eq(_requestRef));
+    return rsp.getValue();
+  }
+
+  void assertItemIsUsed(CacheItem item) {
+    assertThat(item.isLoadOk()).isTrue();
+    assertThat(item.isLock()).isTrue();
   }
 }

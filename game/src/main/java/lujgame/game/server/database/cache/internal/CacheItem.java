@@ -2,8 +2,13 @@ package lujgame.game.server.database.cache.internal;
 
 public class CacheItem {
 
-  public CacheItem(Class<?> dbType) {
+  public CacheItem(String cacheKey, Class<?> dbType) {
+    _cacheKey = cacheKey;
     _dbType = dbType;
+  }
+
+  public String getCacheKey() {
+    return _cacheKey;
   }
 
   public Class<?> getDbType() {
@@ -42,12 +47,17 @@ public class CacheItem {
     _value = value;
   }
 
+  @Override
+  public String toString() {
+    return _cacheKey;
+  }
+
+  private final String _cacheKey;
   private final Class<?> _dbType;
 
   private boolean _loadOk;
   private boolean _present;
 
-  private boolean _lock;
-
   private Object _value;
+  private boolean _lock;
 }

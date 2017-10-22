@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @LujInternal
 public class DbCmdInvoker {
 
+  /**
+   * 请求调用指定类型的cmd
+   */
   public <T extends CacheOkCommand> void invoke(Class<T> cmdType, Object packet,
       ImmutableList<DbCacheUseItem> setUseList, ActorRef dbCacheRef, ActorRef entityRef) {
     ImmutableMap.Builder<String, Object> param = ImmutableMap.builder();

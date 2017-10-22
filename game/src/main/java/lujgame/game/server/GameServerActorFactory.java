@@ -15,7 +15,7 @@ import lujgame.game.master.cluster.GameNodeRegistrar;
 import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.database.cache.DbCacheActorFactory;
-import lujgame.game.server.entity.logic.EntityBinder;
+import lujgame.game.server.entity.internal.EntityBinder;
 import lujgame.game.server.net.NetHandleMeta;
 import lujgame.game.server.net.NetHandleSuite;
 import lujgame.game.server.net.packet.NetPacketCodec;

@@ -2,8 +2,10 @@ package lujgame.game.server.database.operate;
 
 import akka.actor.ActorRef;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import javax.annotation.Nullable;
 import lujgame.game.server.database.bean.DatabaseMeta;
+import lujgame.game.server.database.cache.internal.CacheItem;
 import lujgame.game.server.database.operate.internal.DbopNetTool;
 import lujgame.game.server.database.type.DbObjTool;
 import lujgame.game.server.database.type.DbSetTool;
@@ -22,6 +24,7 @@ public class DbOperateContext {
       long now,
       ImmutableMap<String, Object> paramMap,
       ImmutableMap<String, Object> resultMap,
+      ImmutableSet<CacheItem> borrowItems,
       ImmutableMap<Class<?>, DatabaseMeta> databaseMetaMap,
       ImmutableMap<Class<?>, NetPacketCodec> netPacketCodecMap,
       ActorRef connRef,
@@ -32,9 +35,10 @@ public class DbOperateContext {
       Jstr0 strInternal,
       Jtime0 timeInternal) {
     _now = now;
-
     _paramMap = paramMap;
+
     _resultMap = resultMap;
+    _borrowItems = borrowItems;
 
     _databaseMetaMap = databaseMetaMap;
     _netPacketCodecMap = netPacketCodecMap;
@@ -111,9 +115,10 @@ public class DbOperateContext {
   }
 
   private final long _now;
-
   private final ImmutableMap<String, Object> _paramMap;
+
   private final ImmutableMap<String, Object> _resultMap;
+  private final ImmutableSet<CacheItem> _borrowItems;
 
   private final ImmutableMap<Class<?>, DatabaseMeta> _databaseMetaMap;
   private final ImmutableMap<Class<?>, NetPacketCodec> _netPacketCodecMap;

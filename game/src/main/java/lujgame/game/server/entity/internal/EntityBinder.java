@@ -1,4 +1,4 @@
-package lujgame.game.server.entity.logic;
+package lujgame.game.server.entity.internal;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActorContext;

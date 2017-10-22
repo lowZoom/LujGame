@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import javax.inject.Inject;
 import lujgame.anno.database.Z;
 import lujgame.core.spring.BeanCollector;
 import lujgame.game.server.database.bean.DatabaseMeta;
@@ -23,19 +24,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class DbOperateContextTest extends ZBaseTest {
 
-  @Autowired
+  @Inject
   DbOperateContextFactory _dbOperateContextFactory;
 
-  @Autowired
+  @Inject
   BeanCollector _beanCollector;
 
-  @Autowired
+  @Inject
   Dbobjimpl0 _dbInternal;
 
-  @Autowired
+  @Inject
   Packetimpl0 _packetInternal;
 
-  @Autowired
+  @Inject
   DbSetTool _dbSetTool;
 
   long _now;
@@ -139,12 +140,12 @@ public class DbOperateContextTest extends ZBaseTest {
     ImmutableMap<Class<?>, DatabaseMeta> metaMap = _beanCollector
         .collectBeanMap(DatabaseMeta.class, DatabaseMeta::databaseType);
 
-    return _dbOperateContextFactory.createContext(_now,
-        _paramMap, _resultMap, metaMap, _codecMap, null, null);
+    return _dbOperateContextFactory.createContext(_now, _paramMap, _resultMap,
+        ImmutableSet.of(), metaMap, _codecMap, null, null);
   }
 
   JSet<Z> makeEmptyDbSet() {
-    CacheItem item = new CacheItem(Z.class);
+    CacheItem item = new CacheItem("", Z.class);
     item.setValue(ImmutableSet.of());
     return _dbSetTool.newDbSet(item, ImmutableList.of());
   }

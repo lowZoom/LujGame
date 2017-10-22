@@ -5,12 +5,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import akka.actor.ActorRef;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import lujgame.game.server.database.operate.DbOperateContext;
-import lujgame.game.server.database.operate.DbOperateContextFactory;
+import com.google.common.collect.ImmutableSet;
+import javax.inject.Inject;
 import lujgame.game.server.database.cache.DbCacheActorState;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
-import org.springframework.beans.factory.annotation.Autowired;
+import lujgame.game.server.database.operate.DbOperateContext;
+import lujgame.game.server.database.operate.DbOperateContextFactory;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -38,7 +40,7 @@ class ZCacheUtil {
   }
 
   CacheItem addCacheItem(Cache<String, CacheItem> cache, String key) {
-    CacheItem item = new CacheItem(ZTestDb.class);
+    CacheItem item = new CacheItem(key, ZTestDb.class);
     cache.put(key, item);
     return item;
   }
@@ -48,13 +50,13 @@ class ZCacheUtil {
   }
 
   DbOperateContext makeOperateContext(ImmutableMap<String, Object> resultMap, ActorRef connRef) {
-    return _operateContextFactory.createContext(0, ImmutableMap.of(), resultMap,
+    return _operateContextFactory.createContext(0, ImmutableMap.of(), resultMap, ImmutableSet.of(),
         ImmutableMap.of(), ImmutableMap.of(), connRef, null);
   }
 
-  @Autowired
+  @Inject
   private CacheKeyMaker _cacheKeyMaker;
 
-  @Autowired
+  @Inject
   private DbOperateContextFactory _operateContextFactory;
 }

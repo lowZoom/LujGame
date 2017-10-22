@@ -14,6 +14,8 @@ import lujgame.core.akka.common.CaseActor;
 import lujgame.game.boot.message.BootFailMsg;
 import lujgame.game.server.database.cache.internal.CacheUseSetFinisher;
 import lujgame.game.server.database.cache.internal.CacheUseStarter;
+import lujgame.game.server.database.cache.internal.DbCacheReturner;
+import lujgame.game.server.database.cache.message.DbCacheReturnMsg;
 import lujgame.game.server.database.cache.message.DbCacheUseReq;
 import lujgame.game.server.database.load.DbLoadActorFactory;
 import lujgame.game.server.database.load.message.DbLoadObjRsp;
@@ -25,7 +27,8 @@ public class DbCacheActor extends CaseActor {
       DbCacheActorState state,
       DbLoadActorFactory dbLoadActorFactory,
       CacheUseStarter cacheUseStarter,
-      CacheUseSetFinisher cacheUseSetFinisher) {
+      CacheUseSetFinisher cacheUseSetFinisher,
+      DbCacheReturner dbCacheReturner) {
     _state = state;
 
     _dbLoadActorFactory = dbLoadActorFactory;
@@ -33,18 +36,19 @@ public class DbCacheActor extends CaseActor {
     _cacheUseSetFinisher = cacheUseSetFinisher;
     _cacheUseStarter = cacheUseStarter;
 
+    _dbCacheReturner = dbCacheReturner;
+
     addCase(DbCacheUseReq.class, this::onDbCacheUse);
     addCase(DbLoadSetRsp.class, this::onLoadSetRsp);
   }
 
   @Override
   public void preStart() {
-    DbCacheActorState state = _state;
     LoggingAdapter log = log();
 
     try {
       log.debug("检测数据库...");
-      HikariDataSource dataSrc = initDatabase(state.getDatabaseConfig());
+      HikariDataSource dataSrc = initDatabase(_state.getDatabaseConfig());
 
       startLoadActor(dataSrc);
 
@@ -96,6 +100,10 @@ public class DbCacheActor extends CaseActor {
 //    _cacheUseFinisher.finishUseObject(_state, msg);
   }
 
+  private void onDbCacheReturn(DbCacheReturnMsg msg) {
+    _dbCacheReturner.returnCache(msg.getBorrowItems(), _state.getLockMap(), _state.getCache());
+  }
+
   private final DbCacheActorState _state;
 
   private final DbLoadActorFactory _dbLoadActorFactory;
@@ -103,4 +111,6 @@ public class DbCacheActor extends CaseActor {
   private final CacheUseStarter _cacheUseStarter;
   //  private final CacheUseFinisher _cacheUseFinisher;
   private final CacheUseSetFinisher _cacheUseSetFinisher;
+
+  private final DbCacheReturner _dbCacheReturner;
 }
