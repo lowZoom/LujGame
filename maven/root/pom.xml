@@ -18,6 +18,12 @@
   </properties>
 
   <dependencies>
+    <!-- https://mvnrepository.com/artifact/javax.inject/javax.inject -->
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <version>1</version>
+    </dependency>
     <!-- http://mvnrepository.com/artifact/junit/junit -->
     <dependency>
       <groupId>junit</groupId>
