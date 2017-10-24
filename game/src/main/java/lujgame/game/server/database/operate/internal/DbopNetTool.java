@@ -2,6 +2,7 @@ package lujgame.game.server.database.operate.internal;
 
 import akka.actor.ActorRef;
 import java.util.Map;
+import javax.inject.Inject;
 import lujgame.core.akka.AkkaTool;
 import lujgame.game.server.core.LujInternal;
 import lujgame.game.server.net.packet.NetPacketCodec;
@@ -9,7 +10,6 @@ import lujgame.game.server.net.packet.PacketImpl;
 import lujgame.game.server.net.packet.Packetimpl0;
 import lujgame.game.server.type.Z1;
 import lujgame.gateway.network.akka.connection.message.Game2GateMsg;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @LujInternal
 public class DbopNetTool {
@@ -30,12 +30,12 @@ public class DbopNetTool {
     _akkaTool.tell(new Game2GateMsg(data), entityRef, connRef);
   }
 
-  @Autowired
+  @Inject
   private Z1 _typeInternal;
 
-  @Autowired
+  @Inject
   private AkkaTool _akkaTool;
 
-  @Autowired
+  @Inject
   private Packetimpl0 _packetInternal;
 }

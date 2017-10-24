@@ -20,6 +20,6 @@ public class Net10001 extends GameNetHandler<Net10001Req> {
     //TODO: 在这里就指定预读
     ctx.dbLoadSet(M1PlayerDb.class, name, "0");
 
-    ctx.invoke(M1LoginCmd.class);
+    ctx.invoke(M1LoginCmd.class, packet);
   }
 }

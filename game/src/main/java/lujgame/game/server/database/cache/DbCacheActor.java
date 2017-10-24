@@ -38,8 +38,7 @@ public class DbCacheActor extends CaseActor {
 
     _dbCacheReturner = dbCacheReturner;
 
-    addCase(DbCacheUseReq.class, this::onDbCacheUse);
-    addCase(DbLoadSetRsp.class, this::onLoadSetRsp);
+    initCases();
   }
 
   @Override
@@ -63,6 +62,13 @@ public class DbCacheActor extends CaseActor {
         .expireAfterAccess(90, TimeUnit.MINUTES)
         .expireAfterWrite(90, TimeUnit.MINUTES)
         .build());
+  }
+
+  private void initCases() {
+    addCase(DbCacheUseReq.class, this::onDbCacheUse);
+    addCase(DbLoadSetRsp.class, this::onLoadSetRsp);
+
+    addCase(DbCacheReturnMsg.class, this::onDbCacheReturn);
   }
 
   private HikariDataSource initDatabase(Config dbCfg) throws SQLException {

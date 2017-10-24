@@ -44,7 +44,6 @@
     </list>
     <writeAnnotations>
       <writeAnnotation name="javax.inject.Inject" />
-      <writeAnnotation name="org.springframework.beans.factory.annotation.Autowired" />
     </writeAnnotations>
   </component>
   <component name="MavenProjectsManager">

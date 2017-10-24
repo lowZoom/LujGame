@@ -21,7 +21,7 @@ public class RobotInstanceActor extends CaseActor {
     _robotConnector = robotConnector;
     _robotBehaver = robotBehaver;
 
-    registerMessage();
+    initCases();
   }
 
   @Override
@@ -29,7 +29,7 @@ public class RobotInstanceActor extends CaseActor {
     _robotConnector.startConnect(_state, getSelf(), log());
   }
 
-  private void registerMessage() {
+  private void initCases() {
     addCase(ConnectOkMsg.class, this::onConnectOk);
 //    addCase(ConnectFail.class, this::onConnectFail);
 
