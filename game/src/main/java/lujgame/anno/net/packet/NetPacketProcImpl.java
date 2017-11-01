@@ -209,7 +209,7 @@ public class NetPacketProcImpl {
         .addModifiers(Modifier.PUBLIC)
         .addParameter(TypeName.get(Object.class), "packet")
         .returns(byte[].class)
-        .addStatement("return null")
+        .addStatement("return new byte[0]")
         .build();
 
     t.writeTo(JavaFile.builder(item.getPackageName(), TypeSpec

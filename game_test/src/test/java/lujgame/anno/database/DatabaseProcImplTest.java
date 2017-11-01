@@ -2,8 +2,8 @@ package lujgame.anno.database;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.google.common.collect.ImmutableMap;
 import java.util.Map;
+import javax.inject.Inject;
 import lujgame.core.spring.BeanCollector;
 import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.database.bean.DbObjImpl;
@@ -11,14 +11,13 @@ import lujgame.game.server.database.type.DbTypeInternal;
 import lujgame.test.ZBaseTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class DatabaseProcImplTest extends ZBaseTest {
 
-  @Autowired
+  @Inject
   BeanCollector _beanCollector;
 
-  @Autowired
+  @Inject
   DbTypeInternal _dbTypeInternal;
 
   @Before
@@ -37,7 +36,6 @@ public class DatabaseProcImplTest extends ZBaseTest {
     assertThat(metaMap).hasSize(1);
 
     DatabaseMeta meta = metaMap.get(Z.class);
-    assertThat(meta).isNotNull();
     assertThat(meta.databaseType()).isSameAs(Z.class);
 
     DbObjImpl obj = meta.createObject(_dbTypeInternal);

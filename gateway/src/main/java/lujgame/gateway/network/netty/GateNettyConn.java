@@ -2,6 +2,7 @@ package lujgame.gateway.network.netty;
 
 import akka.actor.ActorRef;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
 import java.util.LinkedList;
 import java.util.List;
 import lujgame.gateway.network.akka.accept.message.NewConnMsg;
@@ -39,7 +40,7 @@ public class GateNettyConn extends GateNettyData {
     System.out.println("conn eeeevent trrrrrrrrrriger??????");
 
     if (evt instanceof NettyConnEvent) {
-      onConnActor(ctx, (NettyConnEvent) evt);
+      onConnActorOk(ctx, (NettyConnEvent) evt);
       return;
     }
   }
@@ -49,8 +50,8 @@ public class GateNettyConn extends GateNettyData {
 //    //TODO: 通知acceptRef销毁连接
 //  }
 
-  private void onConnActor(ChannelHandlerContext ctx, NettyConnEvent event) {
-    System.out.println("conn accept ---> 数据flush");
+  private void onConnActorOk(ChannelHandlerContext ctx, NettyConnEvent event) {
+    System.out.println("conn accept ---> 数据flush, ctx: " + ctx);
 
     ActorRef connRef = event.getConnRef();
     ActorRef sender = ActorRef.noSender();

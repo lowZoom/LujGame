@@ -13,7 +13,7 @@ public class RobotNettyHandler extends ChannelInboundHandlerAdapter {
 
   @Override
   public void channelActive(ChannelHandlerContext ctx) throws Exception {
-    System.out.println(Thread.currentThread() + " aaaaaaaaactife");
+    System.err.println(Thread.currentThread() + " aaaaaaaaactife");
 
     ConnectOkMsg msg = new ConnectOkMsg(ctx);
     _robotRef.tell(msg, ActorRef.noSender());

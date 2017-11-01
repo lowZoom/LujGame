@@ -16,6 +16,7 @@ public class RobotNettyEncoder extends MessageToByteEncoder<RobotNetPacket> {
 
     out.writeMedium(opcode);
     out.writeMedium(data.length);
+
     out.writeBytes(data);
   }
 }

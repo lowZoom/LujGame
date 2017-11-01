@@ -8,4 +8,3 @@ public interface ZTestPacket {
 
   JStr str();
 }
-

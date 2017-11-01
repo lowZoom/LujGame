@@ -10,11 +10,20 @@ public class GateNettyEncoder extends MessageToByteEncoder<NettySendEvent> {
   @Override
   protected void encode(ChannelHandlerContext ctx,
       NettySendEvent msg, ByteBuf out) throws Exception {
-    byte[] data = msg.getData();
+    try {
 
-    out.writeMedium(msg.getOpcode());
-    out.writeMedium(data.length);
+      System.err.println("在网关NETTY，实际发包");
 
-    out.writeBytes(data);
+      byte[] data = msg.getData();
+
+      out.writeMedium(msg.getOpcode());
+      out.writeMedium(data.length);
+
+      out.writeBytes(data);
+
+    } catch (Throwable e) {
+      e.printStackTrace();
+    }
+
   }
 }
