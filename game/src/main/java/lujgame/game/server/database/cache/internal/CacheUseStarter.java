@@ -14,11 +14,17 @@ import lujgame.game.server.database.cache.DbCacheActorState;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.database.cache.message.DbCacheUseReq;
 import lujgame.game.server.database.load.message.DbLoadSetReq;
+import lujgame.game.server.entity.internal.DbCmdExeStarter;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CacheUseStarter {
 
+  /**
+   * 在Cache上开始一次数据使用，如果数据全部就绪，直接回复给Entity
+   *
+   * FIXME: 名字起得有问题，use的不只object
+   */
   public void startUseObject(DbCacheActorState state,
       DbCacheUseReq msg, ActorRef cacheRef, LoggingAdapter log) {
     //TODO: 分开处理 对象读取 和 集合读取
@@ -51,11 +57,8 @@ public class CacheUseStarter {
       return;
     }
 
-    // 锁住对应缓存项
-    setUsingList.forEach(this::lockItem);
-
-    //TODO: 回调到处理器上
-    log.debug("未做：回调到处理器上");
+    // 回调到处理器上
+    _dbCmdExeStarter.startExecute(cache, state.getLockMap(), setUsingList, msg, cacheRef);
   }
 
   private UsingItem makeUsingItem(DbCacheUseItem useItem,
@@ -90,13 +93,12 @@ public class CacheUseStarter {
     waitQueue.addLast(msg);
   }
 
-  private void lockItem(UsingItem item) {
-    item.getCacheItem().setLock(true);
-  }
-
   @Inject
   private AkkaTool _akkaTool;
 
   @Inject
   private DbCacheUser _dbCacheUser;
+
+  @Inject
+  private DbCmdExeStarter _dbCmdExeStarter;
 }

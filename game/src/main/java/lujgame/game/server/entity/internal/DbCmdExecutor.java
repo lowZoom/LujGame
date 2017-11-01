@@ -2,16 +2,21 @@ package lujgame.game.server.entity.internal;
 
 import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import java.util.Map;
 import javax.inject.Inject;
 import lujgame.core.akka.AkkaTool;
 import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.core.LujInternal;
+import lujgame.game.server.database.cache.internal.CacheItem;
+import lujgame.game.server.database.cache.internal.UsingItem;
 import lujgame.game.server.database.cache.message.DbCacheReturnMsg;
+import lujgame.game.server.database.cache.message.DbCacheUseReq;
 import lujgame.game.server.database.cache.message.DbCacheUseRsp;
 import lujgame.game.server.database.operate.DbOperateContextFactory;
 import lujgame.game.server.entity.GameEntityActorState;
-import org.springframework.beans.factory.annotation.Autowired;
+import lujgame.game.server.type.JSet;
 
 @LujInternal
 public class DbCmdExecutor {

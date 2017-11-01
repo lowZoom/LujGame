@@ -5,16 +5,18 @@ import akka.cluster.Cluster;
 import akka.cluster.ClusterEvent;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import javax.inject.Inject;
 import lujgame.core.akka.common.CaseActor;
 import lujgame.core.akka.link.ActorLinker;
 import lujgame.core.akka.schedule.ActorScheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class AkkaTool {
 
-  @Autowired
+  @Inject
   public AkkaTool(
       ActorScheduler actorScheduler,
       ActorLinker actorLinker) {

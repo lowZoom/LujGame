@@ -6,30 +6,28 @@ import static com.google.common.base.Preconditions.checkState;
 import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.google.common.cache.Cache;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
-import lujgame.core.akka.AkkaTool;
 import lujgame.game.server.database.cache.DbCacheActorState;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.database.cache.message.DbCacheUseReq;
-import lujgame.game.server.database.cache.message.DbCacheUseRsp;
 import lujgame.game.server.database.load.message.DbLoadSetRsp;
 import lujgame.game.server.database.type.DbSetTool;
-import lujgame.game.server.type.JSet;
+import lujgame.game.server.entity.internal.DbCmdExeStarter;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CacheUseSetFinisher {
 
+  /**
+   * Loader回复结果给Cache，Cache检查是否所有数据就绪，如果是再回复给Entity执行逻辑
+   */
   public void finishUseSet(DbCacheActorState state,
       DbLoadSetRsp msg, ActorRef cacheRef, LoggingAdapter log) {
     String cacheKey = msg.getCacheKey();
@@ -57,7 +55,7 @@ public class CacheUseSetFinisher {
         continue;
       }
 
-      if (tryFinishCacheReq(state, req)) {
+      if (tryFinishCacheReq(state, req, cacheRef)) {
         log.debug("触发数据库CMD：{}", req.getCmdType());
         iter.remove();
       }
@@ -74,7 +72,7 @@ public class CacheUseSetFinisher {
     return req.getSetUseList().stream().anyMatch(i -> Objects.equals(i.getCacheKey(), cacheKey));
   }
 
-  private boolean tryFinishCacheReq(DbCacheActorState state, DbCacheUseReq req) {
+  private boolean tryFinishCacheReq(DbCacheActorState state, DbCacheUseReq req, ActorRef cacheRef) {
     Cache<String, CacheItem> cache = state.getCache();
 
     List<UsingItem> setUseList = req.getSetUseList().stream()
@@ -86,57 +84,10 @@ public class CacheUseSetFinisher {
       return false;
     }
 
-    ImmutableMap.Builder<String, Object> result = ImmutableMap.builder();
-    ImmutableSet.Builder<CacheItem> borrowItems = ImmutableSet.builder();
-
-    Map<String, CacheItem> lockMap = state.getLockMap();
-
-    // 锁住对应缓存项
-    for (UsingItem item : setUseList) {
-      CacheItem ci = item.getCacheItem();
-      borrowCacheItem(lockMap, ci, borrowItems);
-
-      String resultKey = item.getUseItem().getResultKey();
-      JSet<?> resultSet = _dbSetTool.newDbSet(ci, useElem(cache, lockMap, ci, borrowItems));
-
-      result.put(resultKey, resultSet);
-    }
-
-    //TODO: 调用对应CMD
-    _akkaTool.tellSelf(new DbCacheUseRsp(req.getCmdType(), req.getParamMap(), result.build(),
-        borrowItems.build(), req.getRequestTime()), req.getRequestRef());
+    // 触发对应CMD执行
+    _dbCmdExeStarter.startExecute(cache, state.getLockMap(), setUseList, req, cacheRef);
 
     return true;
-  }
-
-  private ImmutableList<CacheItem> useElem(Cache<String, CacheItem> cache,
-      Map<String, CacheItem> lockMap, CacheItem setItem,
-      ImmutableSet.Builder<CacheItem> borrowItems) {
-    //TODO: 读取元素对应缓存，并进行锁定
-    ImmutableList.Builder<CacheItem> result = ImmutableList.builder();
-
-    Set<Long> idSet = _dbSetTool.getIdSet(setItem);
-    Class<?> dbType = setItem.getDbType();
-
-    for (Long dbId : idSet) {
-      String key = _cacheKeyMaker.makeObjectKey(dbType, dbId);
-      CacheItem elemItem = checkAndGet(cache, key);
-
-      borrowCacheItem(lockMap, elemItem, borrowItems);
-      result.add(elemItem);
-    }
-
-    return result.build();
-  }
-
-  private CacheItem checkAndGet(Cache<String, CacheItem> cache, String key) {
-    return checkNotNull(cache.getIfPresent(key), key);
-  }
-
-  private void borrowCacheItem(Map<String, CacheItem> lockMap, CacheItem item,
-      ImmutableSet.Builder<CacheItem> borrowItems) {
-    _dbCacheLocker.lockItem(lockMap, item);
-    borrowItems.add(item);
   }
 
   private UsingItem makeUsingItem(DbCacheUseItem useItem, Cache<String, CacheItem> cache) {
@@ -170,18 +121,19 @@ public class CacheUseSetFinisher {
     return true;
   }
 
-  @Inject
-  private AkkaTool _akkaTool;
+  private CacheItem checkAndGet(Cache<String, CacheItem> cache, String key) {
+    return checkNotNull(cache.getIfPresent(key), key);
+  }
 
   @Inject
   private DbCacheUser _dbCacheUser;
-
-  @Inject
-  private DbCacheLocker _dbCacheLocker;
 
   @Inject
   private CacheKeyMaker _cacheKeyMaker;
 
   @Inject
   private DbSetTool _dbSetTool;
+
+  @Inject
+  private DbCmdExeStarter _dbCmdExeStarter;
 }

@@ -3,6 +3,7 @@ package lujgame.game.server.net.internal;
 import akka.actor.ActorRef;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import javax.inject.Inject;
 import lujgame.core.akka.AkkaTool;
 import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.core.LujInternal;
@@ -27,6 +28,6 @@ public class DbCmdInvoker {
         param.build(), entityRef, 0), entityRef, dbCacheRef);
   }
 
-  @Autowired
+  @Inject
   private AkkaTool _akkaTool;
 }

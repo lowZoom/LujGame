@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import akka.actor.ActorRef;
@@ -16,36 +15,40 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.LinkedList;
+import java.util.Map;
+import javax.inject.Inject;
 import lujgame.core.akka.AkkaTool;
 import lujgame.game.server.database.cache.DbCacheActorState;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.database.cache.message.DbCacheUseReq;
+import lujgame.game.server.database.cache.message.DbCacheUseRsp;
 import lujgame.game.server.database.load.message.DbLoadObjReq;
 import lujgame.game.server.database.load.message.DbLoadSetReq;
 import lujgame.test.ZBaseTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class CacheUseStarterTest extends ZBaseTest {
 
-  @Autowired
+  @Inject
   CacheUseStarter _starter;
 
   @Mock
-  @Autowired
+  @Inject
   AkkaTool _akkaTool;
 
-  @Autowired
+  @Inject
   ZCacheUtil _cacheUtil;
 
   DbCacheActorState _state;
 
-  LinkedList<DbCacheUseReq> _waitQueue;
   Cache<String, CacheItem> _cache;
+  Map<String, CacheItem> _lockMap;
+  LinkedList<DbCacheUseReq> _waitQueue;
 
   ActorRef _cacheRef;
+  ActorRef _requestRef;
   ActorRef _loaderRef;
 
   @Before
@@ -54,9 +57,11 @@ public class CacheUseStarterTest extends ZBaseTest {
     _state = u.createCacheState();
 
     _cache = _state.getCache();
+    _lockMap = _state.getLockMap();
     _waitQueue = _state.getWaitQueue();
 
     _cacheRef = new ZRefMock();
+    _requestRef = new ZRefMock();
 
     _loaderRef = new ZRefMock();
     _state.setLoaderRef(_loaderRef);
@@ -119,7 +124,7 @@ public class CacheUseStarterTest extends ZBaseTest {
     ZCacheUtil u = _cacheUtil;
 
     final String SET_KEY = u.makeSetKey("a");
-    addEmptySetItem(SET_KEY);
+    CacheItem setItem = addEmptySetItem(SET_KEY);
 
     // 干扰项
     final String KEY_2 = u.makeObjectKey(2L);
@@ -131,13 +136,13 @@ public class CacheUseStarterTest extends ZBaseTest {
     startUseObject(msg);
 
     //-- Assert --//
+    assertThat(_lockMap.values()).containsOnly(setItem);
+    assertThat(setItem.isLock()).isTrue();
+
+    assertThat(u.getNotNull(_cache, KEY_2).isLock()).isFalse();
     assertThat(_waitQueue).isEmpty();
-    assertThat(u.safeGet(_cache, SET_KEY).isLock()).isTrue();
-    assertThat(u.safeGet(_cache, KEY_2).isLock()).isFalse();
 
-    verify(_akkaTool, never()).tell(any(), any(), any());
-
-    //TODO: 检查是否有回调命令
+    verify(_akkaTool).tell(any(DbCacheUseRsp.class), eq(_cacheRef), eq(_requestRef));
   }
 
   void startUseObject(DbCacheUseReq msg) {
@@ -145,13 +150,14 @@ public class CacheUseStarterTest extends ZBaseTest {
   }
 
   DbCacheUseReq makeUseReq(ImmutableList<DbCacheUseItem> setList) {
-    return new DbCacheUseReq(setList, null, ImmutableMap.of(), null, 1);
+    return new DbCacheUseReq(setList, null, ImmutableMap.of(), _requestRef, 1);
   }
 
-  void addEmptySetItem(String setKey) {
+  CacheItem addEmptySetItem(String setKey) {
     CacheItem setItem = _cacheUtil.addCacheItem(_cache, setKey);
     setItem.setLoadOk(true);
     setItem.setValue(ImmutableSet.of());
+    return setItem;
   }
 
   DbCacheUseItem makeUseItem(String cacheKey, String resultKey) {

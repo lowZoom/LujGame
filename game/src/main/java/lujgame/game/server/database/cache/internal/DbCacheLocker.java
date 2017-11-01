@@ -2,19 +2,35 @@ package lujgame.game.server.database.cache.internal;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.common.cache.Cache;
 import java.util.Map;
+import java.util.Objects;
 import lujgame.game.server.core.LujInternal;
 
 @LujInternal
 public class DbCacheLocker {
 
   public void lockItem(Map<String, CacheItem> lockMap, CacheItem item) {
-    String key = item.getCacheKey();
+    String cacheKey = item.getCacheKey();
+    checkState(item.isLoadOk(), cacheKey);
+    checkState(!item.isLock(), "重复上锁：%s", cacheKey);
 
-    checkState(!item.isLock(), "重复上锁：%s", key);
     item.setLock(true);
+    CacheItem old = lockMap.put(cacheKey, item);
 
-    CacheItem old = lockMap.put(key, item);
-    checkState(old == null, "重复上锁：%s", key);
+    checkState(old == null, "重复上锁：%s", cacheKey);
+  }
+
+  public void unlockItem(CacheItem item, Map<String, CacheItem> lockMap,
+      Cache<String, CacheItem> cache) {
+    String cacheKey = item.getCacheKey();
+    checkState(item.isLoadOk(), cacheKey);
+    checkState(item.isLock(), "重复解锁：%s", cacheKey);
+
+    CacheItem rmItem = lockMap.remove(cacheKey);
+    checkState(Objects.equals(rmItem, item), cacheKey);
+
+    rmItem.setLock(false);
+    cache.put(cacheKey, item);
   }
 }

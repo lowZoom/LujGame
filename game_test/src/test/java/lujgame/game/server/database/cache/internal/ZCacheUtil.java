@@ -7,7 +7,6 @@ import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import javax.inject.Inject;
@@ -15,7 +14,6 @@ import lujgame.game.server.database.cache.DbCacheActorState;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.database.operate.DbOperateContext;
 import lujgame.game.server.database.operate.DbOperateContextFactory;
-import org.mockito.Mockito;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -48,7 +46,7 @@ class ZCacheUtil {
     return item;
   }
 
-  CacheItem safeGet(Cache<String, CacheItem> cache, String key) {
+  CacheItem getNotNull(Cache<String, CacheItem> cache, String key) {
     return checkNotNull(cache.getIfPresent(key), key);
   }
 

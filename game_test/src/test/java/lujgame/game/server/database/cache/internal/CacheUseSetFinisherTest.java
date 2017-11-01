@@ -46,8 +46,9 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
 
   Cache<String, CacheItem> _cache;
   Map<String, CacheItem> _lockMap;
-
   LinkedList<DbCacheUseReq> _waitQueue;
+
+  ActorRef _cacheRef;
   ActorRef _requestRef;
 
   @Before
@@ -57,8 +58,9 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
 
     _cache = _state.getCache();
     _lockMap = _state.getLockMap();
-
     _waitQueue = _state.getWaitQueue();
+
+    _cacheRef = new ZRefMock();
     _requestRef = new ZRefMock();
   }
 
@@ -81,7 +83,9 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
 
     //-- Assert --//
     assertThat(_waitQueue).isEmpty();
+
     assertItemIsUsed(setItem);
+    assertThat(_lockMap).hasSize(1);
 
     ImmutableMap<String, Object> resultMap = getUseRsp().getResultMap();
     assertThat(resultMap).hasSize(1);
@@ -91,8 +95,7 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
     assertThat(resultSet).isNotNull();
     assertThat(ctx.isEmpty(resultSet)).isTrue();
 
-    assertThat(_lockMap).hasSize(1);
-    assertThat(_lockMap.values()).contains(setItem);
+    verify(_akkaTool).tell(any(DbCacheUseRsp.class), eq(_cacheRef), eq(_requestRef));
   }
 
   @Test
@@ -160,7 +163,7 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
   }
 
   void finishUseSet(DbLoadSetRsp msg) {
-    _finisher.finishUseSet(_state, msg, null, mock(LoggingAdapter.class));
+    _finisher.finishUseSet(_state, msg, _cacheRef, mock(LoggingAdapter.class));
   }
 
   DbOperateContext makeOperateContext(ImmutableMap<String, Object> resultMap) {
@@ -173,12 +176,14 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
 
   DbCacheUseRsp getUseRsp() {
     ArgumentCaptor<DbCacheUseRsp> rsp = ArgumentCaptor.forClass(DbCacheUseRsp.class);
-    verify(_akkaTool).tellSelf(rsp.capture(), eq(_requestRef));
+    verify(_akkaTool).tell(rsp.capture(), eq(_cacheRef), eq(_requestRef));
     return rsp.getValue();
   }
 
   void assertItemIsUsed(CacheItem item) {
     assertThat(item.isLoadOk()).isTrue();
     assertThat(item.isLock()).isTrue();
+
+    assertThat(_lockMap).containsValue(item);
   }
 }
