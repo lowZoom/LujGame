@@ -39,6 +39,8 @@ public class DbCacheReturnerTest extends ZBaseTest {
     //-- Assert --//
     assertThat(_lockMap).isEmpty();
     assertThat(_cache.asMap().values()).containsExactly(item);
+
+    assertThat(item.isLock()).isFalse();
   }
 
   void returnCache0(Set<CacheItem> borrowItems) {

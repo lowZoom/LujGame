@@ -7,8 +7,8 @@ import lujgame.robot.robot.instance.message.ConnectOkMsg;
 
 public class RobotNettyHandler extends ChannelInboundHandlerAdapter {
 
-  public RobotNettyHandler(ActorRef instanceRef) {
-    _instanceRef = instanceRef;
+  public RobotNettyHandler(ActorRef robotRef) {
+    _robotRef = robotRef;
   }
 
   @Override
@@ -16,10 +16,15 @@ public class RobotNettyHandler extends ChannelInboundHandlerAdapter {
     System.out.println(Thread.currentThread() + " aaaaaaaaactife");
 
     ConnectOkMsg msg = new ConnectOkMsg(ctx);
-    _instanceRef.tell(msg, ActorRef.noSender());
+    _robotRef.tell(msg, ActorRef.noSender());
   }
 
-//  @Override
+  @Override
+  public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    System.err.println("收到数据 -》 " + msg);
+  }
+
+  //  @Override
 //  public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 //    System.out.println("--------> Inactive");
 //  }
@@ -29,5 +34,5 @@ public class RobotNettyHandler extends ChannelInboundHandlerAdapter {
 //    System.out.println("--------> Unnnreg");
 //  }
 
-  private final ActorRef _instanceRef;
+  private final ActorRef _robotRef;
 }

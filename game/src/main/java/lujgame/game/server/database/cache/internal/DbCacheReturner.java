@@ -34,6 +34,7 @@ public class DbCacheReturner {
     CacheItem rmItem = lockMap.remove(cacheKey);
     checkState(Objects.equals(rmItem, item), cacheKey);
 
+    rmItem.setLock(false);
     cache.put(cacheKey, item);
   }
 }

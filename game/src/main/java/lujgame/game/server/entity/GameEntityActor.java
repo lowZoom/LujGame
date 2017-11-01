@@ -35,7 +35,7 @@ public class GameEntityActor extends CaseActor {
    * 数据就绪后执行对应cmd
    */
   private void onDbCacheUseRsp(DbCacheUseRsp msg) {
-    _dbCmdExecutor.executeCmd(_state, msg, getSelf(), System.currentTimeMillis());
+    _dbCmdExecutor.executeCmd(_state, msg, getSelf(), System.currentTimeMillis(), log());
   }
 
   private final GameEntityActorState _state;

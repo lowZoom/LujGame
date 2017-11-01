@@ -1,8 +1,10 @@
 package lujgame.game.server.database.cache.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.mockito.Mockito.mock;
 
 import akka.actor.ActorRef;
+import akka.event.LoggingAdapter;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableList;
@@ -13,6 +15,7 @@ import lujgame.game.server.database.cache.DbCacheActorState;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.database.operate.DbOperateContext;
 import lujgame.game.server.database.operate.DbOperateContextFactory;
+import org.mockito.Mockito;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -51,7 +54,7 @@ class ZCacheUtil {
 
   DbOperateContext makeOperateContext(ImmutableMap<String, Object> resultMap, ActorRef connRef) {
     return _operateContextFactory.createContext(0, ImmutableMap.of(), resultMap, ImmutableSet.of(),
-        ImmutableMap.of(), ImmutableMap.of(), connRef, null);
+        ImmutableMap.of(), ImmutableMap.of(), connRef, null, mock(LoggingAdapter.class));
   }
 
   @Inject

@@ -1,7 +1,9 @@
 package lujgame.game.server.entity.internal;
 
 import akka.actor.ActorRef;
+import akka.event.LoggingAdapter;
 import java.util.Map;
+import javax.inject.Inject;
 import lujgame.core.akka.AkkaTool;
 import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.core.LujInternal;
@@ -14,15 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 @LujInternal
 public class DbCmdExecutor {
 
-  public void executeCmd(GameEntityActorState state,
-      DbCacheUseRsp msg, ActorRef entityRef, long now) {
+  public void executeCmd(GameEntityActorState state, DbCacheUseRsp msg,
+      ActorRef entityRef, long now, LoggingAdapter log) {
     Map<Class<?>, CacheOkCommand> cmdMap = state.getCmdMap();
     Class<?> cmdType = msg.getCmdType();
 
     CacheOkCommand cmd = cmdMap.get(cmdType);
     cmd.execute(_dbOperateContextFactory.createContext(now, msg.getParamMap(), msg.getResultMap(),
         msg.getBorrowItems(), state.getDatabaseMetaMap(), state.getNetPacketCodecMap(),
-        state.getConnRef(), entityRef));
+        state.getConnRef(), entityRef, log));
 
     //TODO: 将修改部分发起到IO线程
 
@@ -30,9 +32,9 @@ public class DbCmdExecutor {
     _akkaTool.tell(new DbCacheReturnMsg(msg.getBorrowItems()), entityRef, state.getDbCacheRef());
   }
 
-  @Autowired
+  @Inject
   private AkkaTool _akkaTool;
 
-  @Autowired
+  @Inject
   private DbOperateContextFactory _dbOperateContextFactory;
 }

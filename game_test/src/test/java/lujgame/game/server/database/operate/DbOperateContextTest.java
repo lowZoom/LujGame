@@ -1,7 +1,9 @@
 package lujgame.game.server.database.operate;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
+import akka.event.LoggingAdapter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -20,6 +22,7 @@ import lujgame.game.server.type.JSet;
 import lujgame.test.ZBaseTest;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class DbOperateContextTest extends ZBaseTest {
@@ -141,7 +144,7 @@ public class DbOperateContextTest extends ZBaseTest {
         .collectBeanMap(DatabaseMeta.class, DatabaseMeta::databaseType);
 
     return _dbOperateContextFactory.createContext(_now, _paramMap, _resultMap,
-        ImmutableSet.of(), metaMap, _codecMap, null, null);
+        ImmutableSet.of(), metaMap, _codecMap, null, null, mock(LoggingAdapter.class));
   }
 
   JSet<Z> makeEmptyDbSet() {

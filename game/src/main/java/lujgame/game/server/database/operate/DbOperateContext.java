@@ -1,6 +1,7 @@
 package lujgame.game.server.database.operate;
 
 import akka.actor.ActorRef;
+import akka.event.LoggingAdapter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import javax.annotation.Nullable;
@@ -29,6 +30,7 @@ public class DbOperateContext {
       ImmutableMap<Class<?>, NetPacketCodec> netPacketCodecMap,
       ActorRef connRef,
       ActorRef entityRef,
+      LoggingAdapter log,
       DbSetTool dbSetTool,
       DbObjTool dbObjTool,
       DbopNetTool dbopNetTool,
@@ -44,7 +46,9 @@ public class DbOperateContext {
     _netPacketCodecMap = netPacketCodecMap;
 
     _connRef = connRef;
+
     _entityRef = entityRef;
+    _log = log;
 
     _dbSetTool = dbSetTool;
     _dbObjTool = dbObjTool;
@@ -53,6 +57,10 @@ public class DbOperateContext {
 
     _strInternal = strInternal;
     _timeInternal = timeInternal;
+  }
+
+  public LoggingAdapter log() {
+    return _log;
   }
 
   public <T> T getPacket(Class<T> packetType) {
@@ -127,6 +135,7 @@ public class DbOperateContext {
   private final ActorRef _connRef;
 
   private final ActorRef _entityRef;
+  private final LoggingAdapter _log;
 
   private final DbSetTool _dbSetTool;
   private final DbObjTool _dbObjTool;

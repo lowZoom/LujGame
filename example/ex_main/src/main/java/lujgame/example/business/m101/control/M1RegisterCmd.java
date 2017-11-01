@@ -16,6 +16,7 @@ public class M1RegisterCmd extends CacheOkCommand {
     JSet<M1PlayerDb> dbSet = ctx.getDbSet(M1PlayerDb.class, "0");
     if (!ctx.isEmpty(dbSet)) {
       //TODO: 发送 该玩家已存在 错误包
+      ctx.log().debug("尚未实现：发送 该玩家已存在 错误包");
       return;
     }
 

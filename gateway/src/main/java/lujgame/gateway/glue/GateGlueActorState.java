@@ -48,7 +48,7 @@ public class GateGlueActorState {
 
   /**
    * 投递目标节点Map：Id -> Node
-   * 由管理节点主动推送，接收推送时维护
+   * 由管理节点主动推送，网关接收到推送时维护
    */
   private final Map<String, ActorRef> _forwardMap;
 

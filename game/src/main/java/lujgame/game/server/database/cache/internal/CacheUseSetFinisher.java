@@ -103,9 +103,8 @@ public class CacheUseSetFinisher {
     }
 
     //TODO: 调用对应CMD
-    ActorRef requestRef = req.getRequestRef();
     _akkaTool.tellSelf(new DbCacheUseRsp(req.getCmdType(), req.getParamMap(), result.build(),
-        borrowItems.build(), req.getRequestTime()), requestRef);
+        borrowItems.build(), req.getRequestTime()), req.getRequestRef());
 
     return true;
   }
