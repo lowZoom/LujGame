@@ -4,6 +4,7 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.japi.Creator;
 import io.netty.channel.ChannelHandlerContext;
+import javax.inject.Inject;
 import lujgame.gateway.network.akka.accept.logic.ConnKiller;
 import lujgame.gateway.network.akka.accept.logic.ForwardBinder;
 import lujgame.gateway.network.akka.connection.logic.ConnInfoGetter;
@@ -14,11 +15,12 @@ import lujgame.gateway.network.akka.connection.logic.packet.ConnPacketBuffer;
 import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class GateConnActorFactory {
 
-  @Autowired
+  @Inject
   public GateConnActorFactory(
       ConnPacketReceiver connPacketReceiver,
       ConnPacketSender connPacketSender,

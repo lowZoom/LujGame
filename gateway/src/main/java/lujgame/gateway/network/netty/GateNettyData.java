@@ -8,6 +8,9 @@ import lujgame.gateway.network.akka.connection.message.Netty2GateMsg;
 
 public abstract class GateNettyData extends ChannelInboundHandlerAdapter {
 
+  /**
+   * 当有数据从外网到达netty时触发
+   */
   public abstract void onDataMsg(Netty2GateMsg msg);
 
   @Override
