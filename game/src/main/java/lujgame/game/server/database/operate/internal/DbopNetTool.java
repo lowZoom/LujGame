@@ -17,15 +17,18 @@ public class DbopNetTool {
   public Object createProto(Map<Class<?>, NetPacketCodec> codecMap, Class<?> protoType) {
     NetPacketCodec codec = codecMap.get(protoType);
 
-    PacketImpl packet = codec.createPacket(_typeInternal);
+    PacketImpl<?> packet = codec.createPacket(_typeInternal);
     _packetInternal.setCodec(packet, codec);
 
     return packet;
   }
 
-  public void sendToClient(ActorRef connRef, PacketImpl packet, ActorRef entityRef) {
-    NetPacketCodec codec = _packetInternal.getCodec(packet);
-    byte[] data = codec.encodePacket(packet);
+  public void sendToClient(ActorRef connRef, PacketImpl<?> packet, ActorRef entityRef) {
+    Packetimpl0 i = _packetInternal;
+    NetPacketCodec codec = i.getCodec(packet);
+
+    Object packetVal = i.getValue(packet);
+    byte[] data = codec.encodePacket(packetVal);
 
     _akkaTool.tell(new Game2GateMsg(data), entityRef, connRef);
   }

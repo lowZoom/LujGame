@@ -7,6 +7,8 @@ import javax.inject.Inject;
 import lujgame.core.spring.BeanCollector;
 import lujgame.game.server.database.operate.ZTestPacket;
 import lujgame.game.server.net.packet.NetPacketCodec;
+import lujgame.game.server.net.packet.PacketImpl;
+import lujgame.game.server.net.packet.Packetimpl0;
 import lujgame.game.server.type.Z1;
 import lujgame.gateway.network.akka.connection.logic.packet.ConnPacketHeader;
 import lujgame.test.ZBaseTest;
@@ -19,6 +21,9 @@ public class NetPacketProcImplTest extends ZBaseTest {
 
   @Inject
   Z1 _typeInternal;
+
+  @Inject
+  Packetimpl0 _packetInternal;
 
   @Test
   public void process_() throws Exception {
@@ -34,7 +39,11 @@ public class NetPacketProcImplTest extends ZBaseTest {
     NetPacketCodec codec = codecMap.get(ZTestPacket.class);
     ZTestPacket packet = (ZTestPacket) codec.createPacket(_typeInternal);
 
-    byte[] data = codec.encodePacket(packet);
+    byte[] data = codec.encodePacket(getPacketValue(packet));
     assertThat(data.length).isGreaterThanOrEqualTo(ConnPacketHeader.HEADER_SIZE);
+  }
+
+  Object getPacketValue(Object packet) {
+    return _packetInternal.getValue((PacketImpl<?>) packet);
   }
 }

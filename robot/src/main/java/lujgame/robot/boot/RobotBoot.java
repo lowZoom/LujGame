@@ -3,15 +3,15 @@ package lujgame.robot.boot;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import com.typesafe.config.Config;
+import javax.inject.Inject;
 import lujgame.core.file.DataFileReader;
 import lujgame.robot.boot.actor.RobotStartActorFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RobotBoot {
 
-  @Autowired
+  @Inject
   public RobotBoot(
       DataFileReader dataFileReader,
       RobotStartActorFactory startActorFactory) {

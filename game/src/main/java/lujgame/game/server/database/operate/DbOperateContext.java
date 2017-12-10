@@ -110,7 +110,7 @@ public class DbOperateContext {
   }
 
   public void sendResponse2C(Object proto) {
-    _dbopNetTool.sendToClient(_connRef, (PacketImpl) proto, _entityRef);
+    _dbopNetTool.sendToClient(_connRef, (PacketImpl<?>) proto, _entityRef);
   }
 
   public JTime now() {

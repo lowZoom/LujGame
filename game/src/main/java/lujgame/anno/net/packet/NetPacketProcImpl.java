@@ -31,6 +31,7 @@ import lujgame.game.server.type.JStr;
 import lujgame.game.server.type.Z1;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 @Component
 public class NetPacketProcImpl {
@@ -141,10 +142,11 @@ public class NetPacketProcImpl {
     String internalParam = "i";
     String jsonParam = "j";
 
+    ClassName valueType = ClassName.bestGuess(jsonType.name);
     MethodSpec construct = fillConstruct(MethodSpec
         .constructorBuilder(), fieldList, internalParam, jsonParam)
         .addParameter(TypeName.get(Z1.class), internalParam)
-        .addParameter(ClassName.bestGuess(jsonType.name), jsonParam)
+        .addParameter(valueType, jsonParam)
         .build();
 
     List<MethodSpec> propertyList = fieldList.stream()
@@ -154,7 +156,7 @@ public class NetPacketProcImpl {
     t.writeTo(JavaFile.builder(item.getPackageName(), TypeSpec
         .classBuilder(getImplName(item))
         .addModifiers(Modifier.FINAL)
-        .superclass(PacketImpl.class)
+        .superclass(ParameterizedTypeName.get(ClassName.get(PacketImpl.class), valueType))
         .addSuperinterface(TypeName.get(item.getPacketType()))
         .addMethod(construct)
         .addMethods(propertyList)
@@ -169,6 +171,7 @@ public class NetPacketProcImpl {
   private MethodSpec.Builder fillConstruct(MethodSpec.Builder builder,
       List<FieldSpec> fieldList, String internalName, String jsonName) {
     GenerateTool t = _generateTool;
+    builder.addStatement("super($1L)", jsonName);
 
     for (FieldSpec f : fieldList) {
       FieldType fieldType = FIELD_MAP.get(f.type);
@@ -205,16 +208,17 @@ public class NetPacketProcImpl {
             getImplName(item), internalName, dataName, getJsonName(item))
         .build();
 
+    String packetName = "packet";
     MethodSpec encode = t.overrideBuilder("encodePacket")
         .addModifiers(Modifier.PUBLIC)
-        .addParameter(TypeName.get(Object.class), "packet")
+        .addParameter(TypeName.get(Object.class), packetName)
         .returns(byte[].class)
-        .addStatement("return new byte[0]")
+        .addStatement("return writeJson($L)", packetName)
         .build();
 
     t.writeTo(JavaFile.builder(item.getPackageName(), TypeSpec
         .classBuilder(item.getClassName() + "Codec")
-        .addAnnotation(Component.class)
+        .addAnnotation(Service.class)
         .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
         .superclass(NetPacketCodec.class)
         .addMethod(buildPacketType(packetType))

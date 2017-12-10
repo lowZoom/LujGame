@@ -1,5 +1,6 @@
 package lujgame.game.server.net.packet;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import lujgame.game.server.type.Z1;
@@ -23,5 +24,15 @@ public abstract class NetPacketCodec {
     }
   }
 
+  protected static byte[] writeJson(Object obj) {
+    try {
+      return JSON.writeValueAsBytes(obj);
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+      return EMPTY_DATA;
+    }
+  }
+
   private static final ObjectMapper JSON = new ObjectMapper();
+  private static final byte[] EMPTY_DATA = new byte[0];
 }

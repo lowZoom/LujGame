@@ -9,7 +9,7 @@ import lujgame.game.server.net.type.PkIntImpl;
 import lujgame.game.server.net.type.PkStrImpl;
 
 @LujInternal
-public class Z1 {
+public class Z1 { // 因为要注入到生成类里，所以统一到一个类里，方便生成
 
   public JInt newInt(IntSupplier getter, IntConsumer setter) {
     return new JInt(new PkIntImpl(getter, setter));
