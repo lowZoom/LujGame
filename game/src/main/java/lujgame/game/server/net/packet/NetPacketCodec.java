@@ -9,13 +9,13 @@ public abstract class NetPacketCodec {
 
   public abstract Class<?> packetType();
 
-  public abstract PacketImpl createPacket(Z1 i);
+  public abstract PacketImpl<?> createPacket(Z1 i);
 
   public abstract Object decodePacket(Z1 i, byte[] data);
 
   public abstract byte[] encodePacket(Object packet);
 
-  //FIXME: TEMP
+  //FIXME: 将序列化方案抽取成可配置
   protected static <T> T readJson(byte[] data, Class<T> type) {
     try {
       return JSON.readValue(data, type);
@@ -24,6 +24,7 @@ public abstract class NetPacketCodec {
     }
   }
 
+  //FIXME: 将序列化方案抽取成可配置
   protected static byte[] writeJson(Object obj) {
     try {
       return JSON.writeValueAsBytes(obj);
