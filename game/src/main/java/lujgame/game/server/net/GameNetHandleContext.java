@@ -37,6 +37,7 @@ public class GameNetHandleContext {
     _useList = ImmutableList.builder();
   }
 
+  @SuppressWarnings({"unchecked", "unused"})
   public <T> T getPacket(GameNetHandler<T> handler) {
     return (T) _proto;
   }

@@ -6,9 +6,10 @@ import lujgame.example.business.m101.net.Net10002Rsp;
 import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.operate.DbOperateContext;
 import lujgame.game.server.type.JSet;
-import org.springframework.stereotype.Component;
+import lujgame.game.server.type.JStr;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class M1RegisterCmd extends CacheOkCommand {
 
   @Override
@@ -20,12 +21,16 @@ public class M1RegisterCmd extends CacheOkCommand {
       return;
     }
 
-    M1PlayerDb playerDb = ctx.createDb(M1PlayerDb.class, dbSet);
-    Net10002Req packet = ctx.getPacket(Net10002Req.class);
-    ctx.jSet(playerDb.name(), packet.loginName());
+    Net10002Req packet = ctx.getRequestPacket(Net10002Req.class);
+    JStr loginName = packet.loginName();
 
+    // 创建玩家对应数据库对象
+    M1PlayerDb playerDb = ctx.createDb(M1PlayerDb.class, dbSet);
+    ctx.jSet(playerDb.name(), loginName);
+
+    // 回复客户端
     Net10002Rsp rsp = ctx.createProto(Net10002Rsp.class);
-    ctx.jSet(rsp.name(), packet.loginName());
+    ctx.jSet(rsp.name(), loginName);
     ctx.sendResponse2C(rsp);
   }
 }

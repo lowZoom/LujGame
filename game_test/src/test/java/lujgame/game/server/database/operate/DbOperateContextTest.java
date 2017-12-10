@@ -22,8 +22,6 @@ import lujgame.game.server.type.JSet;
 import lujgame.test.ZBaseTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class DbOperateContextTest extends ZBaseTest {
 
@@ -67,7 +65,7 @@ public class DbOperateContextTest extends ZBaseTest {
     ctx = makeContext();
 
     //-- Act --//
-    ZTestPacket result = ctx.getPacket(ZTestPacket.class);
+    ZTestPacket result = ctx.getRequestPacket(ZTestPacket.class);
 
     //-- Assert --//
     assertThat(result).isSameAs(proto);

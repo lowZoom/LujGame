@@ -24,7 +24,7 @@ public class RobotNettyHandler extends ChannelInboundHandlerAdapter {
     System.err.println("收到数据 -》 " + msg);
   }
 
-  //  @Override
+//  @Override
 //  public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 //    System.out.println("--------> Inactive");
 //  }

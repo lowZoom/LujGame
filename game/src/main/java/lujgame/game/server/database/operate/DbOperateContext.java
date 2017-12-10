@@ -63,7 +63,7 @@ public class DbOperateContext {
     return _log;
   }
 
-  public <T> T getPacket(Class<T> packetType) {
+  public <T> T getRequestPacket(Class<T> packetType) {
     return (T) _paramMap.get("packet");
   }
 

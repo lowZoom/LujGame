@@ -8,10 +8,9 @@ import lujgame.example.business.m101.net.Net10001Rsp;
 import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.operate.DbOperateContext;
 import lujgame.game.server.type.JSet;
-import lujgame.game.server.type.JTime;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class M1LoginCmd extends CacheOkCommand {
 
   @Override
@@ -22,14 +21,17 @@ public class M1LoginCmd extends CacheOkCommand {
 //      ctx.sendError2C();
 //      return;
 
-      Net10001Req packet = ctx.getPacket(Net10001Req.class);
+      Net10001Req packet = ctx.getRequestPacket(Net10001Req.class);
       throw new RuntimeException("不应该找不到，用户名：" + packet.loginName());
     }
 
-    M1PlayerDb playerDb = ctx.getDb(playerSet);
-    JTime now = ctx.now();
-    ctx.jSet(playerDb.loginTime(), now);
+    //TODO: 检查是否已登录，顶号
 
+    // 更新登录时间
+    M1PlayerDb playerDb = ctx.getDb(playerSet);
+    ctx.jSet(playerDb.loginTime(), ctx.now());
+
+    // 回复客户端登录包
     Net10001Rsp rsp = _protoEncoder.encode1010001(ctx, playerDb);
     ctx.sendResponse2C(rsp);
   }

@@ -18,7 +18,6 @@ public class Net10002 extends GameNetHandler<Net10002Req> {
     ctx.log().debug("新玩家注册：{}", name);
 
     ctx.dbLoadSet(M1PlayerDb.class, name, "0");
-
     ctx.invoke(M1RegisterCmd.class, packet);
   }
 }
