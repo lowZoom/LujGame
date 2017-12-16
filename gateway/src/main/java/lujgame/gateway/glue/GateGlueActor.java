@@ -2,7 +2,7 @@ package lujgame.gateway.glue;
 
 import lujgame.core.akka.common.CaseActor;
 import lujgame.gateway.glue.message.NewForwardMsg;
-import lujgame.gateway.network.akka.accept.logic.ForwardBinder;
+import lujgame.gateway.network.akka.accept.logic.bind.ForwardBinder;
 import lujgame.gateway.network.akka.accept.message.BindForwardReqLocal;
 
 public class GateGlueActor extends CaseActor {

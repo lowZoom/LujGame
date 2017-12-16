@@ -56,12 +56,12 @@ public class DbOperateContextTest extends ZBaseTest {
   }
 
   @Test
-  public void getPacket() throws Exception {
+  public void getPacket_() throws Exception {
     //-- Arrange --//
     DbOperateContext ctx = makeContext();
     Object proto = ctx.createProto(ZTestPacket.class);
 
-    _paramMap = ImmutableMap.of("packet", proto);
+    _paramMap = ImmutableMap.of("luj.packet", proto);
     ctx = makeContext();
 
     //-- Act --//

@@ -4,18 +4,18 @@ import akka.actor.ActorRef;
 import java.net.InetSocketAddress;
 import lujgame.core.akka.common.CaseActor;
 import lujgame.gateway.network.akka.accept.logic.ConnKiller;
-import lujgame.gateway.network.akka.accept.logic.ForwardBinder;
+import lujgame.gateway.network.akka.accept.logic.bind.ForwardBindFinisher;
 import lujgame.gateway.network.akka.accept.message.BindForwardRsp;
-import lujgame.gateway.network.akka.connection.logic.ConnInfoGetter;
 import lujgame.gateway.network.akka.connection.logic.ConnPacketReceiver;
 import lujgame.gateway.network.akka.connection.logic.ConnPacketSender;
 import lujgame.gateway.network.akka.connection.logic.DumbDetector;
+import lujgame.gateway.network.akka.connection.logic.GateConnActorDependency;
 import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
 import lujgame.gateway.network.akka.connection.message.Game2GateMsg;
 import lujgame.gateway.network.akka.connection.message.Netty2GateMsg;
 
 /**
- * 处理一条连接相关逻辑
+ * 处理一条连接相关逻辑，与Netty直接通讯
  */
 public class GateConnActor extends CaseActor {
 
@@ -23,24 +23,9 @@ public class GateConnActor extends CaseActor {
 
   public enum Dumb {MSG}
 
-  public GateConnActor(
-      ConnActorState state,
-      ConnPacketReceiver packetReceiver,
-      ConnPacketSender packetSender,
-      ForwardBinder forwardBinder,
-      ConnKiller connKiller,
-      DumbDetector dumbDetector,
-      ConnInfoGetter connInfoGetter) {
+  public GateConnActor(ConnActorState state, GateConnActorDependency dependency) {
     _state = state;
-
-    _packetReceiver = packetReceiver;
-    _packetSender = packetSender;
-
-    _forwardBinder = forwardBinder;
-    _connKiller = connKiller;
-
-    _dumbDetector = dumbDetector;
-    _connInfoGetter = connInfoGetter;
+    _dependency = dependency;
 
     registerMessage();
   }
@@ -48,15 +33,16 @@ public class GateConnActor extends CaseActor {
   @Override
   public void preStart() throws Exception {
     ConnActorState state = _state;
+    GateConnActorDependency d = _dependency;
 
-    InetSocketAddress remoteAddr = _connInfoGetter.getRemoteAddress(state);
+    InetSocketAddress remoteAddr = d.getConnInfoGetter().getRemoteAddress(state);
     log().info("新连接 -> {}", remoteAddr);
 
     ActorRef self = getSelf();
-    _packetReceiver.updateNettyHandler(state, self);
+    d.getPacketReceiver().updateNettyHandler(state, self);
 
     // 启动空连接检测
-    _dumbDetector.startDetect(this);
+    d.getDumbDetector().startDetect(this);
   }
 
   @Override
@@ -79,33 +65,31 @@ public class GateConnActor extends CaseActor {
   }
 
   private void onNettyData(Netty2GateMsg msg) {
-    _packetReceiver.receivePacket(_state, msg.getData(), getSelf(), log());
+    ConnPacketReceiver r = _dependency.getPacketReceiver();
+    r.receivePacket(_state, msg.getData(), getSelf(), log());
   }
 
   private void onBindForwardRsp(BindForwardRsp msg) {
-    _forwardBinder.finishBind(_state, msg.getForwardRef(), msg.getForwardId(), getSelf(), log());
+    ForwardBindFinisher f = _dependency.getForwardBindFinisher();
+    f.finishBind(_state, msg.getForwardRef(), msg.getForwardId(), getSelf(), log());
   }
 
   private void onGameData(Game2GateMsg msg) {
-    _packetSender.sendPacket(_state.getNettyContext(), 233, msg.getData());
+    ConnPacketSender s = _dependency.getPacketSender();
+    s.sendPacket(_state.getNettyContext(), 233, msg.getData());
   }
 
   private void onDestroy(@SuppressWarnings("unused") Destroy ignored) {
-    _connKiller.requestKill(_state, getSelf());
+    ConnKiller k = _dependency.getConnKiller();
+    k.requestKill(_state, getSelf());
   }
 
   private void onDumb(@SuppressWarnings("unused") Dumb ignored) {
-    _dumbDetector.destroyDumb(_state, getSelf(), log());
+    DumbDetector d = _dependency.getDumbDetector();
+    d.destroyDumb(_state, getSelf(), log());
   }
 
   private final ConnActorState _state;
 
-  private final ConnPacketReceiver _packetReceiver;
-  private final ConnPacketSender _packetSender;
-
-  private final ForwardBinder _forwardBinder;
-  private final ConnKiller _connKiller;
-
-  private final DumbDetector _dumbDetector;
-  private final ConnInfoGetter _connInfoGetter;
+  private final GateConnActorDependency _dependency;
 }

@@ -5,7 +5,6 @@ import akka.actor.Props;
 import akka.japi.Creator;
 import com.typesafe.config.Config;
 import lujgame.gateway.network.akka.accept.logic.ConnKiller;
-import lujgame.gateway.network.akka.accept.logic.ForwardBinder;
 import lujgame.gateway.network.akka.accept.logic.NettyRunner;
 import lujgame.gateway.network.akka.accept.logic.NewConnCreator;
 import org.springframework.beans.factory.annotation.Autowired;

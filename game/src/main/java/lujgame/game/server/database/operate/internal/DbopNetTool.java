@@ -23,14 +23,15 @@ public class DbopNetTool {
     return packet;
   }
 
-  public void sendToClient(ActorRef connRef, PacketImpl<?> packet, ActorRef entityRef) {
+  public void sendToClient(ActorRef connRef,
+      Integer opcode, PacketImpl<?> packet, ActorRef entityRef) {
     Packetimpl0 i = _packetInternal;
     NetPacketCodec codec = i.getCodec(packet);
 
     Object packetVal = i.getValue(packet);
     byte[] data = codec.encodePacket(packetVal);
 
-    _akkaTool.tell(new Game2GateMsg(data), entityRef, connRef);
+    _akkaTool.tell(new Game2GateMsg(opcode, data), entityRef, connRef);
   }
 
   @Inject

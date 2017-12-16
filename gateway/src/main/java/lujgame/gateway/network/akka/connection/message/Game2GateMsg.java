@@ -4,13 +4,16 @@ import java.io.Serializable;
 
 public class Game2GateMsg implements Serializable {
 
-  public Game2GateMsg(byte[] data) {
+  public Game2GateMsg(Integer opcode, byte[] data) {
+    _opcode = opcode;
     _data = data;
   }
 
   public byte[] getData() {
     return _data;
   }
+
+  private final Integer _opcode;
 
   private final byte[] _data;
 }

@@ -3,7 +3,7 @@ package lujgame.gateway.glue;
 import akka.actor.Props;
 import akka.japi.Creator;
 import com.typesafe.config.Config;
-import lujgame.gateway.network.akka.accept.logic.ForwardBinder;
+import lujgame.gateway.network.akka.accept.logic.bind.ForwardBinder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

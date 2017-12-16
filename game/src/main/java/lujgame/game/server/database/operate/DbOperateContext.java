@@ -64,7 +64,7 @@ public class DbOperateContext {
   }
 
   public <T> T getRequestPacket(Class<T> packetType) {
-    return (T) _paramMap.get("packet");
+    return (T) _paramMap.get("luj.packet");
   }
 
   @Nullable
@@ -110,7 +110,8 @@ public class DbOperateContext {
   }
 
   public void sendResponse2C(Object proto) {
-    _dbopNetTool.sendToClient(_connRef, (PacketImpl<?>) proto, _entityRef);
+    Integer opcode = (Integer) _paramMap.get("luj.opcode");
+    _dbopNetTool.sendToClient(_connRef, opcode, (PacketImpl<?>) proto, _entityRef);
   }
 
   public JTime now() {

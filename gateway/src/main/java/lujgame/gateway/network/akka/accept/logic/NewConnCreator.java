@@ -6,20 +6,17 @@ import akka.actor.UntypedActorContext;
 import akka.event.LoggingAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import java.util.Map;
+import javax.inject.Inject;
 import lujgame.gateway.network.akka.accept.NetAcceptActor;
 import lujgame.gateway.network.akka.accept.NetAcceptState;
 import lujgame.gateway.network.akka.accept.message.NewConnMsg;
 import lujgame.gateway.network.akka.connection.GateConnActorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class NewConnCreator {
-
-  @Autowired
-  public NewConnCreator(GateConnActorFactory connActorFactory) {
-    _connActorFactory = connActorFactory;
-  }
 
   public ConnectionItem createConnection(NetAcceptActor acceptActor,
       NetAcceptState state, NewConnMsg msg) {
@@ -45,5 +42,6 @@ public class NewConnCreator {
     log.debug("增加新连接，当前连接数量：{}", connMap.size());
   }
 
-  private final GateConnActorFactory _connActorFactory;
+  @Inject
+  private GateConnActorFactory _connActorFactory;
 }
