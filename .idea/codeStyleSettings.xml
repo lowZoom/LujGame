@@ -67,6 +67,9 @@
         <JSON>
           <option name="ARRAY_WRAPPING" value="0" />
         </JSON>
+        <JavaCodeStyleSettings>
+          <option name="CLASS_NAMES_IN_JAVADOC" value="3" />
+        </JavaCodeStyleSettings>
         <XML>
           <option name="XML_ALIGN_ATTRIBUTES" value="false" />
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
