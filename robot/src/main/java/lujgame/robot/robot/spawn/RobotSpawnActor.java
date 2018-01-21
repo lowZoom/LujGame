@@ -3,13 +3,12 @@ package lujgame.robot.robot.spawn;
 import akka.event.LoggingAdapter;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import lujgame.core.akka.common.CaseActor;
+import lujgame.robot.robot.config.RobotConfigScanner;
+import lujgame.robot.robot.config.RobotTemplate;
 import lujgame.robot.robot.instance.RobotInstanceActor;
-import lujgame.robot.robot.instance.RobotInstanceActorFactory;
-import lujgame.robot.robot.spawn.logic.RobotGroup;
 import lujgame.robot.robot.spawn.logic.RobotSpawner;
 
 /**
@@ -17,11 +16,10 @@ import lujgame.robot.robot.spawn.logic.RobotSpawner;
  */
 public class RobotSpawnActor extends CaseActor {
 
-  public RobotSpawnActor(
-      RobotSpawner robotSpawner,
-      RobotInstanceActorFactory robotInstanceFactory) {
+  public RobotSpawnActor(RobotSpawner robotSpawner,
+      RobotConfigScanner robotConfigScanner) {
     _robotSpawner = robotSpawner;
-    _robotInstanceFactory = robotInstanceFactory;
+    _robotConfigScanner = robotConfigScanner;
 
     _robotList = new ArrayList<>(64);
 
@@ -39,8 +37,9 @@ public class RobotSpawnActor extends CaseActor {
     RobotSpawner s = _robotSpawner;
     LoggingAdapter log = log();
 
-    List<Path> configList = s.findRobotConfig("robot", log);
-    List<RobotGroup> groupList = s.makeRobotGroup(configList, log);
+    //FIXME: 在前一层就应该解析好机器人配置
+
+    List<RobotTemplate> groupList = _robotConfigScanner.scan(log);
     s.spawnRobot(groupList, _eventGroup, getContext(), log);
   }
 
@@ -49,5 +48,7 @@ public class RobotSpawnActor extends CaseActor {
   private final List<RobotInstanceActor> _robotList;
 
   private final RobotSpawner _robotSpawner;
-  private final RobotInstanceActorFactory _robotInstanceFactory;
+
+  //TODO: 这个应该放到前一层
+  private final RobotConfigScanner _robotConfigScanner;
 }

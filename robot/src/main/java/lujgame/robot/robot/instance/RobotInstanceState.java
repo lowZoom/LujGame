@@ -2,14 +2,14 @@ package lujgame.robot.robot.instance;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoopGroup;
+import lujgame.robot.robot.config.RobotTemplate;
 import lujgame.robot.robot.instance.logic.RobotBehaveState;
-import lujgame.robot.robot.spawn.logic.RobotGroup;
 
 public class RobotInstanceState {
 
-  public RobotInstanceState(RobotGroup robotGroup,
+  public RobotInstanceState(RobotTemplate robotTemplate,
       EventLoopGroup workerGroup, RobotBehaveState behaveState) {
-    _robotGroup = robotGroup;
+    _robotTemplate = robotTemplate;
     _workerGroup = workerGroup;
 
     _behaveState = behaveState;
@@ -23,8 +23,8 @@ public class RobotInstanceState {
     _nettyContext = nettyContext;
   }
 
-  public RobotGroup getRobotGroup() {
-    return _robotGroup;
+  public RobotTemplate getRobotTemplate() {
+    return _robotTemplate;
   }
 
   public EventLoopGroup getWorkerGroup() {
@@ -37,7 +37,7 @@ public class RobotInstanceState {
 
   private ChannelHandlerContext _nettyContext;
 
-  private final RobotGroup _robotGroup;
+  private final RobotTemplate _robotTemplate;
   private final EventLoopGroup _workerGroup;
 
   private final RobotBehaveState _behaveState;

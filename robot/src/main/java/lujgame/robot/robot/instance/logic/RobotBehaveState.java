@@ -1,15 +1,22 @@
 package lujgame.robot.robot.instance.logic;
 
-import com.typesafe.config.Config;
+import io.netty.channel.ChannelHandlerContext;
+import java.util.List;
+import lujgame.robot.robot.config.BehaviorConfig;
+import lujgame.robot.robot.config.RobotConfig;
 
 public class RobotBehaveState {
 
-  public Config getBehaviorConfig() {
-    return _behaviorConfig;
+  public RobotBehaveState(List<BehaviorConfig> behaviorList) {
+    _behaviorList = behaviorList;
   }
 
-  public void setBehaviorConfig(Config behaviorConfig) {
-    _behaviorConfig = behaviorConfig;
+  public ChannelHandlerContext getNettyContext() {
+    return _nettyContext;
+  }
+
+  public void setNettyContext(ChannelHandlerContext nettyContext) {
+    _nettyContext = nettyContext;
   }
 
   public int getBehaviorIndex() {
@@ -20,7 +27,12 @@ public class RobotBehaveState {
     _behaviorIndex = behaviorIndex;
   }
 
-  private Config _behaviorConfig;
+  public List<BehaviorConfig> getBehaviorList() {
+    return _behaviorList;
+  }
 
+  private ChannelHandlerContext _nettyContext;
   private int _behaviorIndex;
+
+  private final List<BehaviorConfig>  _behaviorList;
 }

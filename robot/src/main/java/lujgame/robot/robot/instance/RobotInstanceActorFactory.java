@@ -2,42 +2,19 @@ package lujgame.robot.robot.instance;
 
 import akka.actor.Props;
 import akka.japi.Creator;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
 import io.netty.channel.EventLoopGroup;
-import java.nio.file.Path;
-import lujgame.core.file.FileTool;
+import javax.inject.Inject;
+import lujgame.robot.robot.config.RobotTemplate;
 import lujgame.robot.robot.instance.logic.RobotBehaveState;
 import lujgame.robot.robot.instance.logic.RobotBehaver;
 import lujgame.robot.robot.instance.logic.RobotConnector;
-import lujgame.robot.robot.spawn.logic.RobotGroup;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class RobotInstanceActorFactory {
 
-  @Autowired
-  public RobotInstanceActorFactory(
-      FileTool fileTool,
-      RobotConnector robotConnector,
-      RobotBehaver robotBehaver) {
-    _fileTool = fileTool;
-
-    _robotConnector = robotConnector;
-    _robotBehaver = robotBehaver;
-  }
-
-  public RobotGroup readGroup(Path path) {
-    String groupName = _fileTool.getName(path.toString());
-    Config config = ConfigFactory.parseFile(path.toFile());
-
-    return new RobotGroup(groupName, config.getConfig("robot"));
-  }
-
-  public Props props(RobotGroup robotGroup, EventLoopGroup eventGroup) {
-    RobotBehaveState bState = new RobotBehaveState();
-
+  public Props props(RobotTemplate robotGroup, EventLoopGroup eventGroup) {
+    RobotBehaveState bState = new RobotBehaveState(robotGroup.getBehaviorList());
     RobotInstanceState iState = new RobotInstanceState(robotGroup, eventGroup, bState);
 
     Creator<RobotInstanceActor> c = () -> new RobotInstanceActor(
@@ -48,8 +25,9 @@ public class RobotInstanceActorFactory {
     return Props.create(RobotInstanceActor.class, c);
   }
 
-  private final FileTool _fileTool;
+  @Inject
+  private RobotConnector _robotConnector;
 
-  private final RobotConnector _robotConnector;
-  private final RobotBehaver _robotBehaver;
+  @Inject
+  private RobotBehaver _robotBehaver;
 }

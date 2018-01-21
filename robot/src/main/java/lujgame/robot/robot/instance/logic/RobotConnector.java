@@ -2,35 +2,24 @@ package lujgame.robot.robot.instance.logic;
 
 import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
-import com.typesafe.config.Config;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import javax.inject.Inject;
 import lujgame.robot.netty.RobotNettyInit;
+import lujgame.robot.robot.config.RobotTemplate;
 import lujgame.robot.robot.instance.RobotInstanceActor;
 import lujgame.robot.robot.instance.RobotInstanceState;
-import lujgame.robot.robot.spawn.logic.RobotConfigReader;
-import lujgame.robot.robot.spawn.logic.RobotGroup;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class RobotConnector {
 
-  @Autowired
-  public RobotConnector(RobotConfigReader robotConfigReader,
-      RobotBehaver robotBehaver) {
-    _robotConfigReader = robotConfigReader;
-    _robotBehaver = robotBehaver;
-  }
-
   public void startConnect(RobotInstanceState state, ActorRef instanceRef, LoggingAdapter log) {
-    RobotGroup robotGroup = state.getRobotGroup();
-    Config robotCfg = robotGroup.getConfig();
+    RobotTemplate template = state.getRobotTemplate();
 
-    RobotConfigReader r = _robotConfigReader;
-    String ip = r.getIp(robotCfg);
-    int port = r.getPort(robotCfg);
+    String ip = template.getHostname();
+    int port = template.getPort();
     log.info("检测目标服务器 -> {}:{}", ip, port);
 
     new Bootstrap()
@@ -46,6 +35,7 @@ public class RobotConnector {
   public void handleConnectOk(RobotInstanceState state,
       ChannelHandlerContext nettyContext, ActorRef instanceRef, LoggingAdapter log) {
     state.setNettyContext(nettyContext);
+    state.getBehaveState().setNettyContext(nettyContext);
 
     log.debug("连接成功，开始执行行为列表");
 
@@ -57,6 +47,6 @@ public class RobotConnector {
     log.debug("连接结果：{}", success);
   }
 
-  private final RobotConfigReader _robotConfigReader;
-  private final RobotBehaver _robotBehaver;
+  @Inject
+  private RobotBehaver _robotBehaver;
 }

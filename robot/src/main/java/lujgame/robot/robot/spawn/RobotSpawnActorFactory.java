@@ -2,31 +2,26 @@ package lujgame.robot.robot.spawn;
 
 import akka.actor.Props;
 import akka.japi.Creator;
-import java.util.ArrayList;
-import lujgame.robot.robot.instance.RobotInstanceActorFactory;
+import javax.inject.Inject;
+import lujgame.robot.robot.config.RobotConfigScanner;
 import lujgame.robot.robot.spawn.logic.RobotSpawner;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class RobotSpawnActorFactory {
-
-  @Autowired
-  public RobotSpawnActorFactory(
-      RobotSpawner robotSpawner,
-      RobotInstanceActorFactory robotInstanceFactory) {
-    _robotSpawner = robotSpawner;
-    _robotInstanceFactory = robotInstanceFactory;
-  }
 
   public Props props() {
     Creator<RobotSpawnActor> c = () -> new RobotSpawnActor(
         _robotSpawner,
-        _robotInstanceFactory);
+        _robotConfigScanner);
 
     return Props.create(RobotSpawnActor.class, c);
   }
 
-  private final RobotSpawner _robotSpawner;
-  private final RobotInstanceActorFactory _robotInstanceFactory;
+  @Inject
+  private RobotSpawner _robotSpawner;
+
+  @Autowired
+  private RobotConfigScanner _robotConfigScanner;
 }

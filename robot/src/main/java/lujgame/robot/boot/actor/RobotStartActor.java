@@ -11,8 +11,7 @@ import lujgame.robot.robot.spawn.RobotSpawnActorFactory;
  */
 public class RobotStartActor extends CaseActor {
 
-  public RobotStartActor(
-      RobotSpawnActorFactory spawnActorFactory) {
+  public RobotStartActor(RobotSpawnActorFactory spawnActorFactory) {
     _spawnActorFactory = spawnActorFactory;
   }
 
