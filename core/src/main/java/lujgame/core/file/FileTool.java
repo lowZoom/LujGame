@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,6 @@ public class FileTool {
   }
 
   public boolean isExtension(Path path, String extension) {
-    return extension.equals(
-        com.google.common.io.Files.getFileExtension(path.toString()));
+    return Objects.equals(extension, com.google.common.io.Files.getFileExtension(path.toString()));
   }
 }

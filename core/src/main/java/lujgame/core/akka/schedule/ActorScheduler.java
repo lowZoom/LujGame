@@ -11,21 +11,15 @@ import java.util.concurrent.TimeUnit;
 import lujgame.core.akka.common.CaseActor;
 import lujgame.core.akka.common.CaseActorInternal;
 import lujgame.core.akka.common.CaseActorState;
+import lujgame.core.akka.internal.AkkaAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import scala.concurrent.ExecutionContextExecutor;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
 
-@Component
+@Service
 public class ActorScheduler {
-
-  @Autowired
-  public ActorScheduler(CaseActorInternal caseActorInternal,
-      ScheduleItemFactory scheduleItemFactory) {
-    _caseActorInternal = caseActorInternal;
-    _scheduleItemFactory = scheduleItemFactory;
-  }
 
   public void schedule(CaseActor actor, long len, TimeUnit unit, Object msg) {
     UntypedActorContext ctx = actor.getContext();
@@ -36,7 +30,7 @@ public class ActorScheduler {
     ActorRef actorRef = actor.getSelf();
     ExecutionContextExecutor dispatcher = system.dispatcher();
 
-    scheduler.scheduleOnce(dur, actorRef, msg, dispatcher, actorRef);
+    _akkaAdapter.scheduleOnce(scheduler, dur, actorRef, msg, dispatcher, actorRef);
   }
 
   public void scheduleSelf(CaseActor actor, long len, TimeUnit unit,
@@ -57,7 +51,8 @@ public class ActorScheduler {
 
     // 新建调度
     ScheduleMsg scheduleMsg = new ScheduleMsg(scheduleId);
-    Cancellable c = scheduler.scheduleOnce(dur, actorRef, scheduleMsg, dispatcher, actorRef);
+    Cancellable c = _akkaAdapter.scheduleOnce(
+        scheduler, dur, actorRef, scheduleMsg, dispatcher, actorRef);
 
     // 存放新的调度
     ScheduleItem item = _scheduleItemFactory.createItem(scheduleId, msg, interruptType, c);
@@ -77,6 +72,12 @@ public class ActorScheduler {
     cancellable.cancel();
   }
 
-  private final CaseActorInternal _caseActorInternal;
-  private final ScheduleItemFactory _scheduleItemFactory;
+  @Autowired
+  private CaseActorInternal _caseActorInternal;
+
+  @Autowired
+  private ScheduleItemFactory _scheduleItemFactory;
+
+  @Autowired
+  private AkkaAdapter _akkaAdapter;
 }
