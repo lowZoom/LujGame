@@ -106,11 +106,11 @@ public class RobotConfigScanner {
     Config cfg = config.getConfig();
 
     List<BehaviorConfig> behaviorList = getBehaviorList(cfg).stream()
-        .map(c -> parseBehavior(c))
+        .map(this::parseBehavior)
         .collect(Collectors.toList());
 
-    return new RobotTemplate(config.getName(), cfg.getString("ip"), cfg.getInt("port"),
-        cfg.getInt("num"), behaviorList);
+    return new RobotTemplate(config.getName(), cfg.getString("hostname"),
+        cfg.getInt("port"), cfg.getInt("num"), behaviorList);
   }
 
   private List<? extends Config> getBehaviorList(Config cfg) {

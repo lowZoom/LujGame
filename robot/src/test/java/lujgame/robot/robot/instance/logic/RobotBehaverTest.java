@@ -1,15 +1,14 @@
 package lujgame.robot.robot.instance.logic;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 import akka.event.LoggingAdapter;
+import com.google.common.collect.ImmutableList;
 import javax.inject.Inject;
 import lujgame.robot.test.RobotTest;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
 public class RobotBehaverTest extends RobotTest {
 
@@ -20,18 +19,19 @@ public class RobotBehaverTest extends RobotTest {
 
   @Before
   public void setUp() throws Exception {
-    _robotBehaveState = new RobotBehaveState(null);
+    _robotBehaveState = new RobotBehaveState(ImmutableList.of());
   }
 
   @Test
   public void doBehave_() throws Exception {
     //-- Arrange --//
+    _robotBehaveState.setBehaviorIndex(1);
 
     //-- Act --//
     doBehave();
 
     //-- Assert --//
-
+    assertThat(_robotBehaveState.getBehaviorIndex()).isEqualTo(2);
   }
 
   void doBehave() {
