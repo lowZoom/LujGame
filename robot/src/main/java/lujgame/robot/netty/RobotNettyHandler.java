@@ -3,6 +3,7 @@ package lujgame.robot.netty;
 import akka.actor.ActorRef;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import lujgame.robot.robot.instance.RobotInstanceActor;
 import lujgame.robot.robot.instance.message.ConnectOkMsg;
 
 public class RobotNettyHandler extends ChannelInboundHandlerAdapter {
@@ -34,5 +35,8 @@ public class RobotNettyHandler extends ChannelInboundHandlerAdapter {
 //    System.out.println("--------> Unnnreg");
 //  }
 
+  /**
+   * @see RobotInstanceActor
+   */
   private final ActorRef _robotRef;
 }

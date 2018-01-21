@@ -4,11 +4,11 @@ import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import javax.inject.Inject;
+import lujgame.gateway.network.GateOpcode;
 import lujgame.gateway.network.akka.accept.logic.ConnKiller;
 import lujgame.gateway.network.akka.connection.logic.ConnPacketReceiver;
 import lujgame.gateway.network.akka.connection.logic.ConnPacketSender;
 import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
-import lujgame.gateway.network.akka.connection.message.Gate2GameMsg;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,7 +17,7 @@ public class ForwardBindFinisher {
   /**
    * 在网关ConnActor中完成绑定动作
    *
-   * @see ConnPacketReceiver#bindForward(ConnActorState, Gate2GameMsg, ActorRef)
+   * @see ConnPacketReceiver#bindForward
    */
   public void finishBind(ConnActorState state, ActorRef forwardRef,
       String forwardId, ActorRef connRef, LoggingAdapter log) {
@@ -33,8 +33,10 @@ public class ForwardBindFinisher {
 
     //TODO: 回复一个空包给客户端表示成功，包头与游戏逻辑包格式一致
     ChannelHandlerContext nettyCtx = state.getNettyContext();
-
+    _connPacketSender.sendPacket(nettyCtx, GateOpcode.BIND, EMPTY_DATA);
   }
+
+  private static final byte[] EMPTY_DATA = new byte[0];
 
   @Inject
   private ConnKiller _connKiller;

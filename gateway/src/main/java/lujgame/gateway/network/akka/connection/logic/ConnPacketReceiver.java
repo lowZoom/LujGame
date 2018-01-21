@@ -7,15 +7,17 @@ import io.netty.channel.ChannelPipeline;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
+import javax.inject.Inject;
+import lujgame.gateway.network.GateOpcode;
 import lujgame.gateway.network.akka.accept.message.BindForwardReqLocal;
 import lujgame.gateway.network.akka.connection.logic.packet.ConnPacketBuffer;
 import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
 import lujgame.gateway.network.akka.connection.message.Gate2GameMsg;
 import lujgame.gateway.network.netty.event.NettyConnEvent;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class ConnPacketReceiver {
 
   public void updateNettyHandler(ConnActorState state, ActorRef connRef) {
@@ -70,7 +72,7 @@ public class ConnPacketReceiver {
         new String(packet.getData(), StandardCharsets.UTF_8));
 
     Integer opcode = packet.getOpcode();
-    if (opcode == 1) {
+    if (Objects.equals(opcode, GateOpcode.BIND)) {
       bindForward(state, packet, connRef);
       return;
     }
@@ -101,9 +103,9 @@ public class ConnPacketReceiver {
     acceptRef.tell(req, connRef);
   }
 
-  @Autowired
+  @Inject
   private PacketBufferDecoder _packetBufferDecoder;
 
-  @Autowired
+  @Inject
   private ConnInfoGetter _connInfoGetter;
 }
