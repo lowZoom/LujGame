@@ -1,9 +1,7 @@
 package lujgame.robot.robot.instance.logic;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
-import akka.event.LoggingAdapter;
 import com.google.common.collect.ImmutableList;
 import javax.inject.Inject;
 import lujgame.robot.test.RobotTest;
@@ -35,6 +33,6 @@ public class RobotBehaverTest extends RobotTest {
   }
 
   void doBehave() {
-    _behaver.doBehave(_robotBehaveState, null, mock(LoggingAdapter.class));
+//    _behaver.doBehave(_robotBehaveState, null, mock(LoggingAdapter.class));
   }
 }

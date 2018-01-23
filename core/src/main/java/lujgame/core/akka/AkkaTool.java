@@ -7,10 +7,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import javax.inject.Inject;
 import lujgame.core.akka.common.CaseActor;
+import lujgame.core.akka.common.casev2.CaseActorV2;
 import lujgame.core.akka.link.ActorLinker;
 import lujgame.core.akka.schedule.ActorScheduler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,6 +37,10 @@ public class AkkaTool {
 
   public void tellSelf(Object msg, ActorRef ref) {
     tell(msg, ref, ref);
+  }
+
+  public void tellSelf(Object msg, CaseActorV2 instanceActor) {
+    tellSelf(msg, instanceActor.getSelf());
   }
 
   public void schedule(CaseActor actor, long len, TimeUnit unit,

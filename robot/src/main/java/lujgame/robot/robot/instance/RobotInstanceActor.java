@@ -1,53 +1,38 @@
 package lujgame.robot.robot.instance;
 
-import lujgame.core.akka.common.CaseActor;
-import lujgame.robot.robot.instance.logic.RobotBehaver;
-import lujgame.robot.robot.instance.logic.RobotConnector;
-import lujgame.robot.robot.instance.message.ConnectOkMsg;
+import akka.actor.ActorRef;
+import lujgame.core.akka.common.casev2.ActorCaseHandler;
+import lujgame.core.akka.common.casev2.CaseActorV2;
+import lujgame.core.akka.common.casev2.CaseContext;
 
 /**
  * 代表一个机器人
  */
-public class RobotInstanceActor extends CaseActor {
+public class RobotInstanceActor extends CaseActorV2 {
+
+  public interface Context<M> extends CaseContext<RobotInstanceState, M> {
+
+  }
+
+  public interface Case<M> extends ActorCaseHandler<Context<M>> {
+
+  }
+
+  public enum Start {MSG}
 
   public enum Behave {MSG}
 
-  public RobotInstanceActor(
-      RobotInstanceState state,
-      RobotConnector robotConnector,
-      RobotBehaver robotBehaver) {
+  public RobotInstanceActor(RobotInstanceState state) {
     _state = state;
-
-    _robotConnector = robotConnector;
-    _robotBehaver = robotBehaver;
-
-    initCases();
   }
 
   @Override
   public void preStart() throws Exception {
-    _robotConnector.startConnect(_state, getSelf(), log());
-  }
-
-  private void initCases() {
-    addCase(ConnectOkMsg.class, this::onConnectOk);
-//    addCase(ConnectFail.class, this::onConnectFail);
-
-    addCase(Behave.class, this::onBehave);
-  }
-
-  private void onConnectOk(ConnectOkMsg msg) {
-    _robotConnector.handleConnectOk(_state, msg.getNettyContext(), getSelf(), log());
+    ActorRef self = getSelf();
+    self.tell(Start.MSG, self);
   }
 
   //TODO: 连接失败时根据配置是否重连
 
-  private void onBehave(@SuppressWarnings("unused") Behave msg) {
-    _robotBehaver.doBehave(_state.getBehaveState(), this, log());
-  }
-
   private final RobotInstanceState _state;
-
-  private final RobotConnector _robotConnector;
-  private final RobotBehaver _robotBehaver;
 }
