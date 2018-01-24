@@ -39,9 +39,10 @@
     </properties>
   </component>
   <component name="EntryPointsManager">
-    <list size="2">
-      <item index="0" class="java.lang.String" itemvalue="org.springframework.context.annotation.Bean" />
-      <item index="1" class="java.lang.String" itemvalue="org.springframework.stereotype.Service" />
+    <list size="3">
+      <item index="0" class="java.lang.String" itemvalue="javax.annotation.PostConstruct" />
+      <item index="1" class="java.lang.String" itemvalue="org.springframework.context.annotation.Bean" />
+      <item index="2" class="java.lang.String" itemvalue="org.springframework.stereotype.Service" />
     </list>
     <writeAnnotations>
       <writeAnnotation name="javax.inject.Inject" />
