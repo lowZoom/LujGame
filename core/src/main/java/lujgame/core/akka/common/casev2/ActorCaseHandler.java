@@ -1,6 +1,6 @@
 package lujgame.core.akka.common.casev2;
 
-public interface ActorCaseHandler<T> {
+public interface ActorCaseHandler<C, M> {
 
-  void onHandle(T ctx);
+  void onHandle(C ctx);
 }

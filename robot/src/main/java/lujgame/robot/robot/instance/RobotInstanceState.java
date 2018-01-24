@@ -3,7 +3,7 @@ package lujgame.robot.robot.instance;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoopGroup;
 import lujgame.robot.robot.config.RobotTemplate;
-import lujgame.robot.robot.instance.logic.RobotBehaveState;
+import lujgame.robot.robot.instance.control.RobotBehaveState;
 
 public class RobotInstanceState {
 

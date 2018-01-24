@@ -1,4 +1,4 @@
-package lujgame.robot.robot.instance.logic;
+package lujgame.robot.robot.instance.control;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

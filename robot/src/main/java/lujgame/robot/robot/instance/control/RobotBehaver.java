@@ -1,4 +1,4 @@
-package lujgame.robot.robot.instance.logic;
+package lujgame.robot.robot.instance.control;
 
 import javax.inject.Inject;
 import lujgame.core.akka.schedule.ActorScheduler;

@@ -8,14 +8,14 @@ import lujgame.core.akka.common.casev2.CaseActorV2;
 import lujgame.robot.netty.RobotNetPacket;
 import lujgame.robot.robot.config.BehaviorConfig;
 import lujgame.robot.robot.instance.RobotInstanceActor;
-import lujgame.robot.robot.instance.logic.RobotBehaveState;
+import lujgame.robot.robot.instance.control.RobotBehaveState;
 import org.springframework.stereotype.Service;
 
 @Service
 class OnBehave implements RobotInstanceActor.Case<RobotInstanceActor.Behave> {
 
   @Override
-  public void onHandle(RobotInstanceActor.Context<RobotInstanceActor.Behave> ctx) {
+  public void onHandle(RobotInstanceActor.Context ctx) {
     RobotBehaveState state = ctx.getActorState().getBehaveState();
     CaseActorV2 instanceActor = ctx.getActor();
     LoggingAdapter log = ctx.getActorLogger();

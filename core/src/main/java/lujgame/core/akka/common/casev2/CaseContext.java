@@ -2,13 +2,29 @@ package lujgame.core.akka.common.casev2;
 
 import akka.event.LoggingAdapter;
 
-public interface CaseContext<S, M> {
+public abstract class CaseContext<S> {
 
-  S getActorState();
+  public <M> M getMessage(ActorCaseHandler<?, M> handler) {
+    return (M) _message;
+  }
 
-  M getMessage();
+  public S getActorState() {
+    return _actorState;
+  }
 
-  LoggingAdapter getActorLogger();
+  public LoggingAdapter getActorLogger() {
+    return _actorLogger;
+  }
 
-  CaseActorV2 getActor();
+  public CaseActorV2 getActor() {
+    return _actor;
+  }
+
+   S _actorState;
+
+   Object _message;
+
+   LoggingAdapter _actorLogger;
+
+   CaseActorV2 _actor;
 }

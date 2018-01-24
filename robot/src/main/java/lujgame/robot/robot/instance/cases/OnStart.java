@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 class OnStart implements RobotInstanceActor.Case<RobotInstanceActor.Start> {
 
   @Override
-  public void onHandle(RobotInstanceActor.Context<RobotInstanceActor.Start> ctx) {
+  public void onHandle(RobotInstanceActor.Context ctx) {
     RobotInstanceState state = ctx.getActorState();
     ActorRef instanceRef = ctx.getActor().getSelf();
 

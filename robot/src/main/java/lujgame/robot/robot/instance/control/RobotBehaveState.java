@@ -1,9 +1,8 @@
-package lujgame.robot.robot.instance.logic;
+package lujgame.robot.robot.instance.control;
 
 import io.netty.channel.ChannelHandlerContext;
 import java.util.List;
 import lujgame.robot.robot.config.BehaviorConfig;
-import lujgame.robot.robot.config.RobotConfig;
 
 public class RobotBehaveState {
 
