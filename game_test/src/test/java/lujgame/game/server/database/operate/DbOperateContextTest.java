@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import javax.inject.Inject;
 import lujgame.anno.database.Z;
-import lujgame.core.spring.BeanCollector;
+import lujgame.core.spring.SpringBeanCollector;
 import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.database.bean.Dbobjimpl0;
 import lujgame.game.server.database.cache.internal.CacheItem;
@@ -29,7 +29,7 @@ public class DbOperateContextTest extends ZBaseTest {
   DbOperateContextFactory _dbOperateContextFactory;
 
   @Inject
-  BeanCollector _beanCollector;
+  SpringBeanCollector _beanCollector;
 
   @Inject
   Dbobjimpl0 _dbInternal;

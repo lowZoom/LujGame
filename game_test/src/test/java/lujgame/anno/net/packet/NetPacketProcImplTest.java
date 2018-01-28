@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
 import javax.inject.Inject;
-import lujgame.core.spring.BeanCollector;
+import lujgame.core.spring.SpringBeanCollector;
 import lujgame.game.server.database.operate.ZTestPacket;
 import lujgame.game.server.net.packet.NetPacketCodec;
 import lujgame.game.server.net.packet.PacketImpl;
@@ -17,7 +17,7 @@ import org.junit.Test;
 public class NetPacketProcImplTest extends ZBaseTest {
 
   @Inject
-  BeanCollector _beanCollector;
+  SpringBeanCollector _beanCollector;
 
   @Inject
   Z1 _typeInternal;

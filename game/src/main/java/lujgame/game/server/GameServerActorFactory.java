@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableMap;
 import com.typesafe.config.Config;
 import java.util.Map;
 import lujgame.core.akka.AkkaTool;
-import lujgame.core.spring.BeanCollector;
+import lujgame.core.spring.SpringBeanCollector;
 import lujgame.game.boot.GameBootConfigLoader;
 import lujgame.game.master.cluster.GameNodeRegistrar;
 import lujgame.game.server.command.CacheOkCommand;
@@ -28,7 +28,7 @@ public class GameServerActorFactory {
   @Autowired
   public GameServerActorFactory(
       AkkaTool akkaTool,
-      BeanCollector beanCollector,
+      SpringBeanCollector beanCollector,
       GameBootConfigLoader bootConfigLoader,
       GameNodeRegistrar gameNodeRegistrar,
       EntityBinder entityBinder,
@@ -93,7 +93,7 @@ public class GameServerActorFactory {
   }
 
   private final AkkaTool _akkaTool;
-  private final BeanCollector _beanCollector;
+  private final SpringBeanCollector _beanCollector;
 
   private final GameBootConfigLoader _bootConfigLoader;
   private final GameNodeRegistrar _gameNodeRegistrar;

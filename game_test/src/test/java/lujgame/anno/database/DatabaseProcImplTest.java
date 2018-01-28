@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
 import javax.inject.Inject;
-import lujgame.core.spring.BeanCollector;
+import lujgame.core.spring.SpringBeanCollector;
 import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.database.bean.DbObjImpl;
 import lujgame.game.server.database.type.DbTypeInternal;
@@ -15,7 +15,7 @@ import org.junit.Test;
 public class DatabaseProcImplTest extends ZBaseTest {
 
   @Inject
-  BeanCollector _beanCollector;
+  SpringBeanCollector _beanCollector;
 
   @Inject
   DbTypeInternal _dbTypeInternal;
