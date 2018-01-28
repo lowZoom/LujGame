@@ -8,7 +8,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import java.util.List;
 import javax.inject.Inject;
-import lujgame.robot.robot.config.RobotConfigScanner;
 import lujgame.robot.robot.config.RobotTemplate;
 import lujgame.robot.robot.instance.RobotInstanceActorFactory;
 import lujgame.robot.robot.instance.RobotInstanceState;
@@ -27,17 +26,15 @@ class ActorPreStart implements RobotSpawnActor.PreStart {
     NioEventLoopGroup loopGroup = new NioEventLoopGroup();
     state.setEventLoopGroup(loopGroup);
 
-    scanRobot(loopGroup, ctx.getActor().getContext(), ctx.getActorLogger());
+    scanRobot(state.getRobotTemplateList(), loopGroup,
+        ctx.getActor().getContext(), ctx.getActorLogger());
   }
 
-  private void scanRobot(NioEventLoopGroup loopGroup,
-      UntypedActorContext actorCtx, LoggingAdapter log) {
-    //FIXME: 在前一层就应该解析好机器人配置
-
-    List<RobotTemplate> groupList = _robotConfigScanner.scan(log);
-    for (RobotTemplate group : groupList) {
-      log.debug("启动机器人组 -> {}", group.getTemplateName());
-      spawnGroup(group, loopGroup, actorCtx);
+  private void scanRobot(List<RobotTemplate> robotTemplateList,
+      NioEventLoopGroup loopGroup, UntypedActorContext actorCtx, LoggingAdapter log) {
+    for (RobotTemplate template : robotTemplateList) {
+      log.debug("启动机器人组 -> {}", template.getTemplateName());
+      spawnGroup(template, loopGroup, actorCtx);
     }
   }
 
@@ -49,8 +46,8 @@ class ActorPreStart implements RobotSpawnActor.PreStart {
     }
   }
 
-  private void spawnOneRobot(UntypedActorContext actorCtx, RobotTemplate robotGroup,
-      EventLoopGroup eventGroup) {
+  private void spawnOneRobot(UntypedActorContext actorCtx,
+      RobotTemplate robotGroup, EventLoopGroup eventGroup) {
     RobotBehaveState bState = new RobotBehaveState(robotGroup.getBehaviorList());
     RobotInstanceState iState = new RobotInstanceState(robotGroup, eventGroup, bState);
 
@@ -60,8 +57,4 @@ class ActorPreStart implements RobotSpawnActor.PreStart {
 
   @Inject
   private RobotInstanceActorFactory _robotInstanceFactory;
-
-  //TODO: 这个应该放到前一层
-  @Inject
-  private RobotConfigScanner _robotConfigScanner;
 }

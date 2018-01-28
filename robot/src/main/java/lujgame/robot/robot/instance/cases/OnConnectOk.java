@@ -4,7 +4,6 @@ import akka.event.LoggingAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import javax.inject.Inject;
 import lujgame.core.akka.AkkaTool;
-import lujgame.core.akka.common.casev2.CaseActorV2;
 import lujgame.robot.robot.instance.RobotInstanceActor;
 import lujgame.robot.robot.instance.RobotInstanceState;
 import lujgame.robot.robot.instance.control.RobotBehaver;
@@ -28,8 +27,7 @@ class OnConnectOk implements RobotInstanceActor.Case<ConnectOkMsg> {
 
     _robotBehaver.initBehave(state.getBehaveState());
 
-    CaseActorV2 instanceActor = ctx.getActor();
-    _akkaTool.tellSelf(RobotInstanceActor.Behave.MSG, instanceActor);
+    _akkaTool.tellSelf(RobotInstanceActor.Behave.MSG, ctx.getActor());
   }
 
   @Inject

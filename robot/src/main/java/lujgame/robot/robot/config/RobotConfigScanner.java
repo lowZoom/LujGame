@@ -3,36 +3,28 @@ package lujgame.robot.robot.config;
 import akka.event.LoggingAdapter;
 import com.google.common.collect.ImmutableList;
 import com.typesafe.config.Config;
-import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
-import com.typesafe.config.ConfigRenderOptions;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import lujgame.core.file.DataFilePathGetter;
 import lujgame.core.file.FileTool;
-import lujgame.robot.robot.config.RobotConfig.Abstract;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RobotConfigScanner {
 
   public List<RobotTemplate> scan(LoggingAdapter log) {
-
-    List<Path> configPathList = findRobotConfig("robot", log);
-    //FIXME: 直接parse
-
-    Map<String, RobotConfig> configMap = configPathList.stream()
+    Map<String, RobotConfig> configMap = findRobotConfig("robot", log).stream()
         .map(this::loadConfig)
         .collect(Collectors.toMap(RobotConfig::getName, Function.identity()));
 
     return configMap.values().stream()
-        .filter(c -> c.getAbstract() == Abstract.NO)
+        .filter(c -> c.getAbstract() == RobotConfig.Abstract.NO)
         .map(c -> expandGroup(c, configMap, log))
         .filter(Objects::nonNull)
         .map(this::toTemplate)
@@ -63,12 +55,12 @@ public class RobotConfigScanner {
     return new RobotConfig(configName, config, getAbstract(config), getExtends(config));
   }
 
-  private Abstract getAbstract(Config cfg) {
+  private RobotConfig.Abstract getAbstract(Config cfg) {
     final String ABSTRACT = "abstract";
     if (!cfg.hasPath(ABSTRACT) || !cfg.getBoolean(ABSTRACT)) {
-      return Abstract.NO;
+      return RobotConfig.Abstract.NO;
     }
-    return Abstract.YES;
+    return RobotConfig.Abstract.YES;
   }
 
   private String getExtends(Config cfg) {
@@ -99,14 +91,14 @@ public class RobotConfigScanner {
 
     Config parentCfg = parentGroup.getConfig();
     Config cfg = group.getConfig();
-    return new RobotConfig(name, cfg.withFallback(parentCfg), Abstract.NO, null);
+    return new RobotConfig(name, cfg.withFallback(parentCfg), RobotConfig.Abstract.NO, null);
   }
 
   private RobotTemplate toTemplate(RobotConfig config) {
     Config cfg = config.getConfig();
 
     List<BehaviorConfig> behaviorList = getBehaviorList(cfg).stream()
-        .map(this::parseBehavior)
+        .map(_behaviorConfigParser::parse)
         .collect(Collectors.toList());
 
     return new RobotTemplate(config.getName(), cfg.getString("hostname"),
@@ -121,30 +113,12 @@ public class RobotConfigScanner {
     return cfg.getConfigList(BEHAVIOR);
   }
 
-  private BehaviorConfig parseBehavior(Config behaviorCfg) {
-    final String KEY_DATA = "data";
-
-    int opcode = behaviorCfg.getInt("op");
-    String dataStr;
-
-    try {
-      Config dataCfg = behaviorCfg.getConfig(KEY_DATA);
-      dataStr = dataCfg.root().render(ConfigRenderOptions.concise());
-    } catch (ConfigException.WrongType ignored) {
-      dataStr = behaviorCfg.getString(KEY_DATA);
-    }
-
-    return new BehaviorConfig(opcode, dataStr);
-  }
-
-  private long getWaitDuration(Config behaviorCfg) {
-    String key = "wait";
-    return behaviorCfg.hasPath(key) ? behaviorCfg.getDuration(key, TimeUnit.MILLISECONDS) : 0;
-  }
-
   @Inject
   private DataFilePathGetter _dataFilePathGetter;
 
   @Inject
   private FileTool _fileTool;
+
+  @Inject
+  private BehaviorConfigParser _behaviorConfigParser;
 }

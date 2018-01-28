@@ -1,10 +1,10 @@
 package lujgame.robot.robot.instance.cases;
 
+import akka.actor.UntypedActor;
 import akka.event.LoggingAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import lujgame.core.akka.common.casev2.CaseActorV2;
 import lujgame.robot.netty.RobotNetPacket;
 import lujgame.robot.robot.config.BehaviorConfig;
 import lujgame.robot.robot.instance.RobotInstanceActor;
@@ -17,9 +17,13 @@ class OnBehave implements RobotInstanceActor.Case<RobotInstanceActor.Behave> {
   @Override
   public void onHandle(RobotInstanceActor.Context ctx) {
     RobotBehaveState state = ctx.getActorState().getBehaveState();
-    CaseActorV2 instanceActor = ctx.getActor();
-    LoggingAdapter log = ctx.getActorLogger();
+    UntypedActor instanceActor = ctx.getActor();
 
+    LoggingAdapter log = ctx.getActorLogger();
+    handleImpl(state, instanceActor, log);
+  }
+
+  private void handleImpl(RobotBehaveState state, UntypedActor instanceActor, LoggingAdapter log) {
     // 步进行为游标
     int behaviorIndex = state.getBehaviorIndex() + 1;
     state.setBehaviorIndex(behaviorIndex);
@@ -48,7 +52,7 @@ class OnBehave implements RobotInstanceActor.Case<RobotInstanceActor.Behave> {
     return new RobotNetPacket(opcode, dataStr.getBytes(StandardCharsets.UTF_8));
   }
 
-  private void tryWait(CaseActorV2 instanceActor, BehaviorConfig behaviorCfg) {
+  private void tryWait(UntypedActor instanceActor, BehaviorConfig behaviorCfg) {
 //    try {
 //    long waitDur = getWaitDuration(behaviorCfg);
 //    _actorScheduler.schedule(instanceActor, waitDur,

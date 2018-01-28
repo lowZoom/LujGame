@@ -1,25 +1,33 @@
 package lujgame.robot.boot.actor;
 
-import akka.actor.Props;
-import akka.japi.Creator;
-import lujgame.robot.robot.spawn.RobotSpawnActorFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import java.util.function.Supplier;
+import lujgame.core.akka.common.casev2.CaseActorFactory;
+import org.springframework.stereotype.Service;
 
-@Component
-public class RobotStartActorFactory {
+@Service
+public class RobotStartActorFactory extends CaseActorFactory<
+    Void,
+    RobotStartActor,
+    RobotStartActor.Context,
+    RobotStartActor.Case<?>> {
 
-  @Autowired
-  public RobotStartActorFactory(RobotSpawnActorFactory spawnActorFactory) {
-    _spawnActorFactory = spawnActorFactory;
+  @Override
+  protected Class<RobotStartActor> actorType() {
+    return RobotStartActor.class;
   }
 
-  public Props props() {
-    Creator<RobotStartActor> c = () -> new RobotStartActor(
-        _spawnActorFactory);
-
-    return Props.create(RobotStartActor.class, c);
+  @Override
+  protected Supplier<RobotStartActor> actorConstructor() {
+    return RobotStartActor::new;
   }
 
-  private final RobotSpawnActorFactory _spawnActorFactory;
+  @Override
+  protected Supplier<RobotStartActor.Context> contextConstructor() {
+    return RobotStartActor.Context::new;
+  }
+
+  @Override
+  protected Class<RobotStartActor.PreStart> preStart() {
+    return RobotStartActor.PreStart.class;
+  }
 }

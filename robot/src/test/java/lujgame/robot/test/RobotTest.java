@@ -1,6 +1,5 @@
 package lujgame.robot.test;
 
-
 import static org.mockito.Mockito.reset;
 
 import java.lang.reflect.Field;

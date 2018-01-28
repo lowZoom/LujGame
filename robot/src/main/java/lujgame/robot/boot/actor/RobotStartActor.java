@@ -1,40 +1,21 @@
 package lujgame.robot.boot.actor;
 
-import akka.actor.ActorRef;
-import akka.actor.Props;
-import akka.actor.UntypedActorContext;
-import java.util.ArrayList;
-import lujgame.core.akka.common.CaseActor;
-import lujgame.robot.robot.spawn.RobotSpawnActorFactory;
-import lujgame.robot.robot.spawn.RobotSpawnState;
+import lujgame.core.akka.common.casev2.ActorCaseHandler;
+import lujgame.core.akka.common.casev2.CaseActorContext;
+import lujgame.core.akka.common.casev2.CaseActorV2;
+import lujgame.core.akka.common.casev2.PreStartHandler;
 
-/**
- * 机器人启动逻辑
- */
-public class RobotStartActor extends CaseActor {
+public class RobotStartActor extends CaseActorV2<Void> {
 
-  public RobotStartActor(RobotSpawnActorFactory spawnActorFactory) {
-    _spawnActorFactory = spawnActorFactory;
+  public static class Context extends CaseActorContext<Void> {
+
   }
 
-  @Override
-  public void preStart() throws Exception {
-    log().info("机器人程序启动。。");
+  public interface Case<M> extends ActorCaseHandler<Context, M> {
 
-    loadConfig();
   }
 
-  private void loadConfig() {
-    RobotSpawnState state = new RobotSpawnState(new ArrayList<>(64));
-    Props spawnProps = _spawnActorFactory.props(state);
+  public interface PreStart extends PreStartHandler<Context> {
 
-    UntypedActorContext ctx = getContext();
-    ActorRef spawnActor = ctx.actorOf(spawnProps, "Spawn");
-
-//    ChangeRobotCountMsg msg = new ChangeRobotCountMsg(1);
-//    ActorRef self = getSelf();
-//    spawnActor.tell(msg, self);
   }
-
-  private final RobotSpawnActorFactory _spawnActorFactory;
 }

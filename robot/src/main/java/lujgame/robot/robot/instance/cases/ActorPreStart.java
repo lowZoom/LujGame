@@ -31,8 +31,7 @@ class ActorPreStart implements RobotInstanceActor.PreStart {
 //        .option(ChannelOption.SO_KEEPALIVE, true)
         .handler(new RobotNettyInit(instanceRef))
         .connect(ip, port)
-        .addListener(f -> onConnectDone(f.isSuccess(), log))
-    ;
+        .addListener(f -> onConnectDone(f.isSuccess(), log));
   }
 
   private void onConnectDone(boolean success, LoggingAdapter log) {
