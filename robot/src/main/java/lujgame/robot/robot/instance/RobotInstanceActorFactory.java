@@ -25,4 +25,9 @@ public class RobotInstanceActorFactory extends CaseActorFactory<
   protected Supplier<RobotInstanceActor.Context> contextConstructor() {
     return RobotInstanceActor.Context::new;
   }
+
+  @Override
+  protected Class<RobotInstanceActor.PreStart> preStart() {
+    return RobotInstanceActor.PreStart.class;
+  }
 }

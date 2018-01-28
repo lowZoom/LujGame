@@ -31,12 +31,11 @@ class ActorPreStart implements RobotInstanceActor.PreStart {
 //        .option(ChannelOption.SO_KEEPALIVE, true)
         .handler(new RobotNettyInit(instanceRef))
         .connect(ip, port)
-//        .addListener(f -> listener.accept(f.isSuccess(), log))
+        .addListener(f -> onConnectDone(f.isSuccess(), log))
     ;
-
   }
 
-  public void onConnectDone(boolean success, LoggingAdapter log) {
+  private void onConnectDone(boolean success, LoggingAdapter log) {
     log.debug("连接结果：{}", success);
   }
 }
