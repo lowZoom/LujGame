@@ -7,12 +7,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import org.springframework.stereotype.Component;
+import javax.inject.Inject;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
 
-@Component
-public class CollectResultMaker {
+@Service
+public class SpringBeanCollector {
 
-  public <K, T> ImmutableMap<K, T> makeMap(Collection<T> beans, Function<T, K> keyMapper) {
+  public <K, T> ImmutableMap<K, T> collectBeanMap(Class<T> beanType, Function<T, K> keyMapper) {
+    Collection<T> beans = _applicationContext.getBeansOfType(beanType).values();
+    return makeMap(beans, keyMapper);
+  }
+
+  private <K, T> ImmutableMap<K, T> makeMap(Collection<T> beans, Function<T, K> keyMapper) {
     Map<K, T> resultMap = new HashMap<>(beans.size());
 
     for (T bean : beans) {
@@ -28,4 +35,7 @@ public class CollectResultMaker {
 
     return ImmutableMap.copyOf(resultMap);
   }
+
+  @Inject
+  private ApplicationContext _applicationContext;
 }

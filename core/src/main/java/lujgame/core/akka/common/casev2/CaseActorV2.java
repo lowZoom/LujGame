@@ -5,22 +5,42 @@ import akka.actor.UntypedActor;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public abstract class CaseActorV2<S> extends UntypedActor {
 
   @Override
+  public void preStart() throws Exception {
+    if (_preStartHandler == null) {
+      return;
+    }
+    CaseActorContext<S> ctx = createContext(null);
+    _preStartHandler.preStart(ctx);
+  }
+
+  @Override
   public void onReceive(Object msg) throws Throwable {
     Class<?> msgType = msg.getClass();
-    ActorCaseHandler<Object, ?> msgHandler = (ActorCaseHandler<Object, ?>) getHandlerMap()
-        .get(msgType);
+    ActorCaseHandler<Object, ?> msgHandler = (ActorCaseHandler<Object, ?>) _handlerMap.get(msgType);
 
-    CaseContext<S> ctx = createContext();
-    ctx._actorState = getState();
-    ctx._message = msg;
-    ctx._actorLogger = _logger;
-    ctx._actor = this;
-
+    CaseActorContext<S> ctx = createContext(msg);
     msgHandler.onHandle(ctx);
+  }
+
+  public void setState(S state) {
+    _state = state;
+  }
+
+  public void setContextConstructor(Supplier<CaseActorContext<S>> contextConstructor) {
+    _contextConstructor = contextConstructor;
+  }
+
+  public void setPreStartHandler(PreStartHandler<CaseActorContext<S>> preStartHandler) {
+    _preStartHandler = preStartHandler;
+  }
+
+  public void setHandlerMap(Map<Class<?>, ?> handlerMap) {
+    _handlerMap = handlerMap;
   }
 
   protected CaseActorV2() {
@@ -28,11 +48,20 @@ public abstract class CaseActorV2<S> extends UntypedActor {
     _logger = Logging.getLogger(system, this);
   }
 
-  protected abstract CaseContext<S> createContext();
+  private CaseActorContext<S> createContext(Object msg) {
+    CaseActorContext<S> ctx = _contextConstructor.get();
+    ctx._actorState = _state;
+    ctx._message = msg;
+    ctx._actorLogger = _logger;
+    ctx._actor = this;
+    return ctx;
+  }
 
-  protected abstract S getState();
+  private S _state;
+  private Supplier<CaseActorContext<S>> _contextConstructor;
 
-  protected abstract Map<Class<?>, ?> getHandlerMap();
+  private PreStartHandler<CaseActorContext<S>> _preStartHandler;
+  private Map<Class<?>, ?> _handlerMap;
 
   private final LoggingAdapter _logger;
 }
