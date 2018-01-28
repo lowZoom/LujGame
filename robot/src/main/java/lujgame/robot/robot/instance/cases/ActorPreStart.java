@@ -10,11 +10,11 @@ import lujgame.robot.robot.instance.RobotInstanceActor;
 import lujgame.robot.robot.instance.RobotInstanceState;
 import org.springframework.stereotype.Service;
 
-@Service
-class OnStart implements RobotInstanceActor.Case<RobotInstanceActor.Start> {
+@Service("RobotInstanceActor.PreStart")
+class ActorPreStart implements RobotInstanceActor.PreStart {
 
   @Override
-  public void onHandle(RobotInstanceActor.Context ctx) {
+  public void preStart(RobotInstanceActor.Context ctx) throws Exception {
     RobotInstanceState state = ctx.getActorState();
     ActorRef instanceRef = ctx.getActor().getSelf();
 
@@ -33,6 +33,7 @@ class OnStart implements RobotInstanceActor.Case<RobotInstanceActor.Start> {
         .connect(ip, port)
 //        .addListener(f -> listener.accept(f.isSuccess(), log))
     ;
+
   }
 
   public void onConnectDone(boolean success, LoggingAdapter log) {

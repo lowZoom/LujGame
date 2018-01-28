@@ -1,27 +1,33 @@
 package lujgame.robot.robot.spawn;
 
-import akka.actor.Props;
-import akka.japi.Creator;
-import javax.inject.Inject;
-import lujgame.robot.robot.config.RobotConfigScanner;
-import lujgame.robot.robot.spawn.logic.RobotSpawner;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.function.Supplier;
+import lujgame.core.akka.common.casev2.CaseActorFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RobotSpawnActorFactory {
+public class RobotSpawnActorFactory extends CaseActorFactory<
+    RobotSpawnState,
+    RobotSpawnActor,
+    RobotSpawnActor.Context,
+    RobotSpawnActor.Case<?>> {
 
-  public Props props() {
-    Creator<RobotSpawnActor> c = () -> new RobotSpawnActor(
-        _robotSpawner,
-        _robotConfigScanner);
-
-    return Props.create(RobotSpawnActor.class, c);
+  @Override
+  protected Class<RobotSpawnActor> actorType() {
+    return RobotSpawnActor.class;
   }
 
-  @Inject
-  private RobotSpawner _robotSpawner;
+  @Override
+  protected Supplier<RobotSpawnActor> actorConstructor() {
+    return RobotSpawnActor::new;
+  }
 
-  @Autowired
-  private RobotConfigScanner _robotConfigScanner;
+  @Override
+  protected Supplier<RobotSpawnActor.Context> contextConstructor() {
+    return RobotSpawnActor.Context::new;
+  }
+
+  @Override
+  protected Class<RobotSpawnActor.PreStart> preStart() {
+    return RobotSpawnActor.PreStart.class;
+  }
 }
