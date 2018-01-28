@@ -1,9 +1,11 @@
 package lujgame.core.akka.common.casev2;
 
+import akka.actor.UntypedActor;
 import akka.event.LoggingAdapter;
 
 public abstract class CaseActorContext<S> {
 
+  @SuppressWarnings({"unchecked", "unused"})
   public <M> M getMessage(ActorCaseHandler<?, M> handler) {
     return (M) _message;
   }
@@ -16,7 +18,7 @@ public abstract class CaseActorContext<S> {
     return _actorLogger;
   }
 
-  public CaseActorV2 getActor() {
+  public UntypedActor getActor() {
     return _actor;
   }
 
@@ -26,5 +28,5 @@ public abstract class CaseActorContext<S> {
 
   LoggingAdapter _actorLogger;
 
-  CaseActorV2 _actor;
+  UntypedActor _actor;
 }
