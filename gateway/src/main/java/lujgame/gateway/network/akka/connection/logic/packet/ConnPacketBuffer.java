@@ -22,8 +22,7 @@ public class ConnPacketBuffer {
     return _pendingHeader;
   }
 
-  public void setPendingHeader(
-      ConnPacketHeader pendingHeader) {
+  public void setPendingHeader(ConnPacketHeader pendingHeader) {
     _pendingHeader = pendingHeader;
   }
 
