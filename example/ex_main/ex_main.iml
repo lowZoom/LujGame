@@ -53,7 +53,7 @@
     <orderEntry type="library" name="Maven: org.agrona:agrona:0.9.5" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.1.11" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.1.11" level="project" />
-    <orderEntry type="library" name="Maven: io.netty:netty-all:4.0.45.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-all:4.0.55.Final" level="project" />
     <orderEntry type="library" name="Maven: javax.inject:javax.inject:1" level="project" />
     <orderEntry type="module" module-name="ex_proto" />
   </component>
