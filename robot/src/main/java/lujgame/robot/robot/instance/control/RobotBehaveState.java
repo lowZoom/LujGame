@@ -33,5 +33,7 @@ public class RobotBehaveState {
   private ChannelHandlerContext _nettyContext;
   private int _behaviorIndex;
 
-  private final List<BehaviorConfig>  _behaviorList;
+  //TODO: 标记自己是否有在等待，等待什么（时间还是包）
+
+  private final List<BehaviorConfig> _behaviorList;
 }

@@ -13,14 +13,14 @@ public class ConnPacketHeader {
     return _opcode;
   }
 
-  /**
-   * @return 包体大小，单位：字节
-   */
   public int getLength() {
     return _length;
   }
 
   private final Integer _opcode;
 
+  /**
+   * 包体大小，单位：字节
+   */
   private final int _length;
 }
