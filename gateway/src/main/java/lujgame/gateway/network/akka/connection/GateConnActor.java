@@ -9,6 +9,8 @@ import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
 
 /**
  * 处理一条连接相关逻辑，与Netty直接通讯
+ *
+ * @see GateConnActorFactory
  */
 public class GateConnActor extends CaseActorV2<ConnActorState> {
 

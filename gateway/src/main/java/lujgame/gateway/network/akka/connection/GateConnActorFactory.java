@@ -31,4 +31,9 @@ public class GateConnActorFactory extends CaseActorFactory<
   protected Class<GateConnActor.PreStart> preStart() {
     return GateConnActor.PreStart.class;
   }
+
+  @Override
+  protected Class<GateConnActor.PostStop> postStop() {
+    return GateConnActor.PostStop.class;
+  }
 }

@@ -38,12 +38,12 @@ public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
     return null;
   }
 
-  protected Class<? extends PreStartHandler<CO>> postStop() {
+  protected Class<? extends PostStopHandler<CO>> postStop() {
     return null;
   }
 
-  @EventListener(ContextRefreshedEvent.class)
   @SuppressWarnings("unchecked")
+  @EventListener(ContextRefreshedEvent.class)
   void init() {
     _contextConstructor = (Supplier<CaseActorContext<S>>) contextConstructor();
 

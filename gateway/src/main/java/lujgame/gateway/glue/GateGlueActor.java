@@ -5,6 +5,9 @@ import lujgame.core.akka.common.casev2.CaseActorContext;
 import lujgame.core.akka.common.casev2.CaseActorV2;
 import lujgame.core.akka.common.casev2.PreStartHandler;
 
+/**
+ * @see GateGlueActorFactory
+ */
 public class GateGlueActor extends CaseActorV2<GateGlueActorState> {
 
   public static class Context extends CaseActorContext<GateGlueActorState> {

@@ -25,4 +25,9 @@ public class GateGlueActorFactory extends CaseActorFactory<
   protected Supplier<GateGlueActor.Context> contextConstructor() {
     return GateGlueActor.Context::new;
   }
+
+  @Override
+  protected Class<GateGlueActor.PreStart> preStart() {
+    return GateGlueActor.PreStart.class;
+  }
 }
