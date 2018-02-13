@@ -10,7 +10,7 @@ import lujgame.robot.robot.instance.RobotInstanceActor;
 import lujgame.robot.robot.instance.RobotInstanceState;
 import org.springframework.stereotype.Service;
 
-@Service("RobotInstanceActor.PreStart")
+@Service
 class ActorPreStart implements RobotInstanceActor.PreStart {
 
   @Override

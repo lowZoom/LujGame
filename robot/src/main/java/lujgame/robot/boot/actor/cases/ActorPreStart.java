@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 /**
  * 机器人程序入口逻辑
  */
-@Service("RobotStartActor.PreStart")
+@Service
 class ActorPreStart implements RobotStartActor.PreStart {
 
   @Override

@@ -2,6 +2,7 @@ package lujgame.core.akka.link;
 
 import akka.actor.ActorRef;
 import akka.actor.Props;
+import akka.actor.UntypedActor;
 import akka.actor.UntypedActorContext;
 import lujgame.core.akka.common.CaseActor;
 import lujgame.core.akka.link.client.LinkClientActorFactory;
@@ -9,6 +10,9 @@ import lujgame.core.akka.link.server.LinkServerActorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * 负责链接两个Actor，可以日后持续通讯
+ */
 @Component
 public class ActorLinker {
 
@@ -20,7 +24,7 @@ public class ActorLinker {
     _serverActorFactory = serverActorFactory;
   }
 
-  public void link(String linkUrl, CaseActor requestor, Enum<?> okMsg) {
+  public void link(String linkUrl, UntypedActor requestor, Enum<?> okMsg) {
     ActorRef reqRef = requestor.getSelf();
     String serverUrl = linkUrl + '/' + _serverActorFactory.getActorName();
     Props props = _clientActorFactory.props(serverUrl, reqRef, okMsg);

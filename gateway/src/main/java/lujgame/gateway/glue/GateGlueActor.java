@@ -1,49 +1,23 @@
 package lujgame.gateway.glue;
 
-import lujgame.core.akka.common.CaseActor;
-import lujgame.gateway.glue.message.NewForwardMsg;
-import lujgame.gateway.network.akka.accept.logic.bind.ForwardBinder;
-import lujgame.gateway.network.akka.accept.message.BindForwardReqLocal;
+import lujgame.core.akka.common.casev2.ActorCaseHandler;
+import lujgame.core.akka.common.casev2.CaseActorContext;
+import lujgame.core.akka.common.casev2.CaseActorV2;
+import lujgame.core.akka.common.casev2.PreStartHandler;
 
-public class GateGlueActor extends CaseActor {
+public class GateGlueActor extends CaseActorV2<GateGlueActorState> {
 
-  public GateGlueActor(
-      GateGlueActorState state,
-      GlueAdminConnector adminConnector,
-      ForwardBinder forwardBinder) {
-    _state = state;
+  public static class Context extends CaseActorContext<GateGlueActorState> {
 
-    _adminConnector = adminConnector;
-    _forwardBinder = forwardBinder;
-
-    addCase(AdminOk.class, this::onAdminConnect);
-    addCase(NewForwardMsg.class, this::onNewForward);
-
-    addCase(BindForwardReqLocal.class, this::onBindForward);
   }
 
-  @Override
-  public void preStart() throws Exception {
-    // 开始尝试连接网关管理节点
-    _adminConnector.startConnect(_state, this, AdminOk.MSG);
+  public interface Case<M> extends ActorCaseHandler<Context, M> {
+
   }
 
-  private void onAdminConnect(@SuppressWarnings("unused") AdminOk msg) {
-    _adminConnector.finishConnect(getSender(), getSelf(), log());
+  public interface PreStart extends PreStartHandler<Context> {
+
   }
 
-  private void onNewForward(NewForwardMsg msg) {
-    _forwardBinder.addForward(_state, msg.getForwardId(), msg.getForwardRef(), log());
-  }
-
-  private void onBindForward(BindForwardReqLocal msg) {
-    _forwardBinder.findForward(_state, msg.getForwardId(), msg.getConnId(), getSender());
-  }
-
-  enum AdminOk {MSG}
-
-  private final GateGlueActorState _state;
-
-  private final GlueAdminConnector _adminConnector;
-  private final ForwardBinder _forwardBinder;
+  public enum AdminOk {MSG}
 }

@@ -1,33 +1,31 @@
-package lujgame.gateway.network.akka.accept.logic.bind;
+package lujgame.gateway.glue.cases;
 
 import akka.actor.ActorRef;
-import akka.event.LoggingAdapter;
+import akka.actor.UntypedActor;
 import java.util.Map;
+import lujgame.gateway.glue.GateGlueActor;
+import lujgame.gateway.glue.GateGlueActor.Context;
 import lujgame.gateway.glue.GateGlueActorState;
+import lujgame.gateway.network.akka.accept.message.BindForwardReqLocal;
 import lujgame.gateway.network.akka.accept.message.BindForwardReqRemote;
 import org.springframework.stereotype.Service;
 
-/**
- * 绑定网关投递节点
- */
 @Service
-public class ForwardBinder {
+class OnBindForward implements GateGlueActor.Case<BindForwardReqLocal> {
 
-  /**
-   * 增加新的转发节点
-   */
-  public void addForward(GateGlueActorState state,
-      String forwardId, ActorRef forwardRef, LoggingAdapter log) {
-    log.info("新的转发节点：{} -> {}", forwardId, forwardRef.path());
+  @Override
+  public void onHandle(Context ctx) {
+    GateGlueActorState actorState = ctx.getActorState();
+    UntypedActor actor = ctx.getActor();
 
-    Map<String, ActorRef> forwardMap = state.getForwardMap();
-    forwardMap.put(forwardId, forwardRef);
+    BindForwardReqLocal msg = ctx.getMessage(this);
+    findForward(actorState, msg.getForwardId(), msg.getConnId(), actor.getSender());
   }
 
   /**
    * @param forwardId 在glueActor中查询此id对应转发节点
    */
-  public void findForward(GateGlueActorState state,
+  private void findForward(GateGlueActorState state,
       String forwardId, String connId, ActorRef connRef) {
     Map<String, ActorRef> forwardMap = state.getForwardMap();
     ActorRef forwardBossRef = forwardMap.get(forwardId);

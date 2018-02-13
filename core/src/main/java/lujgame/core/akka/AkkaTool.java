@@ -48,7 +48,7 @@ public class AkkaTool {
     _actorScheduler.scheduleSelf(actor, len, unit, scheduleId, msg, interrupt);
   }
 
-  public void link(CaseActor requestor, String linkUrl, Enum<?> okMsg) {
+  public void link(UntypedActor requestor, String linkUrl, Enum<?> okMsg) {
     _actorLinker.link(linkUrl, requestor, okMsg);
   }
 

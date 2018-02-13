@@ -4,6 +4,7 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import com.typesafe.config.Config;
 import lujgame.gateway.glue.GateGlueActorFactory;
+import lujgame.gateway.glue.GateGlueActorState;
 import lujgame.gateway.network.akka.accept.NetAcceptActorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,8 +33,14 @@ public class GatewayBoot {
     Config systemCfg = l.loadAkkaConfig(gateCfg);
     ActorSystem system = ActorSystem.create("LujGateway", systemCfg);
 
-    ActorRef glueRef = system.actorOf(_glueActorFactory.props(gateCfg), "Glue");
+    ActorRef glueRef = createGlueActor(system, gateCfg);
     system.actorOf(_netAcceptFactory.props(gateCfg, glueRef), "NetAccept");
+  }
+
+  private ActorRef createGlueActor(ActorSystem system, Config gateCfg) {
+    String glueUrl = gateCfg.getString("admin-url");
+    GateGlueActorState state = new GateGlueActorState(glueUrl);
+    return system.actorOf(_glueActorFactory.props(state), "Glue");
   }
 
   private final GatewayBootConfigLoader _bootConfigLoader;
