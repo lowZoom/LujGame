@@ -30,7 +30,8 @@ public abstract class CaseActorV2<S> extends UntypedActor {
   @Override
   public void onReceive(Object msg) throws Throwable {
     Class<?> msgType = msg.getClass();
-    ActorCaseHandler<Object, ?> msgHandler = (ActorCaseHandler<Object, ?>) _handlerMap.get(msgType);
+    ActorCaseHandler<Object, ?> msgHandler = (ActorCaseHandler<Object, ?>) _caseHandlerMap
+        .get(msgType);
 
     CaseActorContext<S> ctx = createContext(msg);
     msgHandler.onHandle(ctx);
@@ -52,8 +53,8 @@ public abstract class CaseActorV2<S> extends UntypedActor {
     _postStopHandler = postStopHandler;
   }
 
-  public void setHandlerMap(Map<Class<?>, ?> handlerMap) {
-    _handlerMap = handlerMap;
+  public void setCaseHandlerMap(Map<Class<?>, ?> caseHandlerMap) {
+    _caseHandlerMap = caseHandlerMap;
   }
 
   protected CaseActorV2() {
@@ -76,7 +77,7 @@ public abstract class CaseActorV2<S> extends UntypedActor {
   private PreStartHandler<CaseActorContext<S>> _preStartHandler;
   private PostStopHandler<CaseActorContext<S>> _postStopHandler;
 
-  private Map<Class<?>, ?> _handlerMap;
+  private Map<Class<?>, ?> _caseHandlerMap;
 
   private final LoggingAdapter _logger;
 }

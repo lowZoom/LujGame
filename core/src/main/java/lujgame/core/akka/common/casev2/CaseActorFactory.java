@@ -22,7 +22,7 @@ public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
       actor.setContextConstructor(_contextConstructor);
       actor.setPreStartHandler(_preStartHandler);
       actor.setPostStopHandler(_postStopHandler);
-      actor.setHandlerMap(_caseHandlerMap);
+      actor.setCaseHandlerMap(_caseHandlerMap);
       return actor;
     };
     return Props.create(actorType(), c);
