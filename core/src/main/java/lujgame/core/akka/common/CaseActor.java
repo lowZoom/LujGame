@@ -14,6 +14,7 @@ import lujgame.core.akka.common.message.MessageHandleContext;
 import lujgame.core.akka.common.message.handlers.DefaultMsgHdl;
 import lujgame.core.akka.schedule.ScheduleMsgHdl;
 
+@Deprecated
 public abstract class CaseActor extends UntypedActor {
 
   @Override

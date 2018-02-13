@@ -11,8 +11,8 @@ import lujgame.gateway.network.akka.accept.NetAcceptActor;
 import lujgame.gateway.network.akka.accept.NetAcceptState;
 import lujgame.gateway.network.akka.accept.message.NewConnMsg;
 import lujgame.gateway.network.akka.connection.GateConnActorFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import lujgame.gateway.network.akka.connection.logic.packet.ConnPacketBuffer;
+import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,17 +20,17 @@ public class NewConnCreator {
 
   public ConnectionItem createConnection(NetAcceptActor acceptActor,
       NetAcceptState state, NewConnMsg msg) {
-    String connId = Long.toString(state.getNextConnId());
-    state.setNextConnId(state.getNextConnId() + 1);
+    String connId = useNextId(state);
+    ConnPacketBuffer packetBuf = new ConnPacketBuffer();
 
-    GateConnActorFactory connFactory = _connActorFactory;
     ChannelHandlerContext nettyCtx = msg.getNettyContext();
     ActorRef acceptRef = acceptActor.getSelf();
-    Props props = connFactory.props(connId, nettyCtx, acceptRef);
+
+    ConnActorState actorState = new ConnActorState(connId, packetBuf, nettyCtx, acceptRef);
+    Props props = _connActorFactory.props(actorState);
 
     UntypedActorContext ctx = acceptActor.getContext();
-    String name = connFactory.getActorName(connId);
-    ActorRef connRef = ctx.actorOf(props, name);
+    ActorRef connRef = ctx.actorOf(props, getActorName(connId));
     return new ConnectionItem(connId, connRef);
   }
 
@@ -40,6 +40,16 @@ public class NewConnCreator {
     connMap.put(connId, item);
 
     log.debug("增加新连接，当前连接数量：{}", connMap.size());
+  }
+
+  private String useNextId(NetAcceptState state) {
+    long connIdVal = state.getNextConnId();
+    state.setNextConnId(connIdVal + 1);
+    return Long.toString(connIdVal);
+  }
+
+  private String getActorName(String connId) {
+    return "Conn_" + connId;
   }
 
   @Inject

@@ -48,6 +48,10 @@ class ActorPreStart implements RobotSpawnActor.PreStart {
 
   private void spawnOneRobot(UntypedActorContext actorCtx,
       RobotTemplate robotGroup, EventLoopGroup eventGroup) {
+//    _headerBuf = Unpooled.buffer(6, 6);
+//    _bodyBuf = Unpooled.buffer();
+//    _overflowBuf = Unpooled.buffer();
+
     RobotBehaveState bState = new RobotBehaveState(robotGroup.getBehaviorList());
     RobotInstanceState iState = new RobotInstanceState(robotGroup, eventGroup, bState);
 

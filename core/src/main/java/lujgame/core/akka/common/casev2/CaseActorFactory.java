@@ -21,6 +21,7 @@ public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
       actor.setState(state);
       actor.setContextConstructor(_contextConstructor);
       actor.setPreStartHandler(_preStartHandler);
+      actor.setPostStopHandler(_postStopHandler);
       actor.setHandlerMap(_caseHandlerMap);
       return actor;
     };
@@ -37,22 +38,37 @@ public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
     return null;
   }
 
+  protected Class<? extends PreStartHandler<CO>> postStop() {
+    return null;
+  }
+
   @EventListener(ContextRefreshedEvent.class)
   @SuppressWarnings("unchecked")
   void init() {
     _contextConstructor = (Supplier<CaseActorContext<S>>) contextConstructor();
 
-    _preStartHandler = getPrestartHandler();
+    _preStartHandler = getPreStartHandler();
+    _postStopHandler = getPostStopHandler();
+
     _caseHandlerMap = collectCaseHandlerMap();
   }
 
   @SuppressWarnings("unchecked")
-  private PreStartHandler<CaseActorContext<S>> getPrestartHandler() {
-    Class<? extends PreStartHandler<CO>> preStartType = preStart();
+  private PreStartHandler<CaseActorContext<S>> getPreStartHandler() {
+    Class<?> preStartType = preStart();
     if (preStartType == null) {
       return null;
     }
     return (PreStartHandler<CaseActorContext<S>>) _applicationContext.getBean(preStartType);
+  }
+
+  @SuppressWarnings("unchecked")
+  private PostStopHandler<CaseActorContext<S>> getPostStopHandler() {
+    Class<?> postStopType = postStop();
+    if (postStopType == null) {
+      return null;
+    }
+    return (PostStopHandler<CaseActorContext<S>>) _applicationContext.getBean(postStopType);
   }
 
   @SuppressWarnings("unchecked")
@@ -74,6 +90,8 @@ public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
   private Supplier<CaseActorContext<S>> _contextConstructor;
 
   private PreStartHandler<CaseActorContext<S>> _preStartHandler;
+  private PostStopHandler<CaseActorContext<S>> _postStopHandler;
+
   private Map<Class<?>, C> _caseHandlerMap;
 
   @Inject

@@ -1,11 +1,11 @@
 package lujgame.gateway.network.akka.connection.logic;
 
 import akka.actor.ActorRef;
+import akka.actor.UntypedActor;
 import akka.event.LoggingAdapter;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 import lujgame.core.akka.AkkaTool;
-import lujgame.core.akka.common.CaseActor;
 import lujgame.gateway.network.akka.connection.GateConnActor;
 import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
 import lujgame.gateway.network.akka.connection.message.Netty2GateMsg;
@@ -22,7 +22,7 @@ public class DumbDetector {
     _connInfoGetter = connInfoGetter;
   }
 
-  public void startDetect(CaseActor actor) {
+  public void startDetect(UntypedActor actor) {
     _akkaTool.schedule(actor, 3, TimeUnit.SECONDS,
         ScheduleId.DUMB, GateConnActor.Dumb.MSG, Netty2GateMsg.class);
   }

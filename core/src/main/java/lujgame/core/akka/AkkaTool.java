@@ -43,7 +43,7 @@ public class AkkaTool {
     tellSelf(msg, instanceActor.getSelf());
   }
 
-  public void schedule(CaseActor actor, long len, TimeUnit unit,
+  public void schedule(UntypedActor actor, long len, TimeUnit unit,
       String scheduleId, Object msg, Class<?> interrupt) {
     _actorScheduler.scheduleSelf(actor, len, unit, scheduleId, msg, interrupt);
   }

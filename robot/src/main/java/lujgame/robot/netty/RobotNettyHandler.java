@@ -1,10 +1,12 @@
 package lujgame.robot.netty;
 
 import akka.actor.ActorRef;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lujgame.robot.robot.instance.RobotInstanceActor;
 import lujgame.robot.robot.instance.message.ConnectOkMsg;
+import lujgame.robot.robot.instance.message.Netty2RobotMsg;
 
 public class RobotNettyHandler extends ChannelInboundHandlerAdapter {
 
@@ -21,8 +23,14 @@ public class RobotNettyHandler extends ChannelInboundHandlerAdapter {
   }
 
   @Override
-  public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-    System.err.println("收到数据 -》 " + msg);
+  public void channelRead(ChannelHandlerContext ctx, Object bufObj) throws Exception {
+//    try {
+    ByteBuf buf = (ByteBuf) bufObj;
+    Netty2RobotMsg msg = new Netty2RobotMsg(buf);
+    _robotRef.tell(msg, ActorRef.noSender());
+//    } finally {
+//      ReferenceCountUtil.release(bufObj);
+//    }
   }
 
 //  @Override
@@ -36,6 +44,8 @@ public class RobotNettyHandler extends ChannelInboundHandlerAdapter {
 //  }
 
   /**
+   * 该连接对应的机器人actor
+   *
    * @see RobotInstanceActor
    */
   private final ActorRef _robotRef;

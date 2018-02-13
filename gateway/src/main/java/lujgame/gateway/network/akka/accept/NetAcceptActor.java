@@ -10,6 +10,9 @@ import lujgame.gateway.network.akka.accept.message.BindForwardReqLocal;
 import lujgame.gateway.network.akka.accept.message.KillConnMsg;
 import lujgame.gateway.network.akka.accept.message.NewConnMsg;
 
+/**
+ * 外部网络连接监听
+ */
 public class NetAcceptActor extends CaseActor {
 
   public NetAcceptActor(

@@ -1,9 +1,7 @@
-package lujgame.gateway.network.akka.connection.logic;
+package lujgame.gateway.network.akka.connection.cases;
 
 import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -11,25 +9,30 @@ import java.util.Objects;
 import javax.inject.Inject;
 import lujgame.gateway.network.GateOpcode;
 import lujgame.gateway.network.akka.accept.message.BindForwardReqLocal;
+import lujgame.gateway.network.akka.connection.GateConnActor;
+import lujgame.gateway.network.akka.connection.logic.ConnInfoGetter;
+import lujgame.gateway.network.akka.connection.logic.PacketBufferDecoder;
 import lujgame.gateway.network.akka.connection.logic.packet.ConnPacketBuffer;
 import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
 import lujgame.gateway.network.akka.connection.message.Gate2GameMsg;
-import lujgame.gateway.network.netty.event.NettyConnEvent;
+import lujgame.gateway.network.akka.connection.message.Netty2GateMsg;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ConnPacketReceiver {
+class OnNetty2Gate implements GateConnActor.Case<Netty2GateMsg> {
 
-  public void updateNettyHandler(ConnActorState state, ActorRef connRef) {
-    ChannelHandlerContext nettyCtx = state.getNettyContext();
-    System.out.println("packet -->> conn event~!!!! -> " + nettyCtx);
+  @Override
+  public void onHandle(GateConnActor.Context ctx) {
+    ConnActorState state = ctx.getActorState();
+    Netty2GateMsg msg = ctx.getMessage(this);
 
-    ChannelPipeline pipeline = nettyCtx.pipeline();
-    NettyConnEvent event = new NettyConnEvent(connRef);
-    pipeline.fireUserEventTriggered(event);
+    ActorRef connRef = ctx.getActor().getSelf();
+    LoggingAdapter log = ctx.getActorLogger();
+
+    receivePacket(state, msg.getData(), connRef, log);
   }
 
-  public void receivePacket(ConnActorState state,
+  private void receivePacket(ConnActorState state,
       byte[] data, ActorRef connRef, LoggingAdapter log) {
     // 将data加进包缓存
     ConnPacketBuffer packetBuf = state.getPacketBuffer();

@@ -17,8 +17,7 @@ import org.springframework.stereotype.Component;
 public class LinkConnector {
 
   @Autowired
-  public LinkConnector(
-      ActorScheduler actorScheduler) {
+  public LinkConnector(ActorScheduler actorScheduler) {
     _actorScheduler = actorScheduler;
   }
 
