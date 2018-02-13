@@ -30,8 +30,8 @@ public abstract class CaseActorV2<S> extends UntypedActor {
   @Override
   public void onReceive(Object msg) throws Throwable {
     Class<?> msgType = msg.getClass();
-    ActorCaseHandler<Object, ?> msgHandler = (ActorCaseHandler<Object, ?>) _caseHandlerMap
-        .get(msgType);
+    ActorCaseHandler<Object, ?> msgHandler =
+        (ActorCaseHandler<Object, ?>) _caseHandlerMap.get(msgType);
 
     CaseActorContext<S> ctx = createContext(msg);
     msgHandler.onHandle(ctx);
