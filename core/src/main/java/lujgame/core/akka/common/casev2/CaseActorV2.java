@@ -14,7 +14,7 @@ public abstract class CaseActorV2<S> extends UntypedActor {
     if (_preStartHandler == null) {
       return;
     }
-    CaseActorContext<S> ctx = createContext(null);
+    CaseActorContext<S> ctx = createContext(NO_MSG);
     _preStartHandler.preStart(ctx);
   }
 
@@ -23,7 +23,7 @@ public abstract class CaseActorV2<S> extends UntypedActor {
     if (_postStopHandler == null) {
       return;
     }
-    CaseActorContext<S> ctx = createContext(null);
+    CaseActorContext<S> ctx = createContext(NO_MSG);
     _postStopHandler.postStop(ctx);
   }
 
@@ -70,6 +70,8 @@ public abstract class CaseActorV2<S> extends UntypedActor {
     ctx._actor = this;
     return ctx;
   }
+
+  private static final Object NO_MSG = null;
 
   private S _state;
   private Supplier<CaseActorContext<S>> _contextConstructor;

@@ -4,30 +4,29 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.actor.UntypedActorContext;
+import javax.inject.Inject;
 import lujgame.core.akka.common.CaseActor;
+import lujgame.core.akka.link.client.LinkClientActor;
 import lujgame.core.akka.link.client.LinkClientActorFactory;
+import lujgame.core.akka.link.client.LinkClientActorState;
 import lujgame.core.akka.link.server.LinkServerActorFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * 负责链接两个Actor，可以日后持续通讯
  */
-@Component
+@Service
 public class ActorLinker {
 
-  @Autowired
-  public ActorLinker(
-      LinkClientActorFactory clientActorFactory,
-      LinkServerActorFactory serverActorFactory) {
-    _clientActorFactory = clientActorFactory;
-    _serverActorFactory = serverActorFactory;
-  }
-
+  /**
+   * @see LinkClientActor
+   */
   public void link(String linkUrl, UntypedActor requestor, Enum<?> okMsg) {
     ActorRef reqRef = requestor.getSelf();
     String serverUrl = linkUrl + '/' + _serverActorFactory.getActorName();
-    Props props = _clientActorFactory.props(serverUrl, reqRef, okMsg);
+
+    LinkClientActorState state = new LinkClientActorState(serverUrl, reqRef, okMsg);
+    Props props = _clientActorFactory.props(state);
 
     UntypedActorContext ctx = requestor.getContext();
     ctx.actorOf(props);
@@ -42,6 +41,9 @@ public class ActorLinker {
     ctx.actorOf(props, f.getActorName());
   }
 
-  private final LinkClientActorFactory _clientActorFactory;
-  private final LinkServerActorFactory _serverActorFactory;
+  @Inject
+  private LinkClientActorFactory _clientActorFactory;
+
+  @Inject
+  private LinkServerActorFactory _serverActorFactory;
 }

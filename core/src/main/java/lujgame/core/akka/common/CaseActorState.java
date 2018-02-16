@@ -1,13 +1,11 @@
 package lujgame.core.akka.common;
 
 import akka.event.LoggingAdapter;
-import com.google.common.collect.Multimap;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.function.Consumer;
 import lujgame.core.akka.common.message.ActorMessageHandler;
-import lujgame.core.akka.schedule.ScheduleItem;
 
 public class CaseActorState {
 
@@ -21,22 +19,6 @@ public class CaseActorState {
     _messagePipeline = messagePipeline;
 
     _actionMap = new HashMap<>(32);
-  }
-
-  public Map<String, ScheduleItem> getScheduleMap() {
-    return _scheduleMap;
-  }
-
-  public void setScheduleMap(Map<String, ScheduleItem> scheduleMap) {
-    _scheduleMap = scheduleMap;
-  }
-
-  public Multimap<Class<?>, ScheduleItem> getInterruptMap() {
-    return _interruptMap;
-  }
-
-  public void setInterruptMap(Multimap<Class<?>, ScheduleItem> interruptMap) {
-    _interruptMap = interruptMap;
   }
 
   public CaseActor getActor() {
@@ -54,9 +36,6 @@ public class CaseActorState {
   public LinkedList<ActorMessageHandler> getMessagePipeline() {
     return _messagePipeline;
   }
-
-  private Map<String, ScheduleItem> _scheduleMap;
-  private Multimap<Class<?>, ScheduleItem> _interruptMap;
 
   private final Map<Class<?>, Consumer<?>> _actionMap;
   private final CaseActor _actor;

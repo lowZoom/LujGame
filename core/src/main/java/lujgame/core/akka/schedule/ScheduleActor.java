@@ -1,16 +1,13 @@
-package lujgame.core.akka.link.client;
+package lujgame.core.akka.schedule;
 
 import lujgame.core.akka.common.casev2.ActorCaseHandler;
 import lujgame.core.akka.common.casev2.CaseActorContext;
 import lujgame.core.akka.common.casev2.CaseActorV2;
 import lujgame.core.akka.common.casev2.PreStartHandler;
 
-/**
- * 让两个远程actor保持连接
- */
-public class LinkClientActor extends CaseActorV2<LinkClientActorState> {
+public class ScheduleActor extends CaseActorV2<ScheduleActorState> {
 
-  public static class Context extends CaseActorContext<LinkClientActorState> {
+  public static class Context extends CaseActorContext<ScheduleActorState> {
 
   }
 
@@ -21,6 +18,4 @@ public class LinkClientActor extends CaseActorV2<LinkClientActorState> {
   public interface PreStart extends PreStartHandler<Context> {
 
   }
-
-  public enum TryConnect {MSG}
 }

@@ -15,14 +15,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class AkkaTool {
 
-  @Inject
-  public AkkaTool(
-      ActorScheduler actorScheduler,
-      ActorLinker actorLinker) {
-    _actorScheduler = actorScheduler;
-    _actorLinker = actorLinker;
-  }
-
   public void subscribeClusterMemberUp(Cluster cluster,
       CaseActor subscriber, Consumer<ClusterEvent.MemberUp> action) {
     subscriber.addCase(ClusterEvent.MemberUp.class, action);
@@ -56,6 +48,9 @@ public class AkkaTool {
     _actorLinker.linkListen(listener, newMsg);
   }
 
-  private final ActorScheduler _actorScheduler;
-  private final ActorLinker _actorLinker;
+  @Inject
+  private ActorScheduler _actorScheduler;
+
+  @Inject
+  private ActorLinker _actorLinker;
 }

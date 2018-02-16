@@ -8,7 +8,7 @@ import lujgame.gateway.glue.GateGlueActorState;
 import org.springframework.stereotype.Service;
 
 @Service
-class ActorPreStart implements GateGlueActor.PreStart {
+public class ActorPreStart implements GateGlueActor.PreStart {
 
   @Override
   public void preStart(GateGlueActor.Context ctx) throws Exception {

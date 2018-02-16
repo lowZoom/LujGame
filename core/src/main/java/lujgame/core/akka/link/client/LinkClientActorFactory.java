@@ -1,29 +1,33 @@
 package lujgame.core.akka.link.client;
 
-import akka.actor.ActorRef;
-import akka.actor.Props;
-import akka.japi.Creator;
-import lujgame.core.akka.link.client.logic.LinkConnector;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import java.util.function.Supplier;
+import lujgame.core.akka.common.casev2.CaseActorFactory;
+import org.springframework.stereotype.Service;
 
-@Component
-public class LinkClientActorFactory {
+@Service
+public class LinkClientActorFactory extends CaseActorFactory<
+    LinkClientActorState,
+    LinkClientActor,
+    LinkClientActor.Context,
+    LinkClientActor.Case<?>> {
 
-  @Autowired
-  public LinkClientActorFactory(
-      LinkConnector linkConnector) {
-    _linkConnector = linkConnector;
+  @Override
+  protected Class<LinkClientActor> actorType() {
+    return LinkClientActor.class;
   }
 
-  public Props props(String linkUrl, ActorRef requestorRef, Enum<?> okMsg) {
-    LinkClientActorState state = new LinkClientActorState(linkUrl, requestorRef, okMsg);
-
-    Creator<LinkClientActor> c = () ->
-        new LinkClientActor(state, _linkConnector);
-
-    return Props.create(LinkClientActor.class, c);
+  @Override
+  protected Supplier<LinkClientActor> actorConstructor() {
+    return LinkClientActor::new;
   }
 
-  private final LinkConnector _linkConnector;
+  @Override
+  protected Supplier<LinkClientActor.Context> contextConstructor() {
+    return LinkClientActor.Context::new;
+  }
+
+  @Override
+  protected Class<LinkClientActor.PreStart> preStart() {
+    return LinkClientActor.PreStart.class;
+  }
 }
