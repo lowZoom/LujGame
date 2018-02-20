@@ -27,6 +27,12 @@
       <artifactId>spring-context</artifactId>
       <version>4.3.13.RELEASE</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/javax.inject/javax.inject -->
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <version>1</version>
+    </dependency>
 
     <!-- https://mvnrepository.com/artifact/com.typesafe.akka/akka-actor_2.11 -->
     <dependency>

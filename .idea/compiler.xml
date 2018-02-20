@@ -15,6 +15,7 @@
         <module name="game_test" />
         <module name="gateway" />
         <module name="robot" />
+        <module name="test" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -30,6 +31,7 @@
       <module name="lujgame" target="1.8" />
       <module name="robot" target="1.8" />
       <module name="root" target="1.8" />
+      <module name="test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

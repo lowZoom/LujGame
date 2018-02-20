@@ -66,6 +66,7 @@
         <option value="$PROJECT_DIR$/example/ex_proto/pom.xml" />
         <option value="$PROJECT_DIR$/example/maven/ex_pack/pom.xml" />
         <option value="$PROJECT_DIR$/game_test/pom.xml" />
+        <option value="$PROJECT_DIR$/test/pom.xml" />
       </list>
     </option>
   </component>

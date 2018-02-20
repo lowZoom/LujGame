@@ -12,5 +12,6 @@
     <file url="file://$PROJECT_DIR$/gateway" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/maven/root" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/robot" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/test" charset="UTF-8" />
   </component>
 </project>
