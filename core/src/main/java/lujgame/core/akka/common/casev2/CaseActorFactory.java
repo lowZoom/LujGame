@@ -7,7 +7,6 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.function.Supplier;
 import javax.inject.Inject;
-import lujgame.core.spring.SpringBeanCollector;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -75,12 +74,7 @@ public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
   private Map<Class<?>, C> collectCaseHandlerMap() {
     Type factoryType = getClass().getGenericSuperclass();
     ParameterizedType caseType = (ParameterizedType) getTypeArgument(factoryType, 3);
-    return _beanCollector.collectBeanMap((Class<C>) caseType.getRawType(), this::getMessageType);
-  }
-
-  private Class<?> getMessageType(C handler) {
-    Type parentType = handler.getClass().getGenericInterfaces()[0];
-    return (Class<?>) getTypeArgument(parentType, 0);
+    return _caseHandlerCollector.collect((Class<C>) caseType.getRawType());
   }
 
   private Type getTypeArgument(Type type, int argIndex) {
@@ -98,5 +92,5 @@ public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
   private ApplicationContext _applicationContext;
 
   @Inject
-  private SpringBeanCollector _beanCollector;
+  private CaseHandlerCollector _caseHandlerCollector;
 }

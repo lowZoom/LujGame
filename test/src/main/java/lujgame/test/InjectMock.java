@@ -1,4 +1,4 @@
-package lujgame.robot.test;
+package lujgame.test;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

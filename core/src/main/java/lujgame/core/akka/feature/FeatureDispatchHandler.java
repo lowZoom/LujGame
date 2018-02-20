@@ -7,11 +7,12 @@ import java.util.Map;
 import javax.inject.Inject;
 import lujgame.core.akka.common.casev2.CaseActorContext;
 import lujgame.core.akka.common.casev2.CaseActorV2;
+import lujgame.core.akka.common.casev2.DefaultCaseHandler;
 import lujgame.core.akka.common.casev2.ExtensionStateMap;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FeatureDispatchHandler implements ActorFeatureHandler<FeatureDispatchMsg> {
+public class FeatureDispatchHandler implements DefaultCaseHandler<FeatureDispatchMsg> {
 
   @Override
   public void onHandle(CaseActorContext<?> ctx) {

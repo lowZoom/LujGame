@@ -1,16 +1,15 @@
-package lujgame.robot.test;
+package lujgame.core.test;
 
 import lujgame.test.AbstractTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 
-@ContextConfiguration(classes = RobotTest.class)
+@ContextConfiguration(classes = CoreTest.class)
 @Configuration
 @ComponentScan(basePackages = {
     "lujgame.core",
-    "lujgame.robot",
 }, lazyInit = true)
-public abstract class RobotTest extends AbstractTest {
+public class CoreTest extends AbstractTest {
 
 }
