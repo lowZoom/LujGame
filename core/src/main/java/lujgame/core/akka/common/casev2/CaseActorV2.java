@@ -29,16 +29,19 @@ public abstract class CaseActorV2<S> extends UntypedActor {
 
   @Override
   public void onReceive(Object msg) throws Throwable {
-    Class<?> msgType = msg.getClass();
-    ActorCaseHandler<Object, ?> msgHandler =
-        (ActorCaseHandler<Object, ?>) _caseHandlerMap.get(msgType);
-
-    CaseActorContext<S> ctx = createContext(msg);
-    msgHandler.onHandle(ctx);
+    tryHandleCase(msg);
   }
 
-  public void setState(S state) {
-    _state = state;
+  public ExtensionStateMap getExtensionStateMap() {
+    return _extensionStateMap;
+  }
+
+  public void setExtensionStateMap(ExtensionStateMap extensionStateMap) {
+    _extensionStateMap = extensionStateMap;
+  }
+
+  public void setActorState(S actorState) {
+    _actorState = actorState;
   }
 
   public void setContextConstructor(Supplier<CaseActorContext<S>> contextConstructor) {
@@ -62,9 +65,29 @@ public abstract class CaseActorV2<S> extends UntypedActor {
     _logger = Logging.getLogger(system, this);
   }
 
+  @SuppressWarnings("unchecked")
+  private void tryHandleCase(Object msg) {
+    Class<?> msgType = msg.getClass();
+    ActorCaseHandler<Object, ?> msgHandler =
+        (ActorCaseHandler<Object, ?>) _caseHandlerMap.get(msgType);
+
+    if (msgHandler == null) {
+      logUnhandled(msg);
+      return;
+    }
+
+    CaseActorContext<S> ctx = createContext(msg);
+    msgHandler.onHandle(ctx);
+  }
+
+  private void logUnhandled(Object msg) {
+    _logger.warning("未处理的消息：{}（{}）", msg, msg.getClass());
+    unhandled(msg);
+  }
+
   private CaseActorContext<S> createContext(Object msg) {
     CaseActorContext<S> ctx = _contextConstructor.get();
-    ctx._actorState = _state;
+    ctx._actorState = _actorState;
     ctx._message = msg;
     ctx._actorLogger = _logger;
     ctx._actor = this;
@@ -73,12 +96,13 @@ public abstract class CaseActorV2<S> extends UntypedActor {
 
   private static final Object NO_MSG = null;
 
-  private S _state;
+  private ExtensionStateMap _extensionStateMap;
+
+  private S _actorState;
   private Supplier<CaseActorContext<S>> _contextConstructor;
 
   private PreStartHandler<CaseActorContext<S>> _preStartHandler;
   private PostStopHandler<CaseActorContext<S>> _postStopHandler;
-
   private Map<Class<?>, ?> _caseHandlerMap;
 
   private final LoggingAdapter _logger;

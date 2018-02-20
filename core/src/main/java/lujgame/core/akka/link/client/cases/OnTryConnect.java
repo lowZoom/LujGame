@@ -33,8 +33,8 @@ public class OnTryConnect implements LinkClientActor.Case<LinkClientActor.TryCon
     ActorSelection selection = ctx.actorSelection(url);
     selection.tell(LinkConnect.Try.MSG, ctx.self());
 
-    _actorScheduler.scheduleSelf(actor, 3, TimeUnit.SECONDS,
-        ScheduleId.TRY, LinkClientActor.TryConnect.MSG, LinkConnect.Ok.class);
+    _actorScheduler.scheduleSelf(actor.getSelf(), TimeUnit.SECONDS.toMillis(3),
+        ScheduleId.TRY, LinkClientActor.TryConnect.MSG);//, LinkConnect.Ok.class);
   }
 
   private interface ScheduleId {

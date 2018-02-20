@@ -8,7 +8,7 @@ import java.util.Map;
 import lujgame.core.akka.schedule.ScheduleActor;
 import lujgame.core.akka.schedule.ScheduleActorState;
 import lujgame.core.akka.schedule.ScheduleItem;
-import lujgame.core.akka.schedule.ScheduleMsg;
+import lujgame.core.akka.schedule.message.ScheduleMsg;
 import org.springframework.stereotype.Service;
 
 @Service

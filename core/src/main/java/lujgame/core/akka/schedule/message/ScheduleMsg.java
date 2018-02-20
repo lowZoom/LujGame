@@ -1,4 +1,4 @@
-package lujgame.core.akka.schedule;
+package lujgame.core.akka.schedule.message;
 
 public class ScheduleMsg {
 

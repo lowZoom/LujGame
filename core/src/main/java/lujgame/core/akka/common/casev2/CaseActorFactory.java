@@ -18,7 +18,7 @@ public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
   public Props props(S state) {
     Creator<A> c = () -> {
       A actor = actorConstructor().get();
-      actor.setState(state);
+      actor.setActorState(state);
       actor.setContextConstructor(_contextConstructor);
       actor.setPreStartHandler(_preStartHandler);
       actor.setPostStopHandler(_postStopHandler);

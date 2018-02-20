@@ -37,7 +37,7 @@ public class AkkaTool {
 
   public void schedule(UntypedActor actor, long len, TimeUnit unit,
       String scheduleId, Object msg, Class<?> interrupt) {
-    _actorScheduler.scheduleSelf(actor, len, unit, scheduleId, msg, interrupt);
+    _actorScheduler.scheduleSelf(actor.getSelf(), unit.toMillis(len), scheduleId, msg);
   }
 
   public void link(UntypedActor requestor, String linkUrl, Enum<?> okMsg) {
