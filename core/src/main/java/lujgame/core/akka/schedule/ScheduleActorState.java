@@ -13,6 +13,7 @@ public class ScheduleActorState {
     _scheduleMap = scheduleMap;
   }
 
+  @Deprecated
   public Multimap<Class<?>, ScheduleItem> getInterruptMap() {
     return _interruptMap;
   }

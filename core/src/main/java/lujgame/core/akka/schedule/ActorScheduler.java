@@ -11,12 +11,12 @@ import lujgame.core.akka.feature.FeatureDispatchMsg;
 import lujgame.core.akka.internal.AkkaAdapter;
 import lujgame.core.akka.schedule.message.StartScheduleMsg;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import scala.concurrent.ExecutionContextExecutor;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
 
-@Service
+@Component
 public class ActorScheduler {
 
   public void schedule(CaseActor actor, long len, TimeUnit unit, Object msg) {
@@ -32,12 +32,9 @@ public class ActorScheduler {
   }
 
   public void scheduleSelf(ActorRef actorRef, long delayMs, String scheduleId, Object msg) {
-    StartScheduleMsg scheduleMsg = new StartScheduleMsg(delayMs, scheduleId, msg);
-
-    FeatureDispatchMsg featureDispatchMsg = new FeatureDispatchMsg(
-        ActorFeature.SCHEDULE, scheduleMsg);
-
-    actorRef.tell(featureDispatchMsg, actorRef);
+    StartScheduleMsg scheduleMsg = new StartScheduleMsg(scheduleId, delayMs, msg, actorRef);
+    FeatureDispatchMsg dispatchMsg = new FeatureDispatchMsg(ActorFeature.SCHEDULE, scheduleMsg);
+    actorRef.tell(dispatchMsg, actorRef);
   }
 
   @Autowired

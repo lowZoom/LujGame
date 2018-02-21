@@ -1,8 +1,8 @@
 package lujgame.core.akka.schedule.message;
 
-public class ScheduleMsg {
+public class FinishScheduleMsg {
 
-  public ScheduleMsg(String scheduleId) {
+  public FinishScheduleMsg(String scheduleId) {
     _scheduleId = scheduleId;
   }
 

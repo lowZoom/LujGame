@@ -10,14 +10,13 @@ import com.google.common.collect.Multimap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import javax.inject.Inject;
 import lujgame.core.akka.internal.AkkaAdapter;
 import lujgame.core.akka.schedule.ScheduleActor;
 import lujgame.core.akka.schedule.ScheduleActorState;
 import lujgame.core.akka.schedule.ScheduleItem;
-import lujgame.core.akka.schedule.ScheduleItemFactory;
-import lujgame.core.akka.schedule.message.ScheduleMsg;
+import lujgame.core.akka.schedule.message.FinishScheduleMsg;
 import lujgame.core.akka.schedule.message.StartScheduleMsg;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import scala.concurrent.ExecutionContextExecutor;
 import scala.concurrent.duration.Duration;
@@ -34,7 +33,6 @@ public class OnStartSchedule implements ScheduleActor.Case<StartScheduleMsg> {
 
     StartScheduleMsg msg = ctx.getMessage(this);
     FiniteDuration dur = Duration.create(msg.getDelayMs(), TimeUnit.MILLISECONDS);
-    ActorRef actorRef = actor.getSelf();
     ExecutionContextExecutor dispatcher = system.dispatcher();
 
     ScheduleActorState state = ctx.getActorState();
@@ -45,19 +43,24 @@ public class OnStartSchedule implements ScheduleActor.Case<StartScheduleMsg> {
     cancelLast(scheduleMap, scheduleId);
 
     // 新建调度
-    ScheduleMsg scheduleMsg = new ScheduleMsg(scheduleId);
-    Cancellable c = _akkaAdapter.scheduleOnce(
-        scheduler, dur, actorRef, scheduleMsg, dispatcher, actorRef);
+    FinishScheduleMsg scheduleMsg = new FinishScheduleMsg(scheduleId);
+    Cancellable c = _akkaAdapter.scheduleOnce(scheduler, dur,
+        actor.getSelf(), scheduleMsg, dispatcher, actor.getSender());
 
-//    // 存放新的调度
-//    ScheduleItem item = _scheduleItemFactory.createItem(scheduleId, msg, interruptType, c);
-//    scheduleMap.put(scheduleId, item);
-//
+    // 存放新的调度
+    ScheduleItem item = createItem(scheduleId, msg.getMessage(), msg.getReceiver(), c);
+    scheduleMap.put(scheduleId, item);
+
 //    Multimap<Class<?>, ScheduleItem> interruptMap = getOrNewInterruptMap(state);
 //    interruptMap.put(interruptType, item);
   }
 
-  public Map<String, ScheduleItem> getOrNewScheduleMap(ScheduleActorState state) {
+  private ScheduleItem createItem(String scheduleId, Object message,
+      ActorRef receiver, Cancellable cancellable) {
+    return new ScheduleItem(scheduleId, message, receiver, cancellable, null);
+  }
+
+  private Map<String, ScheduleItem> getOrNewScheduleMap(ScheduleActorState state) {
     Map<String, ScheduleItem> scheduleMap = state.getScheduleMap();
     if (scheduleMap == null) {
       scheduleMap = new HashMap<>(8);
@@ -66,7 +69,7 @@ public class OnStartSchedule implements ScheduleActor.Case<StartScheduleMsg> {
     return scheduleMap;
   }
 
-  public Multimap<Class<?>, ScheduleItem> getOrNewInterruptMap(ScheduleActorState state) {
+  private Multimap<Class<?>, ScheduleItem> getOrNewInterruptMap(ScheduleActorState state) {
     Multimap<Class<?>, ScheduleItem> interruptMap = state.getInterruptMap();
     if (interruptMap == null) {
       interruptMap = LinkedListMultimap.create(8);
@@ -84,9 +87,6 @@ public class OnStartSchedule implements ScheduleActor.Case<StartScheduleMsg> {
     cancellable.cancel();
   }
 
-  @Autowired
-  private ScheduleItemFactory _scheduleItemFactory;
-
-  @Autowired
+  @Inject
   private AkkaAdapter _akkaAdapter;
 }
