@@ -28,7 +28,8 @@ public class CaseHandlerCollectorTest extends CoreTest {
     Map<Class<?>, TestCaseHandler> result = collect();
 
     //-- Assert --//
-    assertThat(result.get(TestDefaultCaseHandler.class)).isNotNull();
+    assertThat(result.get(TestCaseHandler.Msg.class)).isNotNull();
+    assertThat(result.get(TestDefaultCaseHandler.Msg.class)).isNotNull();
   }
 
   Map<Class<?>, TestCaseHandler> collect() {

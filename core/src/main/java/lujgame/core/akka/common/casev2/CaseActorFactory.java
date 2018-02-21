@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 import javax.inject.Inject;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 
 public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
@@ -42,7 +41,7 @@ public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
   }
 
   @SuppressWarnings("unchecked")
-  @EventListener(ContextRefreshedEvent.class)
+  @EventListener(CaseHandlerCollector.AfterInit.class)
   void init() {
     _contextConstructor = (Supplier<CaseActorContext<S>>) contextConstructor();
 

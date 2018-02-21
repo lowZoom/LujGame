@@ -1,11 +1,12 @@
 package lujgame.core.akka.common.casev2;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ExtensionStateMap {
 
-  public ExtensionStateMap(Map<Class<?>, Object> stateMap) {
-    _stateMap = stateMap;
+  public ExtensionStateMap() {
+    _stateMap = new HashMap<>(8);
   }
 
   public void put(Class<?> key, Object value) {

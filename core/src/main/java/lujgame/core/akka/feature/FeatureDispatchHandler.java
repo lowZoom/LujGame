@@ -1,5 +1,7 @@
 package lujgame.core.akka.feature;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import akka.actor.ActorContext;
 import akka.actor.ActorRef;
 import akka.actor.Props;
@@ -17,7 +19,8 @@ public class FeatureDispatchHandler implements DefaultCaseHandler<FeatureDispatc
   @Override
   public void onHandle(CaseActorContext<?> ctx) {
     CaseActorV2<?> actor = (CaseActorV2<?>) ctx.getActor();
-    FeatureState state = getOrCreateFeatureState(actor.getExtensionStateMap());
+    ExtensionStateMap stateMap = getOrCreateStateMap(actor);
+    FeatureState state = getOrCreateFeatureState(stateMap);
     Map<ActorFeature, ActorRef> featureRefMap = state.getFeatureRefMap();
 
     FeatureDispatchMsg msg = ctx.getMessage(this);
@@ -25,6 +28,16 @@ public class FeatureDispatchHandler implements DefaultCaseHandler<FeatureDispatc
 
     ActorRef featureRef = getOrCreateFeatureRef(featureRefMap, feature, actor.getContext());
     featureRef.tell(msg.getFeatureMsg(), actor.getSelf());
+  }
+
+  private ExtensionStateMap getOrCreateStateMap(CaseActorV2<?> actor) {
+    ExtensionStateMap oldMap = actor.getExtensionStateMap();
+    if (oldMap != null) {
+      return oldMap;
+    }
+    ExtensionStateMap newMap = new ExtensionStateMap();
+    actor.setExtensionStateMap(newMap);
+    return newMap;
   }
 
   private FeatureState getOrCreateFeatureState(ExtensionStateMap stateMap) {
@@ -45,6 +58,8 @@ public class FeatureDispatchHandler implements DefaultCaseHandler<FeatureDispatc
     }
 
     FeatureActorFactory<Object, ?, ?, ?> factory = _featureActorFactoryMap.getFactory(feature);
+    checkNotNull(factory, feature);
+
     Object featureState = factory.createFeatureState();
     Props props = factory.props(featureState);
 
