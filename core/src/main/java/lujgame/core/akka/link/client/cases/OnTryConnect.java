@@ -1,6 +1,7 @@
 package lujgame.core.akka.link.client.cases;
 
 import akka.actor.ActorContext;
+import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import akka.actor.UntypedActor;
 import akka.event.LoggingAdapter;
@@ -19,21 +20,23 @@ public class OnTryConnect implements LinkClientActor.Case<LinkClientActor.TryCon
   public void onHandle(LinkClientActor.Context ctx) {
     LinkClientActorState actorState = ctx.getActorState();
     UntypedActor actor = ctx.getActor();
-    LoggingAdapter log = ctx.getActorLogger();
 
+    LoggingAdapter log = ctx.getActorLogger();
     tryConnectServer(actorState, actor, log);
   }
 
   private void tryConnectServer(LinkClientActorState state,
-      UntypedActor actor, LoggingAdapter log) {
+      UntypedActor clientActor, LoggingAdapter log) {
     String url = state.getLinkUrl();
     log.debug("尝试连接 -> {}", url);
 
-    ActorContext ctx = actor.getContext();
+    ActorContext ctx = clientActor.getContext();
     ActorSelection selection = ctx.actorSelection(url);
-    selection.tell(LinkConnect.Try.MSG, ctx.self());
 
-    _actorScheduler.scheduleSelf(actor.getSelf(), TimeUnit.SECONDS.toMillis(3),
+    ActorRef clientRef = clientActor.getSelf();
+    selection.tell(LinkConnect.Try.MSG, clientRef);
+
+    _actorScheduler.scheduleSelf(clientRef, TimeUnit.SECONDS.toMillis(3),
         ScheduleId.TRY, LinkClientActor.TryConnect.MSG);//, LinkConnect.Ok.class);
   }
 

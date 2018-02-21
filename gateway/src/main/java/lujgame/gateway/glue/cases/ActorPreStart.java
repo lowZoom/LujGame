@@ -16,12 +16,8 @@ public class ActorPreStart implements GateGlueActor.PreStart {
     UntypedActor actor = ctx.getActor();
 
     // 开始尝试连接网关管理节点
-    startConnect(actorState, actor, GateGlueActor.AdminOk.MSG);
-  }
-
-  private void startConnect(GateGlueActorState state, UntypedActor actor, Enum<?> okMsg) {
-    String url = state.getGlueUrl();
-    _akkaTool.link(actor, url, okMsg);
+    String url = actorState.getGlueUrl();
+    _akkaTool.link(actor, url, GateGlueActor.AdminOk.MSG);
   }
 
   @Inject

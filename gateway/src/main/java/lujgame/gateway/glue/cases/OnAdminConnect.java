@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  * 成功连上网关中心管理节点
  */
 @Service
-class OnAdminConnect implements GateGlueActor.Case<GateGlueActor.AdminOk> {
+public class OnAdminConnect implements GateGlueActor.Case<GateGlueActor.AdminOk> {
 
   @Override
   public void onHandle(GateGlueActor.Context ctx) {
