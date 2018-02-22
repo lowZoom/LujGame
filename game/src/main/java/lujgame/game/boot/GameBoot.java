@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableMap;
 import com.typesafe.config.Config;
 import lujgame.game.master.cluster.ClusterBossActorFactory;
 import lujgame.game.master.gate.CommGateActorFactory;
+import lujgame.game.master.gate.CommGateActorState;
 import lujgame.game.server.GameServerActorFactory;
 import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.bean.DatabaseMeta;
@@ -58,7 +59,12 @@ public class GameBoot {
     Cluster cluster = Cluster.get(system);
 
     ActorRef masterRef = system.actorOf(_clusterBossActorFactory.props(cluster), "Master");
-    ActorRef gateCommRef = system.actorOf(_commGateActorFactory.props(masterRef), "GateComm");
+    createGateComm(system, masterRef);
+  }
+
+  private void createGateComm(ActorSystem system, ActorRef masterRef) {
+    CommGateActorState state = new CommGateActorState(masterRef);
+    system.actorOf(_commGateActorFactory.props(state), "GateComm");
   }
 
   private void startGame(Config gameCfg, Config akkaCfg, Logger log) {

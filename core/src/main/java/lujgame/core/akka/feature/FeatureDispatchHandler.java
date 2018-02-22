@@ -61,13 +61,19 @@ public class FeatureDispatchHandler implements DefaultCaseHandler<FeatureDispatc
     checkNotNull(factory, feature);
 
     Object featureState = factory.createFeatureState();
-    Props props = factory.props(featureState);
+    checkNotNull(featureState, feature);
 
-    ActorRef newRef = actorContext.actorOf(props);
+    Props props = factory.props(featureState);
+    String actorName = _featureActorNameMaker.makeName(feature);
+    ActorRef newRef = actorContext.actorOf(props, actorName);
+
     refMap.put(feature, newRef);
     return newRef;
   }
 
   @Inject
   private FeatureActorFactoryMap _featureActorFactoryMap;
+
+  @Inject
+  private FeatureActorNameMaker _featureActorNameMaker;
 }

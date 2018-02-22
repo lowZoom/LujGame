@@ -6,5 +6,9 @@ public class StartListenMsg {
     _newLinkMsg = newLinkMsg;
   }
 
+  public Enum<?> getNewLinkMsg() {
+    return _newLinkMsg;
+  }
+
   private final Enum<?> _newLinkMsg;
 }

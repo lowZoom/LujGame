@@ -1,30 +1,27 @@
 package lujgame.game.master.gate;
 
-import akka.actor.ActorRef;
-import akka.actor.Props;
-import akka.japi.Creator;
-import lujgame.core.akka.AkkaTool;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import lujgame.core.akka.common.casev2.CaseActorFactory;
+import org.springframework.stereotype.Service;
 
-@Component
-public class CommGateActorFactory {
+@Service
+public class CommGateActorFactory extends CaseActorFactory<
+    CommGateActorState,
+    CommGateActor,
+    CommGateActor.Context,
+    CommGateActor.Case<?>> {
 
-  @Autowired
-  public CommGateActorFactory(AkkaTool akkaTool, GameGateAdder gateAdder) {
-    _akkaTool = akkaTool;
-    _gateAdder = gateAdder;
+  @Override
+  protected CommGateActor createActor() {
+    return new CommGateActor();
   }
 
-  public Props props(ActorRef masterRef) {
-    CommGateActorState state = new CommGateActorState(masterRef);
-
-    Creator<CommGateActor> c = () -> new CommGateActor(state, _akkaTool, _gateAdder);
-
-    return Props.create(CommGateActor.class, c);
+  @Override
+  protected CommGateActor.Context createContext() {
+    return new CommGateActor.Context();
   }
 
-  private final AkkaTool _akkaTool;
-
-  private final GameGateAdder _gateAdder;
+  @Override
+  protected Class<CommGateActor.PreStart> preStart() {
+    return CommGateActor.PreStart.class;
+  }
 }

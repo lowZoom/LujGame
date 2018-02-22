@@ -7,6 +7,9 @@ import lujgame.core.akka.link.server.LinkServerActor;
 import lujgame.core.akka.link.server.LinkServerActorState;
 import org.springframework.stereotype.Service;
 
+/**
+ * 有远程client连接过来
+ */
 @Service
 public class OnConnectTry implements LinkServerActor.Case<LinkConnect.Try> {
 
@@ -18,7 +21,7 @@ public class OnConnectTry implements LinkServerActor.Case<LinkConnect.Try> {
     answerConnect(actorState, actor.getSender());
   }
 
-  public void answerConnect(LinkServerActorState state, ActorRef clientRef) {
+  private void answerConnect(LinkServerActorState state, ActorRef clientRef) {
     ActorRef listenRef = state.getListenerRef();
 
     // 通知本地服务端监听节点

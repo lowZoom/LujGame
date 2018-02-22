@@ -28,10 +28,6 @@ public class LinkServerActorFactory extends FeatureActorFactory<
 
   @Override
   public LinkServerActorState createFeatureState() {
-    return null;
+    return new LinkServerActorState();
   }
-
-//  public String getActorName() {
-//    return "Luj$LinkServer";
-//  }
 }
