@@ -1,9 +1,10 @@
-package lujgame.core.akka.schedule;
+package lujgame.core.akka.schedule.actor;
 
 import lujgame.core.akka.common.casev2.ActorCaseHandler;
 import lujgame.core.akka.common.casev2.CaseActorContext;
 import lujgame.core.akka.common.casev2.CaseActorV2;
 import lujgame.core.akka.common.casev2.PreStartHandler;
+import lujgame.core.akka.schedule.control.state.ScheduleActorState;
 
 public class ScheduleActor extends CaseActorV2<ScheduleActorState> {
 

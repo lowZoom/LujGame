@@ -1,4 +1,4 @@
-package lujgame.core.akka.schedule;
+package lujgame.core.akka.schedule.control.state;
 
 import akka.actor.ActorRef;
 import akka.actor.Cancellable;
@@ -6,14 +6,12 @@ import akka.actor.Cancellable;
 public class ScheduleItem {
 
   public ScheduleItem(String scheduleId, Object message,
-      ActorRef receiver, Cancellable cancellable, Class<?> interruptType) {
+      ActorRef receiver, Cancellable cancellable) {
     _scheduleId = scheduleId;
     _message = message;
 
     _receiver = receiver;
     _cancellable = cancellable;
-
-    _interruptType = interruptType;
   }
 
   public String getScheduleId() {
@@ -32,16 +30,9 @@ public class ScheduleItem {
     return _cancellable;
   }
 
-  @Deprecated
-  public Class<?> getInterruptType() {
-    return _interruptType;
-  }
-
   private final String _scheduleId;
   private final Object _message;
 
   private final ActorRef _receiver;
   private final Cancellable _cancellable;
-
-  private final Class<?> _interruptType;
 }

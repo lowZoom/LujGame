@@ -1,7 +1,8 @@
-package lujgame.core.akka.schedule;
+package lujgame.core.akka.schedule.actor;
 
 import lujgame.core.akka.feature.ActorFeature;
 import lujgame.core.akka.feature.FeatureActorFactory;
+import lujgame.core.akka.schedule.control.state.ScheduleActorState;
 import org.springframework.stereotype.Service;
 
 @Service

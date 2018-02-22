@@ -16,7 +16,7 @@ public class OnStartConnect implements LinkClientActor.Case<StartConnectMsg> {
   public void onHandle(LinkClientActor.Context ctx) {
     LinkClientActorState actorState = ctx.getActorState();
     UntypedActor reqActor = ctx.getActor();
-    actorState.setRequestorRef(reqActor.getSelf());
+    actorState.setRequestorRef(reqActor.getSender());
 
     StartConnectMsg msg = ctx.getMessage(this);
     actorState.setSuccessMsg(msg.getSuccessMsg());

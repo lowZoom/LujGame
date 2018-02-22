@@ -19,6 +19,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class OnTryConnect implements LinkClientActor.Case<LinkClientActor.TryConnect> {
 
+  public interface ScheduleId {
+
+    String TRY = LinkClientActor.TryConnect.class.getName();
+  }
+
   @Override
   public void onHandle(LinkClientActor.Context ctx) {
     LinkClientActorState actorState = ctx.getActorState();
@@ -41,11 +46,6 @@ public class OnTryConnect implements LinkClientActor.Case<LinkClientActor.TryCon
 
     _actorScheduler.scheduleSelf(clientRef, TimeUnit.SECONDS.toMillis(3),
         ScheduleId.TRY, LinkClientActor.TryConnect.MSG);//, LinkConnect.Ok.class);
-  }
-
-  private interface ScheduleId {
-
-    String TRY = LinkClientActor.TryConnect.class.getName();
   }
 
   @Inject

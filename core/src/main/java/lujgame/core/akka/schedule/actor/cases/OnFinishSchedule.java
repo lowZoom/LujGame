@@ -1,18 +1,19 @@
-package lujgame.core.akka.schedule.cases;
+package lujgame.core.akka.schedule.actor.cases;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
-import com.google.common.collect.Multimap;
-import java.util.Collection;
 import java.util.Map;
-import lujgame.core.akka.schedule.ScheduleActor;
-import lujgame.core.akka.schedule.ScheduleActorState;
-import lujgame.core.akka.schedule.ScheduleItem;
-import lujgame.core.akka.schedule.message.FinishScheduleMsg;
+import lujgame.core.akka.schedule.actor.ScheduleActor;
+import lujgame.core.akka.schedule.actor.message.FinishScheduleMsg;
+import lujgame.core.akka.schedule.control.state.ScheduleActorState;
+import lujgame.core.akka.schedule.control.state.ScheduleItem;
 import org.springframework.stereotype.Service;
 
+/**
+ * 定时时间到触发完成消息
+ */
 @Service
 public class OnFinishSchedule implements ScheduleActor.Case<FinishScheduleMsg> {
 
@@ -49,18 +50,5 @@ public class OnFinishSchedule implements ScheduleActor.Case<FinishScheduleMsg> {
     // 调用对应消息处理器
     Object msg = item.getMessage();
     item.getReceiver().tell(msg, sender);
-
-    // 没有注册过打断消息，中止
-    Class<?> interruptType = item.getInterruptType();
-    if (interruptType == null) {
-      return;
-    }
-
-    // 清理打断注册消息
-    Multimap<Class<?>, ScheduleItem> interruptMap = actorState.getInterruptMap();
-    checkNotNull(interruptMap, "都注册过打断消息了还没初始化，检查打断注册逻辑");
-
-    Collection<ScheduleItem> cancelCol = interruptMap.get(interruptType);
-    cancelCol.remove(item);
   }
 }

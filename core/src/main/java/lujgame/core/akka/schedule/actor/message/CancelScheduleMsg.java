@@ -1,8 +1,8 @@
-package lujgame.core.akka.schedule.message;
+package lujgame.core.akka.schedule.actor.message;
 
-public class FinishScheduleMsg {
+public class CancelScheduleMsg {
 
-  public FinishScheduleMsg(String scheduleId) {
+  public CancelScheduleMsg(String scheduleId) {
     _scheduleId = scheduleId;
   }
 

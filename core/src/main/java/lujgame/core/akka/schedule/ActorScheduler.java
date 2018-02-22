@@ -9,7 +9,7 @@ import lujgame.core.akka.common.CaseActor;
 import lujgame.core.akka.feature.ActorFeature;
 import lujgame.core.akka.feature.FeatureDispatchMsg;
 import lujgame.core.akka.internal.AkkaAdapter;
-import lujgame.core.akka.schedule.message.StartScheduleMsg;
+import lujgame.core.akka.schedule.actor.message.StartScheduleMsg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import scala.concurrent.ExecutionContextExecutor;

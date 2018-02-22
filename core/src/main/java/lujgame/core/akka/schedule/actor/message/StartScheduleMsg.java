@@ -1,4 +1,4 @@
-package lujgame.core.akka.schedule.message;
+package lujgame.core.akka.schedule.actor.message;
 
 import akka.actor.ActorRef;
 
