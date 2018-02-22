@@ -2,7 +2,9 @@ package lujgame.core.akka.feature;
 
 public enum ActorFeature {
 
-  LINK,
+  LINK_CLIENT,
+
+  LINK_SERVER,
 
   SCHEDULE,
 }

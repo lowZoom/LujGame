@@ -17,12 +17,12 @@ public class RobotSpawnActorFactory extends CaseActorFactory<
   }
 
   @Override
-  protected Supplier<RobotSpawnActor> actorConstructor() {
+  protected Supplier<RobotSpawnActor> createActor() {
     return RobotSpawnActor::new;
   }
 
   @Override
-  protected Supplier<RobotSpawnActor.Context> contextConstructor() {
+  protected Supplier<RobotSpawnActor.Context> createContext() {
     return RobotSpawnActor.Context::new;
   }
 

@@ -15,7 +15,7 @@ public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
 
   public Props props(S state) {
     Creator<A> c = () -> {
-      A actor = actorConstructor().get();
+      A actor = createActor();
       actor.setActorState(state);
       actor.setContextConstructor(_contextConstructor);
       actor.setPreStartHandler(_preStartHandler);
@@ -23,14 +23,12 @@ public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
       actor.setCaseHandlerMap(_caseHandlerMap);
       return actor;
     };
-    return Props.create(actorType(), c);
+    return Props.create(_actorType, c);
   }
 
-  protected abstract Class<A> actorType();
+  protected abstract A createActor();
 
-  protected abstract Supplier<A> actorConstructor();
-
-  protected abstract Supplier<CO> contextConstructor();
+  protected abstract CO createContext();
 
   protected Class<? extends PreStartHandler<CO>> preStart() {
     return null;
@@ -43,12 +41,14 @@ public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
   @SuppressWarnings("unchecked")
   @EventListener(CaseHandlerCollector.AfterInit.class)
   void init() {
-    _contextConstructor = (Supplier<CaseActorContext<S>>) contextConstructor();
+    Type factoryType = getClass().getGenericSuperclass();
+    _actorType = (Class<A>) getTypeArgument(factoryType, 1);
+    _contextConstructor = this::createContext;
 
     _preStartHandler = getPreStartHandler();
     _postStopHandler = getPostStopHandler();
 
-    _caseHandlerMap = collectCaseHandlerMap();
+    _caseHandlerMap = collectCaseHandlerMap(factoryType);
   }
 
   @SuppressWarnings("unchecked")
@@ -70,8 +70,7 @@ public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
   }
 
   @SuppressWarnings("unchecked")
-  private Map<Class<?>, C> collectCaseHandlerMap() {
-    Type factoryType = getClass().getGenericSuperclass();
+  private Map<Class<?>, C> collectCaseHandlerMap(Type factoryType) {
     ParameterizedType caseType = (ParameterizedType) getTypeArgument(factoryType, 3);
     return _caseHandlerCollector.collect((Class<C>) caseType.getRawType());
   }
@@ -80,6 +79,7 @@ public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
     return ((ParameterizedType) type).getActualTypeArguments()[argIndex];
   }
 
+  private Class<A> _actorType;
   private Supplier<CaseActorContext<S>> _contextConstructor;
 
   private PreStartHandler<CaseActorContext<S>> _preStartHandler;

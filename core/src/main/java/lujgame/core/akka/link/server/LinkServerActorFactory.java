@@ -1,32 +1,37 @@
 package lujgame.core.akka.link.server;
 
-import akka.actor.ActorRef;
-import akka.actor.Props;
-import akka.japi.Creator;
-import lujgame.core.akka.link.server.logic.LinkListener;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import lujgame.core.akka.feature.ActorFeature;
+import lujgame.core.akka.feature.FeatureActorFactory;
+import org.springframework.stereotype.Service;
 
-@Component
-public class LinkServerActorFactory {
+@Service
+public class LinkServerActorFactory extends FeatureActorFactory<
+    LinkServerActorState,
+    LinkServerActor,
+    LinkServerActor.Context,
+    LinkServerActor.Case<?>> {
 
-  @Autowired
-  public LinkServerActorFactory(LinkListener linkListener) {
-    _linkListener = linkListener;
+  @Override
+  protected LinkServerActor createActor() {
+    return new LinkServerActor();
   }
 
-  public Props props(ActorRef listenRef, Enum<?> newMsg) {
-    LinkServerActorState state = new LinkServerActorState(listenRef, newMsg);
-
-    Creator<LinkServerActor> c = () ->
-        new LinkServerActor(state, _linkListener);
-
-    return Props.create(LinkServerActor.class, c);
+  @Override
+  protected LinkServerActor.Context createContext() {
+    return new LinkServerActor.Context();
   }
 
-  public String getActorName() {
-    return "Luj$LinkServer";
+  @Override
+  public ActorFeature actorFeature() {
+    return ActorFeature.LINK_SERVER;
   }
 
-  private final LinkListener _linkListener;
+  @Override
+  public LinkServerActorState createFeatureState() {
+    return null;
+  }
+
+//  public String getActorName() {
+//    return "Luj$LinkServer";
+//  }
 }

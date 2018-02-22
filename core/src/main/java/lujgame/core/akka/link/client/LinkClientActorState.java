@@ -4,37 +4,42 @@ import akka.actor.ActorRef;
 
 public class LinkClientActorState {
 
-  public LinkClientActorState(String linkUrl, ActorRef requestorRef, Enum<?> okMsg) {
-    _linkUrl = linkUrl;
-
-    _requestorRef = requestorRef;
-    _okMsg = okMsg;
+  public String getServerUrl() {
+    return _serverUrl;
   }
 
-  public ActorRef getLinkRef() {
-    return _linkRef;
-  }
-
-  public void setLinkRef(ActorRef linkRef) {
-    _linkRef = linkRef;
-  }
-
-  public String getLinkUrl() {
-    return _linkUrl;
+  public void setServerUrl(String serverUrl) {
+    _serverUrl = serverUrl;
   }
 
   public ActorRef getRequestorRef() {
     return _requestorRef;
   }
 
-  public Enum<?> getOkMsg() {
-    return _okMsg;
+  public void setRequestorRef(ActorRef requestorRef) {
+    _requestorRef = requestorRef;
   }
 
-  private ActorRef _linkRef;
+  public Enum<?> getSuccessMsg() {
+    return _successMsg;
+  }
 
-  private final String _linkUrl;
+  public void setSuccessMsg(Enum<?> successMsg) {
+    _successMsg = successMsg;
+  }
 
-  private final ActorRef _requestorRef;
-  private final Enum<?> _okMsg;
+  public ActorRef getServerRef() {
+    return _serverRef;
+  }
+
+  public void setServerRef(ActorRef serverRef) {
+    _serverRef = serverRef;
+  }
+
+  private String _serverUrl;
+
+  private ActorRef _requestorRef;
+  private Enum<?> _successMsg;
+
+  private ActorRef _serverRef;
 }

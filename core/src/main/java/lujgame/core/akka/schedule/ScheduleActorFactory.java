@@ -1,6 +1,5 @@
 package lujgame.core.akka.schedule;
 
-import java.util.function.Supplier;
 import lujgame.core.akka.feature.ActorFeature;
 import lujgame.core.akka.feature.FeatureActorFactory;
 import org.springframework.stereotype.Service;
@@ -13,18 +12,13 @@ public class ScheduleActorFactory extends FeatureActorFactory<
     ScheduleActor.Case<?>> {
 
   @Override
-  protected Class<ScheduleActor> actorType() {
-    return ScheduleActor.class;
+  protected ScheduleActor createActor() {
+    return new ScheduleActor();
   }
 
   @Override
-  protected Supplier<ScheduleActor> actorConstructor() {
-    return ScheduleActor::new;
-  }
-
-  @Override
-  protected Supplier<ScheduleActor.Context> contextConstructor() {
-    return ScheduleActor.Context::new;
+  protected ScheduleActor.Context createContext() {
+    return new ScheduleActor.Context();
   }
 
   @Override

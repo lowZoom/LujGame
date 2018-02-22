@@ -6,7 +6,7 @@ public class TestActor {
 
   }
 
-  interface Case<M> extends ActorCaseHandler<Context, M> {
+  public interface Case<M> extends ActorCaseHandler<Context, M> {
 
   }
 }

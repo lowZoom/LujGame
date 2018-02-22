@@ -31,10 +31,10 @@ public class ActorScheduler {
     _akkaAdapter.scheduleOnce(scheduler, dur, actorRef, msg, dispatcher, actorRef);
   }
 
-  public void scheduleSelf(ActorRef actorRef, long delayMs, String scheduleId, Object msg) {
-    StartScheduleMsg scheduleMsg = new StartScheduleMsg(scheduleId, delayMs, msg, actorRef);
+  public void scheduleSelf(ActorRef requestor, long delayMs, String scheduleId, Object msg) {
+    StartScheduleMsg scheduleMsg = new StartScheduleMsg(scheduleId, delayMs, msg, requestor);
     FeatureDispatchMsg dispatchMsg = new FeatureDispatchMsg(ActorFeature.SCHEDULE, scheduleMsg);
-    actorRef.tell(dispatchMsg, actorRef);
+    requestor.tell(dispatchMsg, requestor);
   }
 
   @Autowired

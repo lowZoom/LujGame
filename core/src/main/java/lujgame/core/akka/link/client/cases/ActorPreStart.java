@@ -6,7 +6,7 @@ import lujgame.core.akka.link.client.LinkClientActor;
 import org.springframework.stereotype.Service;
 
 @Service
-class ActorPreStart implements LinkClientActor.PreStart {
+public class ActorPreStart implements LinkClientActor.PreStart {
 
   /**
    * @see OnTryConnect

@@ -7,6 +7,9 @@ import lujgame.core.akka.link.client.LinkClientActorState;
 import lujgame.core.akka.link.message.LinkConnect;
 import org.springframework.stereotype.Service;
 
+/**
+ * 成功连接上远程监听节点
+ */
 @Service
 public class OnConnectOk implements LinkClientActor.Case<LinkConnect.Ok> {
 
@@ -22,7 +25,7 @@ public class OnConnectOk implements LinkClientActor.Case<LinkConnect.Ok> {
 //    log().debug("link连接成功！！！！！！！！！！！！！！！！！！！");
 
     ActorRef reqRef = state.getRequestorRef();
-    Enum<?> okMsg = state.getOkMsg();
+    Enum<?> okMsg = state.getSuccessMsg();
 
     reqRef.tell(okMsg, listenRef);
   }

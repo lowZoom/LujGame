@@ -13,6 +13,9 @@ import lujgame.core.akka.link.message.LinkConnect;
 import lujgame.core.akka.schedule.ActorScheduler;
 import org.springframework.stereotype.Service;
 
+/**
+ * 尝试连接远程link监听节点
+ */
 @Service
 public class OnTryConnect implements LinkClientActor.Case<LinkClientActor.TryConnect> {
 
@@ -27,7 +30,7 @@ public class OnTryConnect implements LinkClientActor.Case<LinkClientActor.TryCon
 
   private void tryConnectServer(LinkClientActorState state,
       UntypedActor clientActor, LoggingAdapter log) {
-    String url = state.getLinkUrl();
+    String url = state.getServerUrl();
     log.debug("尝试连接 -> {}", url);
 
     ActorContext ctx = clientActor.getContext();

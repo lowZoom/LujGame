@@ -1,6 +1,5 @@
 package lujgame.gateway.network.akka.connection;
 
-import java.util.function.Supplier;
 import lujgame.core.akka.common.casev2.CaseActorFactory;
 import lujgame.gateway.network.akka.connection.logic.state.ConnActorState;
 import org.springframework.stereotype.Service;
@@ -13,18 +12,13 @@ public class GateConnActorFactory extends CaseActorFactory<
     GateConnActor.Case<?>> {
 
   @Override
-  protected Class<GateConnActor> actorType() {
-    return GateConnActor.class;
+  protected GateConnActor createActor() {
+    return new GateConnActor();
   }
 
   @Override
-  protected Supplier<GateConnActor> actorConstructor() {
-    return GateConnActor::new;
-  }
-
-  @Override
-  protected Supplier<GateConnActor.Context> contextConstructor() {
-    return GateConnActor.Context::new;
+  protected GateConnActor.Context createContext() {
+    return new GateConnActor.Context();
   }
 
   @Override

@@ -24,7 +24,7 @@ public class CommGateActor extends CaseActor {
   @Override
   public void preStart() throws Exception {
     log().debug("妈了个个个个个个？？？ -> {}", getSelf());
-    _akkaTool.linkListen(this, NewGateConnect.MSG);
+    _akkaTool.linkListen(getSelf(), NewGateConnect.MSG);
   }
 
   private void onNewConnect(@SuppressWarnings("unused") NewGateConnect msg) {

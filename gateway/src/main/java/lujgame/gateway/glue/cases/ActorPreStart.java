@@ -17,7 +17,7 @@ public class ActorPreStart implements GateGlueActor.PreStart {
 
     // 开始尝试连接网关管理节点
     String url = actorState.getGlueUrl();
-    _akkaTool.link(actor, url, GateGlueActor.AdminOk.MSG);
+    _akkaTool.link(actor.getSelf(), url, GateGlueActor.AdminOk.MSG);
   }
 
   @Inject

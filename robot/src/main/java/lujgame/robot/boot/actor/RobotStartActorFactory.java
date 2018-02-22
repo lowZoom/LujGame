@@ -17,12 +17,12 @@ public class RobotStartActorFactory extends CaseActorFactory<
   }
 
   @Override
-  protected Supplier<RobotStartActor> actorConstructor() {
+  protected Supplier<RobotStartActor> createActor() {
     return RobotStartActor::new;
   }
 
   @Override
-  protected Supplier<RobotStartActor.Context> contextConstructor() {
+  protected Supplier<RobotStartActor.Context> createContext() {
     return RobotStartActor.Context::new;
   }
 

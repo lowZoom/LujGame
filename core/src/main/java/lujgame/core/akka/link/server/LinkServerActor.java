@@ -1,25 +1,20 @@
 package lujgame.core.akka.link.server;
 
-import lujgame.core.akka.common.CaseActor;
-import lujgame.core.akka.link.message.LinkConnect;
-import lujgame.core.akka.link.server.logic.LinkListener;
+import lujgame.core.akka.common.casev2.ActorCaseHandler;
+import lujgame.core.akka.common.casev2.CaseActorContext;
+import lujgame.core.akka.common.casev2.CaseActorV2;
+import lujgame.core.akka.link.client.LinkClientActor;
 
-public class LinkServerActor extends CaseActor {
+/**
+ * @see LinkClientActor
+ */
+public class LinkServerActor extends CaseActorV2<LinkServerActorState> {
 
-  public LinkServerActor(
-      LinkServerActorState state,
-      LinkListener linkListener) {
-    _state = state;
-    _linkListener = linkListener;
+  public static class Context extends CaseActorContext<LinkServerActorState> {
 
-    addCase(LinkConnect.Try.class, this::onConnectTry);
   }
 
-  private void onConnectTry(@SuppressWarnings("unused") LinkConnect.Try msg) {
-    _linkListener.answerConnect(_state, getSender());
+  public interface Case<M> extends ActorCaseHandler<Context, M> {
+
   }
-
-  private final LinkServerActorState _state;
-
-  private final LinkListener _linkListener;
 }

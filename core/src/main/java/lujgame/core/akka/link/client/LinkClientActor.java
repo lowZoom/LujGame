@@ -4,9 +4,12 @@ import lujgame.core.akka.common.casev2.ActorCaseHandler;
 import lujgame.core.akka.common.casev2.CaseActorContext;
 import lujgame.core.akka.common.casev2.CaseActorV2;
 import lujgame.core.akka.common.casev2.PreStartHandler;
+import lujgame.core.akka.link.server.LinkServerActor;
 
 /**
  * 让两个远程actor保持连接
+ *
+ * @see LinkServerActor
  */
 public class LinkClientActor extends CaseActorV2<LinkClientActorState> {
 
