@@ -10,6 +10,6 @@ import org.springframework.test.context.ContextConfiguration;
 @ComponentScan(basePackages = {
     "lujgame.core",
 }, lazyInit = true)
-public class CoreTest extends AbstractTest {
+public abstract class CoreTest extends AbstractTest {
 
 }

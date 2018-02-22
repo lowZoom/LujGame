@@ -15,7 +15,7 @@ import lujgame.gateway.network.netty.event.NettyConnEvent;
 import org.springframework.stereotype.Service;
 
 @Service
-class ActorPreStart implements GateConnActor.PreStart {
+public class ActorPreStart implements GateConnActor.PreStart {
 
   @Override
   public void preStart(GateConnActor.Context ctx) throws Exception {

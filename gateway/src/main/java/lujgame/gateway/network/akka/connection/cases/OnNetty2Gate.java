@@ -19,7 +19,7 @@ import lujgame.gateway.network.akka.connection.message.Netty2GateMsg;
 import org.springframework.stereotype.Service;
 
 @Service
-class OnNetty2Gate implements GateConnActor.Case<Netty2GateMsg> {
+public class OnNetty2Gate implements GateConnActor.Case<Netty2GateMsg> {
 
   @Override
   public void onHandle(GateConnActor.Context ctx) {
