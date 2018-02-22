@@ -30,7 +30,7 @@ class ActorPreStart implements GateConnActor.PreStart {
     updateNettyHandler(state, connRef);
 
     // 启动空连接检测
-    _dumbDetector.startDetect(connActor);
+//    _dumbDetector.startDetect(connActor);
   }
 
   private void updateNettyHandler(ConnActorState state, ActorRef connRef) {

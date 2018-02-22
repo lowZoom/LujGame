@@ -1,6 +1,5 @@
 package lujgame.robot.boot.actor;
 
-import java.util.function.Supplier;
 import lujgame.core.akka.common.casev2.CaseActorFactory;
 import org.springframework.stereotype.Service;
 
@@ -12,18 +11,13 @@ public class RobotStartActorFactory extends CaseActorFactory<
     RobotStartActor.Case<?>> {
 
   @Override
-  protected Class<RobotStartActor> actorType() {
-    return RobotStartActor.class;
+  protected RobotStartActor createActor() {
+    return new RobotStartActor();
   }
 
   @Override
-  protected Supplier<RobotStartActor> createActor() {
-    return RobotStartActor::new;
-  }
-
-  @Override
-  protected Supplier<RobotStartActor.Context> createContext() {
-    return RobotStartActor.Context::new;
+  protected RobotStartActor.Context createContext() {
+    return new RobotStartActor.Context();
   }
 
   @Override

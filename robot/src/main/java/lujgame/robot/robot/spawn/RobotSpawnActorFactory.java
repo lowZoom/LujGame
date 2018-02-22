@@ -1,6 +1,5 @@
 package lujgame.robot.robot.spawn;
 
-import java.util.function.Supplier;
 import lujgame.core.akka.common.casev2.CaseActorFactory;
 import org.springframework.stereotype.Service;
 
@@ -12,18 +11,13 @@ public class RobotSpawnActorFactory extends CaseActorFactory<
     RobotSpawnActor.Case<?>> {
 
   @Override
-  protected Class<RobotSpawnActor> actorType() {
-    return RobotSpawnActor.class;
+  protected RobotSpawnActor createActor() {
+    return new RobotSpawnActor();
   }
 
   @Override
-  protected Supplier<RobotSpawnActor> createActor() {
-    return RobotSpawnActor::new;
-  }
-
-  @Override
-  protected Supplier<RobotSpawnActor.Context> createContext() {
-    return RobotSpawnActor.Context::new;
+  protected RobotSpawnActor.Context createContext() {
+    return new RobotSpawnActor.Context();
   }
 
   @Override
