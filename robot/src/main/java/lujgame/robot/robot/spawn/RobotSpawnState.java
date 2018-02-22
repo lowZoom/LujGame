@@ -3,7 +3,7 @@ package lujgame.robot.robot.spawn;
 import io.netty.channel.EventLoopGroup;
 import java.util.List;
 import lujgame.robot.robot.config.RobotTemplate;
-import lujgame.robot.robot.instance.RobotInstanceActor;
+import lujgame.robot.robot.instance.actor.RobotInstanceActor;
 
 /**
  * @see RobotSpawnActor

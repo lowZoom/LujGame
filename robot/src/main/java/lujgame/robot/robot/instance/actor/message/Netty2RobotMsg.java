@@ -1,4 +1,4 @@
-package lujgame.robot.robot.instance.message;
+package lujgame.robot.robot.instance.actor.message;
 
 import io.netty.buffer.ByteBuf;
 

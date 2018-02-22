@@ -1,9 +1,10 @@
-package lujgame.robot.robot.instance;
+package lujgame.robot.robot.instance.actor;
 
 import lujgame.core.akka.common.casev2.ActorCaseHandler;
 import lujgame.core.akka.common.casev2.CaseActorContext;
 import lujgame.core.akka.common.casev2.CaseActorV2;
 import lujgame.core.akka.common.casev2.PreStartHandler;
+import lujgame.robot.robot.instance.control.state.RobotInstanceState;
 
 /**
  * 代表一个机器人

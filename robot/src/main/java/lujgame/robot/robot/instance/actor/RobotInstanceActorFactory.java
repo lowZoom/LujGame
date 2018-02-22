@@ -1,6 +1,7 @@
-package lujgame.robot.robot.instance;
+package lujgame.robot.robot.instance.actor;
 
 import lujgame.core.akka.common.casev2.CaseActorFactory;
+import lujgame.robot.robot.instance.control.state.RobotInstanceState;
 import org.springframework.stereotype.Service;
 
 @Service

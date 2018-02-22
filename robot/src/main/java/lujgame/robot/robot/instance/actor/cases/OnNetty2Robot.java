@@ -1,12 +1,12 @@
-package lujgame.robot.robot.instance.cases;
+package lujgame.robot.robot.instance.actor.cases;
 
 import io.netty.buffer.ByteBuf;
 import lujgame.core.net.PacketHeader;
 import lujgame.core.net.ReceiveBuffer;
 import lujgame.robot.netty.RobotNettyHandler;
-import lujgame.robot.robot.instance.RobotInstanceActor;
-import lujgame.robot.robot.instance.RobotInstanceState;
-import lujgame.robot.robot.instance.message.Netty2RobotMsg;
+import lujgame.robot.robot.instance.actor.RobotInstanceActor;
+import lujgame.robot.robot.instance.actor.message.Netty2RobotMsg;
+import lujgame.robot.robot.instance.control.state.RobotInstanceState;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,6 +24,7 @@ public class OnNetty2Robot implements RobotInstanceActor.Case<Netty2RobotMsg> {
     RobotInstanceState state = ctx.getActorState();
     Netty2RobotMsg msg = ctx.getMessage(this);
 
+    //TODO: 调用到behavior
   }
 
   void handleImpl(ByteBuf netBuf, ReceiveBuffer recvBuf) {

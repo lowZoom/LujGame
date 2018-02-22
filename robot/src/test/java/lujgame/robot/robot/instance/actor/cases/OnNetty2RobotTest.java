@@ -1,4 +1,4 @@
-package lujgame.robot.robot.instance.cases;
+package lujgame.robot.robot.instance.actor.cases;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

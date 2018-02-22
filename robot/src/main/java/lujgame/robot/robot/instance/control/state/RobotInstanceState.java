@@ -1,9 +1,8 @@
-package lujgame.robot.robot.instance;
+package lujgame.robot.robot.instance.control.state;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoopGroup;
 import lujgame.robot.robot.config.RobotTemplate;
-import lujgame.robot.robot.instance.control.RobotBehaveState;
 
 public class RobotInstanceState {
 

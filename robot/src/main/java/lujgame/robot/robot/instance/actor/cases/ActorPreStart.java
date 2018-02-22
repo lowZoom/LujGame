@@ -1,4 +1,4 @@
-package lujgame.robot.robot.instance.cases;
+package lujgame.robot.robot.instance.actor.cases;
 
 import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
@@ -6,8 +6,8 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lujgame.robot.netty.RobotNettyInit;
 import lujgame.robot.robot.config.RobotTemplate;
-import lujgame.robot.robot.instance.RobotInstanceActor;
-import lujgame.robot.robot.instance.RobotInstanceState;
+import lujgame.robot.robot.instance.actor.RobotInstanceActor;
+import lujgame.robot.robot.instance.control.state.RobotInstanceState;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,17 +1,17 @@
-package lujgame.robot.robot.instance.cases;
+package lujgame.robot.robot.instance.actor.cases;
 
 import akka.event.LoggingAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import javax.inject.Inject;
 import lujgame.core.akka.AkkaTool;
-import lujgame.robot.robot.instance.RobotInstanceActor;
-import lujgame.robot.robot.instance.RobotInstanceState;
+import lujgame.robot.robot.instance.actor.RobotInstanceActor;
+import lujgame.robot.robot.instance.actor.message.ConnectOkMsg;
 import lujgame.robot.robot.instance.control.RobotBehaver;
-import lujgame.robot.robot.instance.message.ConnectOkMsg;
+import lujgame.robot.robot.instance.control.state.RobotInstanceState;
 import org.springframework.stereotype.Service;
 
 @Service
-class OnConnectOk implements RobotInstanceActor.Case<ConnectOkMsg> {
+public class OnConnectOk implements RobotInstanceActor.Case<ConnectOkMsg> {
 
   @Override
   public void onHandle(RobotInstanceActor.Context ctx) {
@@ -31,8 +31,8 @@ class OnConnectOk implements RobotInstanceActor.Case<ConnectOkMsg> {
   }
 
   @Inject
-  private RobotBehaver _robotBehaver;
+  private AkkaTool _akkaTool;
 
   @Inject
-  private AkkaTool _akkaTool;
+  private RobotBehaver _robotBehaver;
 }

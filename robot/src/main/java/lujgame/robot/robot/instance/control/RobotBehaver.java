@@ -2,6 +2,7 @@ package lujgame.robot.robot.instance.control;
 
 import javax.inject.Inject;
 import lujgame.core.akka.schedule.ActorScheduler;
+import lujgame.robot.robot.instance.control.state.RobotBehaveState;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -4,9 +4,11 @@ import akka.actor.ActorRef;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import lujgame.robot.robot.instance.RobotInstanceActor;
-import lujgame.robot.robot.instance.message.ConnectOkMsg;
-import lujgame.robot.robot.instance.message.Netty2RobotMsg;
+import lujgame.robot.robot.instance.actor.RobotInstanceActor;
+import lujgame.robot.robot.instance.actor.cases.OnConnectOk;
+import lujgame.robot.robot.instance.actor.cases.OnNetty2Robot;
+import lujgame.robot.robot.instance.actor.message.ConnectOkMsg;
+import lujgame.robot.robot.instance.actor.message.Netty2RobotMsg;
 
 public class RobotNettyHandler extends ChannelInboundHandlerAdapter {
 
@@ -14,6 +16,9 @@ public class RobotNettyHandler extends ChannelInboundHandlerAdapter {
     _robotRef = robotRef;
   }
 
+  /**
+   * @see OnConnectOk#onHandle
+   */
   @Override
   public void channelActive(ChannelHandlerContext ctx) throws Exception {
     System.err.println(Thread.currentThread() + " aaaaaaaaactife");
@@ -22,6 +27,9 @@ public class RobotNettyHandler extends ChannelInboundHandlerAdapter {
     _robotRef.tell(msg, ActorRef.noSender());
   }
 
+  /**
+   * @see OnNetty2Robot#onHandle
+   */
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object bufObj) throws Exception {
 //    try {
