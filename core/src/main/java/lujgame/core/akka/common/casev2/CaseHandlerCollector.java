@@ -1,10 +1,10 @@
 package lujgame.core.akka.common.casev2;
 
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
+import lujgame.core.reflect.ReflectTool;
 import lujgame.core.spring.SpringBeanCollector;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -37,16 +37,16 @@ public class CaseHandlerCollector {
   }
 
   private <C> Class<?> getMessageType(C handler) {
-    Type parentType = handler.getClass().getGenericInterfaces()[0];
-    return (Class<?>) getTypeArgument(parentType, 0);
-  }
-
-  private Type getTypeArgument(Type type, int argIndex) {
-    return ((ParameterizedType) type).getActualTypeArguments()[argIndex];
+    ReflectTool r = _reflectTool;
+    ParameterizedType parentType = r.getGenericInterface(handler.getClass());
+    return r.getTypeArgument(parentType, 0);
   }
 
   @SuppressWarnings("rawtypes")
   private Map<Class<?>, ActorCaseHandler> _defaultHandlerMap;
+
+  @Inject
+  private ReflectTool _reflectTool;
 
   @Inject
   private SpringBeanCollector _springBeanCollector;

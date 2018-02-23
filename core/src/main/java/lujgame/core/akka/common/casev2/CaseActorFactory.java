@@ -3,10 +3,10 @@ package lujgame.core.akka.common.casev2;
 import akka.actor.Props;
 import akka.japi.Creator;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.function.Supplier;
 import javax.inject.Inject;
+import lujgame.core.reflect.ReflectTool;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 
@@ -41,8 +41,10 @@ public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
   @SuppressWarnings("unchecked")
   @EventListener(CaseHandlerCollector.AfterInit.class)
   void init() {
-    Type factoryType = getClass().getGenericSuperclass();
-    _actorType = (Class<A>) getTypeArgument(factoryType, 1);
+    ReflectTool r = _reflectTool;
+    ParameterizedType factoryType = r.getGenericSuperclass(getClass());
+
+    _actorType = r.getTypeArgument(factoryType, 1);
     _contextConstructor = this::createContext;
 
     _preStartHandler = getPreStartHandler();
@@ -70,13 +72,9 @@ public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
   }
 
   @SuppressWarnings("unchecked")
-  private Map<Class<?>, C> collectCaseHandlerMap(Type factoryType) {
-    ParameterizedType caseType = (ParameterizedType) getTypeArgument(factoryType, 3);
+  private Map<Class<?>, C> collectCaseHandlerMap(ParameterizedType factoryType) {
+    ParameterizedType caseType = _reflectTool.getTypeArgument(factoryType, 3);
     return _caseHandlerCollector.collect((Class<C>) caseType.getRawType());
-  }
-
-  private Type getTypeArgument(Type type, int argIndex) {
-    return ((ParameterizedType) type).getActualTypeArguments()[argIndex];
   }
 
   private Class<A> _actorType;
@@ -89,6 +87,9 @@ public abstract class CaseActorFactory<S, A extends CaseActorV2<S>,
 
   @Inject
   private ApplicationContext _applicationContext;
+
+  @Inject
+  private ReflectTool _reflectTool;
 
   @Inject
   private CaseHandlerCollector _caseHandlerCollector;

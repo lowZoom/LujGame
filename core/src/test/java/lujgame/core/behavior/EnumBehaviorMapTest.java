@@ -16,18 +16,31 @@ public class EnumBehaviorMapTest extends CoreTest {
 
   @Before
   public void setUp() throws Exception {
+    // NOOP
   }
 
   @Test
-  public void getBehavior_() throws Exception {
+  public void getBehavior_存在() throws Exception {
     //-- Arrange --//
-    _key = TestEnum.TEST;
+    _key = TestEnum.JAVA;
 
     //-- Act --//
     TestBehavior result = getBehavior();
 
     //-- Assert --//
-    assertThat(result).isInstanceOf(TestBehavT.class);
+    assertThat(result).isInstanceOf(TestBehavJ.class);
+  }
+
+  @Test
+  public void getBehavior_不存在() throws Exception {
+    //-- Arrange --//
+    _key = TestEnum.ROCKS;
+
+    //-- Act --//
+    TestBehavior result = getBehavior();
+
+    //-- Assert --//
+    assertThat(result).isNull();
   }
 
   TestBehavior getBehavior() {
