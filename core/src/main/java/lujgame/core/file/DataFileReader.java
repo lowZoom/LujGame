@@ -16,8 +16,7 @@ import org.springframework.stereotype.Component;
 public class DataFileReader {
 
   @Autowired
-  public DataFileReader(
-      DataFilePathGetter pathGetter) {
+  public DataFileReader(DataFilePathGetter pathGetter) {
     _pathGetter = pathGetter;
   }
 

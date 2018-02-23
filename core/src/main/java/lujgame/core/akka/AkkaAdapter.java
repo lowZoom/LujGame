@@ -1,4 +1,4 @@
-package lujgame.core.akka.internal;
+package lujgame.core.akka;
 
 import akka.actor.ActorRef;
 import akka.actor.Cancellable;

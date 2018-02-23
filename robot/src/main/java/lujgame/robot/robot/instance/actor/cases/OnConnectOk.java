@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import lujgame.core.akka.AkkaTool;
 import lujgame.robot.robot.instance.actor.RobotInstanceActor;
 import lujgame.robot.robot.instance.actor.message.ConnectOkMsg;
-import lujgame.robot.robot.instance.control.RobotBehaver;
+import lujgame.robot.robot.instance.control.state.RobotBehaveState;
 import lujgame.robot.robot.instance.control.state.RobotInstanceState;
 import org.springframework.stereotype.Service;
 
@@ -25,14 +25,16 @@ public class OnConnectOk implements RobotInstanceActor.Case<ConnectOkMsg> {
     LoggingAdapter log = ctx.getActorLogger();
     log.debug("连接成功，开始执行行为列表");
 
-    _robotBehaver.initBehave(state.getBehaveState());
+    initBehave(state.getBehaveState());
 
     _akkaTool.tellSelf(RobotInstanceActor.Behave.MSG, ctx.getActor());
   }
 
-  @Inject
-  private AkkaTool _akkaTool;
+  private void initBehave(RobotBehaveState state) {
+    state.setBehaviorIndex(-1);
+//    state.setBehaviorConfig(null);
+  }
 
   @Inject
-  private RobotBehaver _robotBehaver;
+  private AkkaTool _akkaTool;
 }

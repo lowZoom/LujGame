@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
-import lujgame.core.akka.internal.AkkaAdapter;
+import lujgame.core.akka.AkkaAdapter;
 import lujgame.core.akka.schedule.actor.ScheduleActor;
 import lujgame.core.akka.schedule.actor.message.FinishScheduleMsg;
 import lujgame.core.akka.schedule.actor.message.StartScheduleMsg;

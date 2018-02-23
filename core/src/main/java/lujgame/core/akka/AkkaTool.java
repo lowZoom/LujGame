@@ -4,7 +4,6 @@ import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
 import akka.cluster.Cluster;
 import akka.cluster.ClusterEvent;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import javax.inject.Inject;
 import lujgame.core.akka.common.CaseActor;
@@ -35,9 +34,8 @@ public class AkkaTool {
     tellSelf(msg, instanceActor.getSelf());
   }
 
-  public void schedule(UntypedActor actor, long len, TimeUnit unit,
-      String scheduleId, Object msg, Class<?> interrupt) {
-    _actorScheduler.scheduleSelf(actor.getSelf(), unit.toMillis(len), scheduleId, msg);
+  public void schedule(ActorRef requestor, long delay, String scheduleId, Object msg) {
+    _actorScheduler.scheduleSelf(requestor, delay, scheduleId, msg);
   }
 
   public void link(ActorRef requestor, String linkUrl, Enum<?> okMsg) {
