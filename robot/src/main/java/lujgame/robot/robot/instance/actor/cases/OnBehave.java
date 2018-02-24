@@ -37,8 +37,8 @@ public class OnBehave implements RobotInstanceActor.Case<RobotInstanceActor.Beha
 
     List<BehaviorConfig> behaviorList = state.getBehaviorList();
     if (behaviorIndex >= behaviorList.size()) {
-      log.info("机器人行为结束");
-      return;
+      log.info("机器人行为重置");
+      state.setBehaviorIndex(behaviorIndex = 0);
     }
 
     ChannelHandlerContext nettyContext = state.getNettyContext();
