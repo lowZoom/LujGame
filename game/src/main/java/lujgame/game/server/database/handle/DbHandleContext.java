@@ -76,10 +76,6 @@ public class DbHandleContext {
     return _dbSetTool.getOnlyElem(set);
   }
 
-  public <T> JSet<T> getDbSet(Class<T> dbType, String key) {
-    return (JSet<T>) _resultMap.get(key);
-  }
-
   public boolean isEmpty(JSet<?> set) {
     return _dbSetTool.isEmpty(set);
   }
@@ -126,7 +122,7 @@ public class DbHandleContext {
   private final long _now;
   private final ImmutableMap<String, Object> _paramMap;
 
-  private final ImmutableMap<String, Object> _resultMap;
+  final ImmutableMap<String, Object> _resultMap;
   private final ImmutableSet<CacheItem> _borrowItems;
 
   private final ImmutableMap<Class<?>, DatabaseMeta> _databaseMetaMap;
