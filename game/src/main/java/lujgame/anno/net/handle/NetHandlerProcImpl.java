@@ -1,6 +1,7 @@
 package lujgame.anno.net.handle;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import com.google.auto.common.AnnotationMirrors;
 import com.google.auto.common.MoreElements;
@@ -13,6 +14,7 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import java.io.IOException;
+import java.util.List;
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -22,8 +24,8 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import lujgame.anno.core.generate.GenerateTool;
-import lujgame.game.server.net.GameNetHandler;
-import lujgame.game.server.net.NetHandleMeta;
+import lujgame.game.server.net.handle.GameNetHandler;
+import lujgame.game.server.net.handle.NetHandleMeta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -120,7 +122,10 @@ public class NetHandlerProcImpl {
   }
 
   private TypeMirror getPacketType(TypeElement handlerElem) {
-    TypeMirror parentElem = handlerElem.getSuperclass();
+    List<? extends TypeMirror> interfaceList = handlerElem.getInterfaces();
+    checkState(interfaceList.size() == 1, handlerElem.getQualifiedName());
+
+    TypeMirror parentElem = interfaceList.get(0);
     return MoreTypes.asDeclared(parentElem).getTypeArguments().get(0);
   }
 

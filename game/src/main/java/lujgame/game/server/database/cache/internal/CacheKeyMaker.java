@@ -1,8 +1,8 @@
 package lujgame.game.server.database.cache.internal;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class CacheKeyMaker {
 
   public String makeSetKey(Class<?> dbType, String dbKey) {

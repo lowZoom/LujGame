@@ -1,4 +1,4 @@
-package lujgame.game.server.net;
+package lujgame.game.server.net.handle;
 
 public interface NetHandleMeta {
 

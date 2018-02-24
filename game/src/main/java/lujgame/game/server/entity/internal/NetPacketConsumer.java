@@ -3,13 +3,12 @@ package lujgame.game.server.entity.internal;
 import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.google.common.collect.ImmutableMap;
-import lujgame.game.server.database.cache.internal.CacheKeyMaker;
 import lujgame.game.server.entity.GameEntityActorState;
-import lujgame.game.server.net.GameNetHandleContext;
-import lujgame.game.server.net.GameNetHandler;
-import lujgame.game.server.net.NetHandleSuite;
-import lujgame.game.server.net.packet.NetPacketCodec;
+import lujgame.game.server.net.handle.GameNetHandler;
+import lujgame.game.server.net.handle.NetHandleContext;
+import lujgame.game.server.net.handle.NetHandleSuite;
 import lujgame.game.server.net.internal.DbCmdInvoker;
+import lujgame.game.server.net.packet.NetPacketCodec;
 import lujgame.game.server.type.Jstr0;
 import lujgame.game.server.type.Z1;
 import lujgame.gateway.network.akka.connection.message.Gate2GameMsg;
@@ -23,12 +22,10 @@ public class NetPacketConsumer {
   public NetPacketConsumer(
       Z1 typeInternal,
       Jstr0 strInternal,
-      CacheKeyMaker cacheKeyMaker,
       DbCmdInvoker dbCmdInvoker) {
     _typeInternal = typeInternal;
     _strInternal = strInternal;
 
-    _cacheKeyMaker = cacheKeyMaker;
     _dbCmdInvoker = dbCmdInvoker;
   }
 
@@ -43,8 +40,8 @@ public class NetPacketConsumer {
     NetPacketCodec codec = suite.getPacketCodec();
     Object protoObj = codec.decodePacket(_typeInternal, packet.getData());
 
-    GameNetHandleContext ctx = new GameNetHandleContext(protoObj,
-        state.getDbCacheRef(), entityRef, log, _strInternal, _cacheKeyMaker, _dbCmdInvoker);
+    NetHandleContext ctx = new NetHandleContext(protoObj,
+        state.getDbCacheRef(), entityRef, log, _strInternal, _dbCmdInvoker);
 
     GameNetHandler<?> handler = suite.getHandleMeta().handler();
     handler.onHandle(ctx);
@@ -53,6 +50,5 @@ public class NetPacketConsumer {
   private final Z1 _typeInternal;
   private final Jstr0 _strInternal;
 
-  private final CacheKeyMaker _cacheKeyMaker;
   private final DbCmdInvoker _dbCmdInvoker;
 }

@@ -1,4 +1,4 @@
-package lujgame.game.server.net;
+package lujgame.game.server.net.handle;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,15 +6,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.springframework.stereotype.Component;
 
-public abstract class GameNetHandler<P> {
+@SuppressWarnings("unused")
+public interface GameNetHandler<P> {
 
   @Target(ElementType.TYPE)
   @Retention(RetentionPolicy.RUNTIME)
   @Component
-  public @interface Register {
+  @interface Register {
 
     String desc();
   }
 
-  public abstract void onHandle(GameNetHandleContext ctx);
+  void onHandle(NetHandleContext ctx);
 }

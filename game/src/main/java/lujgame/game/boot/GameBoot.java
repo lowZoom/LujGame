@@ -12,7 +12,7 @@ import lujgame.game.master.gate.CommGateActorState;
 import lujgame.game.server.GameServerActorFactory;
 import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.bean.DatabaseMeta;
-import lujgame.game.server.net.NetHandleSuite;
+import lujgame.game.server.net.handle.NetHandleSuite;
 import lujgame.game.server.net.packet.NetPacketCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

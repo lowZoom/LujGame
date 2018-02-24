@@ -4,7 +4,7 @@ import akka.actor.ActorRef;
 import com.google.common.collect.ImmutableMap;
 import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.bean.DatabaseMeta;
-import lujgame.game.server.net.NetHandleSuite;
+import lujgame.game.server.net.handle.NetHandleSuite;
 import lujgame.game.server.net.packet.NetPacketCodec;
 
 public class GameEntityActorState {
