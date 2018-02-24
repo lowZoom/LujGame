@@ -3,17 +3,17 @@ package lujgame.example.business.m101.control;
 import lujgame.example.business.m101.database.M1PlayerDb;
 import lujgame.example.business.m101.net.Net10002Req;
 import lujgame.example.business.m101.net.Net10002Rsp;
-import lujgame.game.server.command.CacheOkCommand;
-import lujgame.game.server.database.operate.DbOperateContext;
+import lujgame.game.server.database.handle.DbHandleContext;
+import lujgame.game.server.database.handle.GameDbHandler;
 import lujgame.game.server.type.JSet;
 import lujgame.game.server.type.JStr;
 import org.springframework.stereotype.Service;
 
 @Service
-public class M1RegisterCmd extends CacheOkCommand {
+public class M1RegisterCmd implements GameDbHandler {
 
   @Override
-  public void execute(DbOperateContext ctx) {
+  public void execute(DbHandleContext ctx) {
     JSet<M1PlayerDb> dbSet = ctx.getDbSet(M1PlayerDb.class, "0");
     if (!ctx.isEmpty(dbSet)) {
       //TODO: 发送 该玩家已存在 错误包

@@ -12,9 +12,9 @@ import lujgame.core.akka.AkkaTool;
 import lujgame.core.spring.SpringBeanCollector;
 import lujgame.game.boot.GameBootConfigLoader;
 import lujgame.game.master.cluster.GameNodeRegistrar;
-import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.database.cache.DbCacheActorFactory;
+import lujgame.game.server.database.handle.GameDbHandler;
 import lujgame.game.server.entity.internal.EntityBinder;
 import lujgame.game.server.net.handle.NetHandleMeta;
 import lujgame.game.server.net.handle.NetHandleSuite;
@@ -45,7 +45,7 @@ public class GameServerActorFactory {
 
   public Props props(Config gameCfg, Cluster cluster,
       ImmutableMap<Integer, NetHandleSuite> handleSuiteMap,
-      ImmutableMap<Class<?>, CacheOkCommand> cmdMap,
+      ImmutableMap<Class<?>, GameDbHandler> cmdMap,
       ImmutableMap<Class<?>, DatabaseMeta> databaseMetaMap,
       ImmutableMap<Class<?>, NetPacketCodec> netPacketCodecMap) {
     String serverId = _bootConfigLoader.getServerId(gameCfg);
@@ -74,8 +74,8 @@ public class GameServerActorFactory {
     return builder.build();
   }
 
-  public ImmutableMap<Class<?>, CacheOkCommand> makeCmdMap() {
-    return _beanCollector.collectBeanMap(CacheOkCommand.class, Object::getClass);
+  public ImmutableMap<Class<?>, GameDbHandler> makeDbHandleMap() {
+    return _beanCollector.collectBeanMap(GameDbHandler.class, Object::getClass);
   }
 
   public ImmutableMap<Class<?>, DatabaseMeta> makeDatabaseMetaMap() {

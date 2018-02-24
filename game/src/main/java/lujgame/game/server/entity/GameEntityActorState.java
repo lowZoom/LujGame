@@ -2,8 +2,8 @@ package lujgame.game.server.entity;
 
 import akka.actor.ActorRef;
 import com.google.common.collect.ImmutableMap;
-import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.bean.DatabaseMeta;
+import lujgame.game.server.database.handle.GameDbHandler;
 import lujgame.game.server.net.handle.NetHandleSuite;
 import lujgame.game.server.net.packet.NetPacketCodec;
 
@@ -11,7 +11,7 @@ public class GameEntityActorState {
 
   public GameEntityActorState(
       ImmutableMap<Integer, NetHandleSuite> handleSuiteMap,
-      ImmutableMap<Class<?>, CacheOkCommand> cmdMap,
+      ImmutableMap<Class<?>, GameDbHandler> cmdMap,
       ImmutableMap<Class<?>, DatabaseMeta> databaseMetaMap,
       ImmutableMap<Class<?>, NetPacketCodec> netPacketCodecMap,
       ActorRef dbCacheRef,
@@ -30,7 +30,7 @@ public class GameEntityActorState {
     return _handleSuiteMap;
   }
 
-  public ImmutableMap<Class<?>, CacheOkCommand> getCmdMap() {
+  public ImmutableMap<Class<?>, GameDbHandler> getCmdMap() {
     return _cmdMap;
   }
 
@@ -51,7 +51,7 @@ public class GameEntityActorState {
   }
 
   private final ImmutableMap<Integer, NetHandleSuite> _handleSuiteMap;
-  private final ImmutableMap<Class<?>, CacheOkCommand> _cmdMap;
+  private final ImmutableMap<Class<?>, GameDbHandler> _cmdMap;
 
   private final ImmutableMap<Class<?>, DatabaseMeta> _databaseMetaMap;
   private final ImmutableMap<Class<?>, NetPacketCodec> _netPacketCodecMap;

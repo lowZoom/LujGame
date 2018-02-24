@@ -3,8 +3,8 @@ package lujgame.game.server.net.handle;
 import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.google.common.collect.ImmutableList;
-import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
+import lujgame.game.server.database.handle.GameDbHandler;
 import lujgame.game.server.net.internal.DbCmdInvoker;
 import lujgame.game.server.type.JLong;
 import lujgame.game.server.type.JStr;
@@ -46,11 +46,11 @@ public class NetHandleContext {
     return _strInternal.getImpl(val).getValue();
   }
 
-  public <T extends CacheOkCommand> void invoke(Class<T> cmdType) {
+  public <T extends GameDbHandler> void invoke(Class<T> cmdType) {
     invoke(cmdType, null);
   }
 
-  public <T extends CacheOkCommand> void invoke(Class<T> cmdType, Object packet) {
+  public <T extends GameDbHandler> void invoke(Class<T> cmdType, Object packet) {
     _dbCmdInvoker.invoke(cmdType, packet, _useList.build(), _dbCacheRef, _entityRef);
   }
 

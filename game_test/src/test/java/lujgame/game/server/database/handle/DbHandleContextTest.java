@@ -1,4 +1,4 @@
-package lujgame.game.server.database.operate;
+package lujgame.game.server.database.handle;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -23,10 +23,10 @@ import lujgame.test.ZBaseTest;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DbOperateContextTest extends ZBaseTest {
+public class DbHandleContextTest extends ZBaseTest {
 
   @Inject
-  DbOperateContextFactory _dbOperateContextFactory;
+  DbHandleContextFactory _dbOperateContextFactory;
 
   @Inject
   SpringBeanCollector _beanCollector;
@@ -58,7 +58,7 @@ public class DbOperateContextTest extends ZBaseTest {
   @Test
   public void getPacket_() throws Exception {
     //-- Arrange --//
-    DbOperateContext ctx = makeContext();
+    DbHandleContext ctx = makeContext();
     Object proto = ctx.createProto(ZTestPacket.class);
 
     _paramMap = ImmutableMap.of("luj.packet", proto);
@@ -74,7 +74,7 @@ public class DbOperateContextTest extends ZBaseTest {
   @Test
   public void createProto() throws Exception {
     //-- Arrange --//
-    DbOperateContext ctx = makeContext();
+    DbHandleContext ctx = makeContext();
 
     //-- Act --//
     ZTestPacket proto = ctx.createProto(ZTestPacket.class);
@@ -91,7 +91,7 @@ public class DbOperateContextTest extends ZBaseTest {
   public void createDb() throws Exception {
     //-- Arrange --//
     _now = 123;
-    DbOperateContext ctx = makeContext();
+    DbHandleContext ctx = makeContext();
 
     JSet<Z> set = makeEmptyDbSet();
 
@@ -111,7 +111,7 @@ public class DbOperateContextTest extends ZBaseTest {
   @Test
   public void jSet_Str_数据库() throws Exception {
     //-- Arrange --//
-    DbOperateContext ctx = makeContext();
+    DbHandleContext ctx = makeContext();
     JSet<Z> dbSet = makeEmptyDbSet();
     Z db = ctx.createDb(Z.class, dbSet);
 
@@ -127,7 +127,7 @@ public class DbOperateContextTest extends ZBaseTest {
   @Test
   public void jSet_Str_网络包() throws Exception {
     //-- Arrange --//
-    DbOperateContext ctx = makeContext();
+    DbHandleContext ctx = makeContext();
     ZTestPacket proto = ctx.createProto(ZTestPacket.class);
 
     //-- Act --//
@@ -137,7 +137,7 @@ public class DbOperateContextTest extends ZBaseTest {
     assertThat(proto.str().toString()).isEqualTo("测试");
   }
 
-  DbOperateContext makeContext() {
+  DbHandleContext makeContext() {
     ImmutableMap<Class<?>, DatabaseMeta> metaMap = _beanCollector
         .collectBeanMap(DatabaseMeta.class, DatabaseMeta::databaseType);
 

@@ -12,8 +12,8 @@ import com.google.common.collect.ImmutableSet;
 import javax.inject.Inject;
 import lujgame.game.server.database.cache.DbCacheActorState;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
-import lujgame.game.server.database.operate.DbOperateContext;
-import lujgame.game.server.database.operate.DbOperateContextFactory;
+import lujgame.game.server.database.handle.DbHandleContext;
+import lujgame.game.server.database.handle.DbHandleContextFactory;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -50,7 +50,7 @@ class ZCacheUtil {
     return checkNotNull(cache.getIfPresent(key), key);
   }
 
-  DbOperateContext makeOperateContext(ImmutableMap<String, Object> resultMap, ActorRef connRef) {
+  DbHandleContext makeOperateContext(ImmutableMap<String, Object> resultMap, ActorRef connRef) {
     return _operateContextFactory.createContext(0, ImmutableMap.of(), resultMap, ImmutableSet.of(),
         ImmutableMap.of(), ImmutableMap.of(), connRef, null, mock(LoggingAdapter.class));
   }
@@ -59,5 +59,5 @@ class ZCacheUtil {
   private CacheKeyMaker _cacheKeyMaker;
 
   @Inject
-  private DbOperateContextFactory _operateContextFactory;
+  private DbHandleContextFactory _operateContextFactory;
 }

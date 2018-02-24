@@ -20,8 +20,8 @@ import lujgame.game.server.database.cache.DbCacheActorState;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.database.cache.message.DbCacheUseReq;
 import lujgame.game.server.database.cache.message.DbCacheUseRsp;
+import lujgame.game.server.database.handle.DbHandleContext;
 import lujgame.game.server.database.load.message.DbLoadSetRsp;
-import lujgame.game.server.database.operate.DbOperateContext;
 import lujgame.game.server.type.JSet;
 import lujgame.test.ZBaseTest;
 import org.junit.Before;
@@ -89,7 +89,7 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
     ImmutableMap<String, Object> resultMap = getUseRsp().getResultMap();
     assertThat(resultMap).hasSize(1);
 
-    DbOperateContext ctx = makeOperateContext(resultMap);
+    DbHandleContext ctx = makeOperateContext(resultMap);
     JSet<ZTestDb> resultSet = ctx.getDbSet(ZTestDb.class, "1");
     assertThat(resultSet).isNotNull();
     assertThat(ctx.isEmpty(resultSet)).isTrue();
@@ -123,7 +123,7 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
     assertItemIsUsed(objItem);
 
     DbCacheUseRsp rsp = getUseRsp();
-    DbOperateContext ctx = makeOperateContext(rsp.getResultMap());
+    DbHandleContext ctx = makeOperateContext(rsp.getResultMap());
 
     JSet<ZTestDb> resultSet = ctx.getDbSet(ZTestDb.class, "1");
     assertThat(resultSet).isNotNull();
@@ -165,7 +165,7 @@ public class CacheUseSetFinisherTest extends ZBaseTest {
     _finisher.finishUseSet(_state, msg, _cacheRef, mock(LoggingAdapter.class));
   }
 
-  DbOperateContext makeOperateContext(ImmutableMap<String, Object> resultMap) {
+  DbHandleContext makeOperateContext(ImmutableMap<String, Object> resultMap) {
     return _cacheUtil.makeOperateContext(resultMap, null);
   }
 

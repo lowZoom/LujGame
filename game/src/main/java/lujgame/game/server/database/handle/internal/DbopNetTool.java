@@ -1,4 +1,4 @@
-package lujgame.game.server.database.operate.internal;
+package lujgame.game.server.database.handle.internal;
 
 import akka.actor.ActorRef;
 import java.util.Map;

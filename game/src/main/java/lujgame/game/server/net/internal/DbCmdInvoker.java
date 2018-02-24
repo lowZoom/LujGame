@@ -5,11 +5,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import javax.inject.Inject;
 import lujgame.core.akka.AkkaTool;
-import lujgame.game.server.command.CacheOkCommand;
 import lujgame.game.server.core.LujInternal;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.database.cache.message.DbCacheUseReq;
-import org.springframework.beans.factory.annotation.Autowired;
+import lujgame.game.server.database.handle.GameDbHandler;
 
 @LujInternal
 public class DbCmdInvoker {
@@ -17,7 +16,7 @@ public class DbCmdInvoker {
   /**
    * 请求调用指定类型的cmd
    */
-  public <T extends CacheOkCommand> void invoke(Class<T> cmdType, Object packet,
+  public <T extends GameDbHandler> void invoke(Class<T> cmdType, Object packet,
       ImmutableList<DbCacheUseItem> setUseList, ActorRef dbCacheRef, ActorRef entityRef) {
     ImmutableMap.Builder<String, Object> param = ImmutableMap.builder();
     if (packet != null) {

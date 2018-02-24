@@ -1,4 +1,4 @@
-package lujgame.game.server.database.operate;
+package lujgame.game.server.database.handle;
 
 import lujgame.game.server.net.packet.NetPacket;
 import lujgame.game.server.type.JStr;
