@@ -17,15 +17,20 @@ public class ReceiveBuffer {
     _pendingHeader = pendingHeader;
   }
 
+  public byte[] getPendingBody() {
+    return _pendingBody;
+  }
+
+  public void setPendingBody(byte[] pendingBody) {
+    _pendingBody = pendingBody;
+  }
+
   public ByteBuf getOverflowBuf() {
     return _overflowBuf;
   }
 
   private PacketHeader _pendingHeader;
-
-//  private final ByteBuf _headerBuf;
-//
-//  private final ByteBuf _bodyBuf;
+  private byte[] _pendingBody;
 
   private final ByteBuf _overflowBuf;
 }

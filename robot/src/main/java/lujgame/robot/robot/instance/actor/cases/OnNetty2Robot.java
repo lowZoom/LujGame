@@ -1,11 +1,19 @@
 package lujgame.robot.robot.instance.actor.cases;
 
+import akka.actor.ActorRef;
+import akka.actor.UntypedActor;
 import io.netty.buffer.ByteBuf;
+import java.util.List;
+import java.util.Objects;
+import javax.inject.Inject;
 import lujgame.core.net.PacketHeader;
 import lujgame.core.net.ReceiveBuffer;
 import lujgame.robot.netty.RobotNettyHandler;
+import lujgame.robot.robot.config.BehaviorConfig;
 import lujgame.robot.robot.instance.actor.RobotInstanceActor;
 import lujgame.robot.robot.instance.actor.message.Netty2RobotMsg;
+import lujgame.robot.robot.instance.control.packet.PacketReceiver;
+import lujgame.robot.robot.instance.control.state.RobotBehaveState;
 import lujgame.robot.robot.instance.control.state.RobotInstanceState;
 import org.springframework.stereotype.Service;
 
@@ -24,56 +32,48 @@ public class OnNetty2Robot implements RobotInstanceActor.Case<Netty2RobotMsg> {
     RobotInstanceState state = ctx.getActorState();
     Netty2RobotMsg msg = ctx.getMessage(this);
 
-    //TODO: 调用到behavior
+    ByteBuf netBuf = msg.getDataBuf();
+    UntypedActor instanceActor = ctx.getActor();
+    handleImpl(state, netBuf, instanceActor.getSelf());
   }
 
-  void handleImpl(ByteBuf netBuf, ReceiveBuffer recvBuf) {
-    ByteBuf overflowBuf = recvBuf.getOverflowBuf();
-    overflowBuf.writeBytes(netBuf);
+  private void handleImpl(RobotInstanceState state, ByteBuf netBuf, ActorRef instanceRef) {
+    ReceiveBuffer recvBuf = state.getReceiveBuffer();
+    _packetReceiver.receive(netBuf, recvBuf);
     netBuf.release();
 
-    //TODO: 拿到头部信息，没有则尝试从overflow中读取
-    PacketHeader header = recvBuf.getPendingHeader();
-    if (header == null) {
-      header = tryDecodeHeader(overflowBuf, recvBuf);
-      if (header == null) {
-        return;
-      }
+    // 如果还没有完整的包，中止
+    if (recvBuf.getPendingBody() == null) {
+      return;
     }
 
-    //TODO: 根据头部信息，从overflow中读取包体
-    int length = header.getLength();
-    byte[] bodyData = tryDecodeBody(overflowBuf, length);
+    PacketHeader header = recvBuf.getPendingHeader();
+    tryFinishWait(state.getBehaveState(), header.getOpcode(), instanceRef);
 
-    //TODO: 拿到完整包体，解出业务包
+    //TODO: 清理接收缓存
+    finishReceive(recvBuf);
 
     //TODO: 若overflow还有残留，触发下次解包
   }
 
-  private PacketHeader tryDecodeHeader(ByteBuf overflowBuf, ReceiveBuffer recvBuf) {
-    if (overflowBuf.readableBytes() < 6) {
-      return null;
+  private void tryFinishWait(RobotBehaveState behaveState, Integer opcode, ActorRef instanceRef) {
+    List<BehaviorConfig> behavList = behaveState.getBehaviorList();
+    int behavIdx = behaveState.getBehaviorIndex();
+
+    BehaviorConfig curBehavior = behavList.get(behavIdx);
+    if (curBehavior.getWaitOption() != BehaviorConfig.Wait.RESPONSE
+        || !Objects.equals(curBehavior.getOpcode(), opcode)) {
+      return;
     }
 
-    Integer opcode = overflowBuf.readMedium();
-    int length = overflowBuf.readMedium();
-
-    PacketHeader header = new PacketHeader(opcode, length);
-    recvBuf.setPendingHeader(header);
-
-    overflowBuf.discardReadBytes();
-    return header;
+    instanceRef.tell(RobotInstanceActor.Behave.MSG, instanceRef);
   }
 
-  private byte[] tryDecodeBody(ByteBuf overflowBuf, int length) {
-    if (overflowBuf.readableBytes() < length) {
-      return null;
-    }
-
-    byte[] data = new byte[length];
-    overflowBuf.readBytes(data);
-
-    overflowBuf.discardReadBytes();
-    return data;
+  private void finishReceive(ReceiveBuffer recvBuf) {
+    recvBuf.setPendingHeader(null);
+    recvBuf.setPendingBody(null);
   }
+
+  @Inject
+  private PacketReceiver _packetReceiver;
 }

@@ -2,6 +2,7 @@ package lujgame.robot.robot.instance.control.state;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoopGroup;
+import lujgame.core.net.ReceiveBuffer;
 import lujgame.robot.robot.config.RobotTemplate;
 
 public class RobotInstanceState {
@@ -12,6 +13,7 @@ public class RobotInstanceState {
     _workerGroup = workerGroup;
 
     _behaveState = behaveState;
+    _receiveBuffer = new ReceiveBuffer();
   }
 
   public ChannelHandlerContext getNettyContext() {
@@ -20,6 +22,10 @@ public class RobotInstanceState {
 
   public void setNettyContext(ChannelHandlerContext nettyContext) {
     _nettyContext = nettyContext;
+  }
+
+  public ReceiveBuffer getReceiveBuffer() {
+    return _receiveBuffer;
   }
 
   public RobotTemplate getRobotTemplate() {
@@ -35,6 +41,7 @@ public class RobotInstanceState {
   }
 
   private ChannelHandlerContext _nettyContext;
+  private final ReceiveBuffer _receiveBuffer;
 
   private final RobotTemplate _robotTemplate;
   private final EventLoopGroup _workerGroup;
