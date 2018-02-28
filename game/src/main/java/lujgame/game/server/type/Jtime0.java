@@ -1,6 +1,6 @@
 package lujgame.game.server.type;
 
-import lujgame.game.server.core.LujInternal;
+import lujgame.core.spring.inject.LujInternal;
 
 @LujInternal
 public class Jtime0 {

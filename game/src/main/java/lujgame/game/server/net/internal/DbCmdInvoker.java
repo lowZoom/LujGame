@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import javax.inject.Inject;
 import lujgame.core.akka.AkkaTool;
-import lujgame.game.server.core.LujInternal;
+import lujgame.core.spring.inject.LujInternal;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
 import lujgame.game.server.database.cache.message.DbCacheUseReq;
 import lujgame.game.server.database.handle.GameDbHandler;

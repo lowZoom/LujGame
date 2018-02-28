@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.common.cache.Cache;
 import java.util.Map;
 import java.util.Objects;
-import lujgame.game.server.core.LujInternal;
+import lujgame.core.spring.inject.LujInternal;
 
 @LujInternal
 public class DbCacheLocker {

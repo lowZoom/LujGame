@@ -120,7 +120,7 @@ public class DbHandleContext {
   }
 
   private final long _now;
-  private final ImmutableMap<String, Object> _paramMap;
+  final ImmutableMap<String, Object> _paramMap;
 
   final ImmutableMap<String, Object> _resultMap;
   private final ImmutableSet<CacheItem> _borrowItems;

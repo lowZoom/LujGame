@@ -1,7 +1,7 @@
 package lujgame.game.server.net.handle;
 
 import com.google.common.collect.ImmutableList;
-import lujgame.game.server.core.LujInternal;
+import lujgame.core.spring.inject.LujInternal;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
 
 /**

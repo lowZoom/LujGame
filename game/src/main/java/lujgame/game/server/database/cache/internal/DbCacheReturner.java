@@ -4,7 +4,7 @@ import com.google.common.cache.Cache;
 import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
-import lujgame.game.server.core.LujInternal;
+import lujgame.core.spring.inject.LujInternal;
 
 @LujInternal
 public class DbCacheReturner {

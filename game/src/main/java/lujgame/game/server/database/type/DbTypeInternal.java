@@ -1,6 +1,6 @@
 package lujgame.game.server.database.type;
 
-import lujgame.game.server.core.LujInternal;
+import lujgame.core.spring.inject.LujInternal;
 import lujgame.game.server.type.JStr;
 import lujgame.game.server.type.JTime;
 import lujgame.game.server.type.Jstr0;

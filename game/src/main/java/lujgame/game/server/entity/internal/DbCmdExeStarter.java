@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
 import lujgame.core.akka.AkkaTool;
-import lujgame.game.server.core.LujInternal;
+import lujgame.core.spring.inject.LujInternal;
 import lujgame.game.server.database.cache.internal.CacheItem;
 import lujgame.game.server.database.cache.internal.CacheKeyMaker;
 import lujgame.game.server.database.cache.internal.DbCacheLocker;

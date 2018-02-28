@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import lujgame.game.server.core.LujInternal;
+import lujgame.core.spring.inject.LujInternal;
 import lujgame.game.server.database.bean.DatabaseMeta;
 import lujgame.game.server.database.bean.DbObjImpl;
 import lujgame.game.server.database.bean.Dbobjimpl0;

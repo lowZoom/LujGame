@@ -1,6 +1,6 @@
 package lujgame.game.server.type;
 
-import lujgame.game.server.core.LujInternal;
+import lujgame.core.spring.inject.LujInternal;
 import lujgame.game.server.database.type.DbStrImpl;
 
 @LujInternal

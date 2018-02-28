@@ -5,7 +5,7 @@ import akka.event.LoggingAdapter;
 import java.util.Map;
 import javax.inject.Inject;
 import lujgame.core.akka.AkkaTool;
-import lujgame.game.server.core.LujInternal;
+import lujgame.core.spring.inject.LujInternal;
 import lujgame.game.server.database.cache.message.DbCacheReturnMsg;
 import lujgame.game.server.database.cache.message.DbCacheUseRsp;
 import lujgame.game.server.database.handle.DbHandleContextFactory;
