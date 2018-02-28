@@ -39,11 +39,12 @@
     </properties>
   </component>
   <component name="EntryPointsManager">
-    <list size="4">
+    <list size="5">
       <item index="0" class="java.lang.String" itemvalue="javax.annotation.PostConstruct" />
-      <item index="1" class="java.lang.String" itemvalue="org.springframework.context.annotation.Bean" />
-      <item index="2" class="java.lang.String" itemvalue="org.springframework.context.event.EventListener" />
-      <item index="3" class="java.lang.String" itemvalue="org.springframework.stereotype.Service" />
+      <item index="1" class="java.lang.String" itemvalue="lujgame.core.spring.inject.LujInternal" />
+      <item index="2" class="java.lang.String" itemvalue="org.springframework.context.annotation.Bean" />
+      <item index="3" class="java.lang.String" itemvalue="org.springframework.context.event.EventListener" />
+      <item index="4" class="java.lang.String" itemvalue="org.springframework.stereotype.Service" />
     </list>
     <writeAnnotations>
       <writeAnnotation name="javax.inject.Inject" />
