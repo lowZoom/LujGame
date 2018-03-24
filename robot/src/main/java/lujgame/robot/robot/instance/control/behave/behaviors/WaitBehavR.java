@@ -18,5 +18,7 @@ public class WaitBehavR implements WaitBehavior {
     BehaviorConfig behavCfg = ctx.getBehaviorConfig();
 
     log.debug("等待响应：{}", behavCfg.getOpcode());
+
+    //TODO: 设置成正在等待响应
   }
 }

@@ -15,12 +15,12 @@ public class Net10002 implements GameNetHandler<Net10002Req> {
   @Override
   public void onHandle(NetHandleContext ctx) {
     Net10002Req packet = ctx.getPacket(this);
-
     JStr name = packet.loginName();
     ctx.log().debug("新玩家注册：{}", name);
 
     _netHandleTool.dbLoadSet(ctx, M1PlayerDb.class, name);
 
+    //TODO: 以后可以改进成使用注解
     ctx.invoke(M1RegisterCmd.class, packet);
   }
 

@@ -13,6 +13,8 @@ import lujgame.game.server.database.handle.GameDbHandler;
 @LujInternal
 public class DbCmdInvoker {
 
+  public static final String PACKET_KEY = "Luj$DefaultPacket";
+
   /**
    * 请求调用指定类型的cmd
    */
@@ -20,7 +22,7 @@ public class DbCmdInvoker {
       ImmutableList<DbCacheUseItem> setUseList, ActorRef dbCacheRef, ActorRef entityRef) {
     ImmutableMap.Builder<String, Object> param = ImmutableMap.builder();
     if (packet != null) {
-      param.put("packet", packet);
+      param.put(PACKET_KEY, packet);
     }
 
     _akkaTool.tell(new DbCacheUseReq(setUseList, cmdType,

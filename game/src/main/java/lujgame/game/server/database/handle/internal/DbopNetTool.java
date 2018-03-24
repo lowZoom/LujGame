@@ -9,7 +9,7 @@ import lujgame.game.server.net.packet.NetPacketCodec;
 import lujgame.game.server.net.packet.PacketImpl;
 import lujgame.game.server.net.packet.Packetimpl0;
 import lujgame.game.server.type.Z1;
-import lujgame.gateway.network.akka.connection.GateConnActor;
+import lujgame.gateway.network.akka.connection.cases.OnGame2Gate;
 import lujgame.gateway.network.akka.connection.message.Game2GateMsg;
 
 @LujInternal
@@ -25,7 +25,7 @@ public class DbopNetTool {
   }
 
   /**
-   * @see GateConnActor#onGameData(Game2GateMsg)
+   * @see OnGame2Gate#onHandle
    */
   public void sendToClient(ActorRef connRef,
       Integer opcode, PacketImpl<?> packet, ActorRef entityRef) {

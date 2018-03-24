@@ -9,6 +9,10 @@ public class Game2GateMsg implements Serializable {
     _data = data;
   }
 
+  public Integer getOpcode() {
+    return _opcode;
+  }
+
   public byte[] getData() {
     return _data;
   }

@@ -10,7 +10,7 @@ import lujgame.gateway.network.akka.connection.message.Game2GateMsg;
 import org.springframework.stereotype.Service;
 
 @Service
-class OnGame2Gate implements GateConnActor.Case<Game2GateMsg> {
+public class OnGame2Gate implements GateConnActor.Case<Game2GateMsg> {
 
   @Override
   public void onHandle(GateConnActor.Context ctx) {
@@ -20,7 +20,10 @@ class OnGame2Gate implements GateConnActor.Case<Game2GateMsg> {
     ActorRef connRef = ctx.getActor().getSelf();
     LoggingAdapter log = ctx.getActorLogger();
 
-    _packetSender.sendPacket(state.getNettyContext(), 233, msg.getData());
+    Integer opcode = msg.getOpcode();
+    log.debug("网关回包：{}", opcode);
+
+    _packetSender.sendPacket(state.getNettyContext(), opcode, msg.getData());
   }
 
   @Inject
