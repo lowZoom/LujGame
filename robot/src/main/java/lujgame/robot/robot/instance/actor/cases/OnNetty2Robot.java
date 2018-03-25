@@ -11,6 +11,7 @@ import lujgame.core.net.ReceiveBuffer;
 import lujgame.robot.netty.RobotNettyHandler;
 import lujgame.robot.robot.config.BehaviorConfig;
 import lujgame.robot.robot.instance.actor.RobotInstanceActor;
+import lujgame.robot.robot.instance.actor.RobotInstanceActor.BehaveNext;
 import lujgame.robot.robot.instance.actor.message.Netty2RobotMsg;
 import lujgame.robot.robot.instance.control.packet.PacketReceiver;
 import lujgame.robot.robot.instance.control.state.RobotBehaveState;
@@ -66,7 +67,7 @@ public class OnNetty2Robot implements RobotInstanceActor.Case<Netty2RobotMsg> {
       return;
     }
 
-    instanceRef.tell(RobotInstanceActor.Behave.MSG, instanceRef);
+    instanceRef.tell(BehaveNext.MSG, instanceRef);
   }
 
   private void finishReceive(ReceiveBuffer recvBuf) {

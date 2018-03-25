@@ -23,7 +23,7 @@ public class RobotInstanceActor extends CaseActorV2<RobotInstanceState> {
 
   }
 
-  public enum Behave {MSG}
+  public enum BehaveNext {MSG}
 
   //TODO: 连接失败时根据配置是否重连
 }

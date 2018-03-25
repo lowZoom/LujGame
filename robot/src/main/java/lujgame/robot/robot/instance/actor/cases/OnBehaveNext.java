@@ -19,7 +19,7 @@ import lujgame.robot.robot.instance.control.state.RobotBehaveState;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OnBehave implements RobotInstanceActor.Case<RobotInstanceActor.Behave> {
+public class OnBehaveNext implements RobotInstanceActor.Case<RobotInstanceActor.BehaveNext> {
 
   @Override
   public void onHandle(RobotInstanceActor.Context ctx) {

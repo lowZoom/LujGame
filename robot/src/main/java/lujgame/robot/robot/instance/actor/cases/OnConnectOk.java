@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import javax.inject.Inject;
 import lujgame.core.akka.AkkaTool;
 import lujgame.robot.robot.instance.actor.RobotInstanceActor;
+import lujgame.robot.robot.instance.actor.RobotInstanceActor.BehaveNext;
 import lujgame.robot.robot.instance.actor.message.ConnectOkMsg;
 import lujgame.robot.robot.instance.control.state.RobotBehaveState;
 import lujgame.robot.robot.instance.control.state.RobotInstanceState;
@@ -27,7 +28,7 @@ public class OnConnectOk implements RobotInstanceActor.Case<ConnectOkMsg> {
 
     initBehave(state.getBehaveState());
 
-    _akkaTool.tellSelf(RobotInstanceActor.Behave.MSG, ctx.getActor());
+    _akkaTool.tellSelf(BehaveNext.MSG, ctx.getActor());
   }
 
   private void initBehave(RobotBehaveState state) {
