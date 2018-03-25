@@ -19,9 +19,10 @@ public class Net10001 implements GameNetHandler<Net10001Req> {
     JStr name = packet.loginName();
     ctx.log().debug("玩家请求登录：{}", name);
 
-    _netHandleTool.dbLoadSet(ctx, M1PlayerDb.class, name);
+    NetHandleTool t = _netHandleTool;
+    t.dbLoadSet(ctx, M1PlayerDb.class, name);
 
-    ctx.invoke(M1LoginCmd.class, packet);
+    t.invoke(ctx, M1LoginCmd.class, packet);
   }
 
   @Inject

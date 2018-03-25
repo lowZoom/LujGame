@@ -40,8 +40,8 @@ public class NetPacketConsumer {
     NetPacketCodec codec = suite.getPacketCodec();
     Object protoObj = codec.decodePacket(_typeInternal, packet.getData());
 
-    NetHandleContext ctx = new NetHandleContext(protoObj,
-        state.getDbCacheRef(), entityRef, log, _strInternal, _dbCmdInvoker);
+    NetHandleContext ctx = new NetHandleContext(opcode, protoObj,
+        state.getDbCacheRef(), entityRef, log, _strInternal);
 
     GameNetHandler<?> handler = suite.getHandleMeta().handler();
     handler.onHandle(ctx);

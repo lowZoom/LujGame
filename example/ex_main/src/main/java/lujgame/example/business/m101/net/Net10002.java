@@ -18,10 +18,11 @@ public class Net10002 implements GameNetHandler<Net10002Req> {
     JStr name = packet.loginName();
     ctx.log().debug("新玩家注册：{}", name);
 
-    _netHandleTool.dbLoadSet(ctx, M1PlayerDb.class, name);
+    NetHandleTool t = _netHandleTool;
+    t.dbLoadSet(ctx, M1PlayerDb.class, name);
 
     //TODO: 以后可以改进成使用注解
-    ctx.invoke(M1RegisterCmd.class, packet);
+    t.invoke(ctx, M1RegisterCmd.class, packet);
   }
 
   @Inject

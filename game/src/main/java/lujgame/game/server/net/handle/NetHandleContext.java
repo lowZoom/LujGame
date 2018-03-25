@@ -4,8 +4,6 @@ import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.google.common.collect.ImmutableList;
 import lujgame.game.server.database.cache.message.DbCacheUseItem;
-import lujgame.game.server.database.handle.GameDbHandler;
-import lujgame.game.server.net.internal.DbCmdInvoker;
 import lujgame.game.server.type.JLong;
 import lujgame.game.server.type.JStr;
 import lujgame.game.server.type.Jstr0;
@@ -14,12 +12,13 @@ import org.omg.CORBA.NO_IMPLEMENT;
 public class NetHandleContext {
 
   public NetHandleContext(
+      Integer opcode,
       Object proto,
       ActorRef dbCacheRef,
       ActorRef entityRef,
       LoggingAdapter log,
-      Jstr0 strInternal,
-      DbCmdInvoker dbCmdInvoker) {
+      Jstr0 strInternal) {
+    _opcode = opcode;
     _proto = proto;
 
     _dbCacheRef = dbCacheRef;
@@ -28,7 +27,6 @@ public class NetHandleContext {
     _log = log;
 
     _strInternal = strInternal;
-    _dbCmdInvoker = dbCmdInvoker;
 
     _useList = ImmutableList.builder();
   }
@@ -46,29 +44,20 @@ public class NetHandleContext {
     return _strInternal.getImpl(val).getValue();
   }
 
-  public <T extends GameDbHandler> void invoke(Class<T> cmdType) {
-    invoke(cmdType, null);
-  }
-
-  public <T extends GameDbHandler> void invoke(Class<T> cmdType, Object packet) {
-    _dbCmdInvoker.invoke(cmdType, packet, _useList.build(), _dbCacheRef, _entityRef);
-  }
-
   public LoggingAdapter log() {
     return _log;
   }
 
+  final Integer _opcode;
   private final Object _proto;
 
   //  private final Builder<DbCacheUseObjItem> _objUseList;
   final ImmutableList.Builder<DbCacheUseItem> _useList;
 
-  private final ActorRef _dbCacheRef;
-  private final ActorRef _entityRef;
+  final ActorRef _dbCacheRef;
+  final ActorRef _entityRef;
 
   private final LoggingAdapter _log;
 
   private final Jstr0 _strInternal;
-
-  private final DbCmdInvoker _dbCmdInvoker;
 }

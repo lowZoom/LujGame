@@ -1,5 +1,7 @@
 package lujgame.game.server.database.handle;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import akka.actor.ActorRef;
 import akka.event.LoggingAdapter;
 import com.google.common.collect.ImmutableMap;
@@ -10,6 +12,7 @@ import lujgame.game.server.database.cache.internal.CacheItem;
 import lujgame.game.server.database.handle.internal.DbopNetTool;
 import lujgame.game.server.database.type.DbObjTool;
 import lujgame.game.server.database.type.DbSetTool;
+import lujgame.game.server.net.internal.DbCmdInvoker;
 import lujgame.game.server.net.packet.NetPacketCodec;
 import lujgame.game.server.net.packet.PacketImpl;
 import lujgame.game.server.type.JSet;
@@ -64,7 +67,7 @@ public class DbHandleContext {
   }
 
   public <T> T getRequestPacket(Class<T> packetType) {
-    return (T) _paramMap.get("luj.packet");
+    return (T) _paramMap.get(DbCmdInvoker.KEY_PACKET);
   }
 
   @Nullable
@@ -106,7 +109,8 @@ public class DbHandleContext {
   }
 
   public void sendResponse2C(Object proto) {
-    Integer opcode = (Integer) _paramMap.get("luj.opcode");
+    Integer opcode = (Integer) _paramMap.get(DbCmdInvoker.KEY_OPCODE);
+    checkNotNull(opcode);
     _dbopNetTool.sendToClient(_connRef, opcode, (PacketImpl<?>) proto, _entityRef);
   }
 
